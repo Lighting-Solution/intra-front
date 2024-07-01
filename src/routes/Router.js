@@ -16,10 +16,19 @@ const Grid = lazy(() => import("../views/ui/Grid"));
 const Tables = lazy(() => import("../views/ui/Tables"));
 const Forms = lazy(() => import("../views/ui/Forms"));
 const Breadcrumbs = lazy(() => import("../views/ui/Breadcrumbs"));
+//Calendar 추가
+const Calendar = lazy(() => import("../views/ui/Calendar.js"));
 
 //DigitalApproval 추가
 const DigitalApproval = lazy(() => import("../views/ui/DigitalApproval.js"));
 
+//결재 대기 문서
+const PendingDocuments = lazy(() => import("../views/ui/PendingDocuments.js"));
+
+//결재 반려 문서
+const RejectedDocuments = lazy(() =>
+  import("../views/ui/RejectedDocuments.js")
+);
 /*****Routes******/
 
 const ThemeRoutes = [
@@ -38,8 +47,22 @@ const ThemeRoutes = [
       { path: "/table", exact: true, element: <Tables /> },
       { path: "/forms", exact: true, element: <Forms /> },
       { path: "/breadcrumbs", exact: true, element: <Breadcrumbs /> },
+      //Calendar 추가
+      { path: "/calendar", exact: true, element: <Calendar /> },
       //DigitalApproval 추가
       { path: "/digitalapproval", exact: true, element: <DigitalApproval /> },
+      //결재 대기 문서
+      {
+        path: "/digitalapproval/pending",
+        exact: true,
+        element: <PendingDocuments />,
+      },
+      //결재 반려 문서
+      {
+        path: "/digitalapproval/rejected",
+        exact: true,
+        element: <RejectedDocuments />,
+      },
     ],
   },
 ];
