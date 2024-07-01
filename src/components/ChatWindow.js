@@ -15,12 +15,7 @@ const ChatWindow = ({ currentChat, setCurrentChat }) => {
 
   useEffect(() => {
     if (currentChat) {
-      setMessages([
-        // { text: "정모야", sender: "me", time: "오전 10:09" },
-        // { text: "장웅이가 괴롭힌다", sender: "me", time: "오전 10:10" },
-        // { text: "구정물", sender: "me", time: "오전 09:00" },
-        // { text: "헤이", sender: "me", time: "오후 02:42" },
-      ]);
+      setMessages([]);
     }
   }, [currentChat]);
 
@@ -65,7 +60,7 @@ const ChatWindow = ({ currentChat, setCurrentChat }) => {
             style={{ marginLeft: "auto" }}
             onClick={handleLeave}
           >
-            나가기
+            닫기
           </Button>
         </Box>
         <Box>
