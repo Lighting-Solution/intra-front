@@ -53,6 +53,12 @@ const navigation = [
     href: "/about",
     icon: "bi bi-people",
   },
+  //DigitalApproval 추가
+  {
+    title: "DigitalApproval",
+    href: "/digitalapproval",
+    icon: "bi bi-file-earmark-check",
+  },
 ];
 
 const Sidebar = () => {
