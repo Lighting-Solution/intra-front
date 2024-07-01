@@ -5,7 +5,6 @@ import { Navigate } from "react-router-dom";
 const FullLayout = lazy(() => import("../layouts/FullLayout.js"));
 
 /***** Pages ****/
-
 const Starter = lazy(() => import("../views/Starter.js"));
 const About = lazy(() => import("../views/About.js"));
 const Alerts = lazy(() => import("../views/ui/Alerts"));
@@ -16,10 +15,10 @@ const Grid = lazy(() => import("../views/ui/Grid"));
 const Tables = lazy(() => import("../views/ui/Tables"));
 const Forms = lazy(() => import("../views/ui/Forms"));
 const Breadcrumbs = lazy(() => import("../views/ui/Breadcrumbs"));
+const ChatLayout = lazy(() => import("../views/ui/ChatLayout"));
 
 /*****Routes******/
-
-const ThemeRoutes = [
+const ThemeRoutes = (setCurrentChat, currentChat) => [
   {
     path: "/",
     element: <FullLayout />,
@@ -35,6 +34,16 @@ const ThemeRoutes = [
       { path: "/table", exact: true, element: <Tables /> },
       { path: "/forms", exact: true, element: <Forms /> },
       { path: "/breadcrumbs", exact: true, element: <Breadcrumbs /> },
+      {
+        path: "/chat",
+        exact: true,
+        element: (
+          <ChatLayout
+            setCurrentChat={setCurrentChat}
+            currentChat={currentChat}
+          />
+        ),
+      },
     ],
   },
 ];

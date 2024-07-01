@@ -53,6 +53,11 @@ const navigation = [
     href: "/about",
     icon: "bi bi-people",
   },
+  {
+    title: "Chat", // 추가된 Chat 링크
+    href: "/chat",
+    icon: "bi bi-chat",
+  },
 ];
 
 const Sidebar = () => {
@@ -66,12 +71,12 @@ const Sidebar = () => {
       <div className="d-flex align-items-center">
         <Logo />
         <span className="ms-auto d-lg-none">
-        <Button
-          close
-          size="sm"
-          className="ms-auto d-lg-none"
-          onClick={() => showMobilemenu()}
-        ></Button>
+          <Button
+            close
+            size="sm"
+            className="ms-auto d-lg-none"
+            onClick={() => showMobilemenu()}
+          ></Button>
         </span>
       </div>
       <div className="pt-4 mt-2">
