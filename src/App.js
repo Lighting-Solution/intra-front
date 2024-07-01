@@ -1,8 +1,11 @@
+import React, { useState } from "react";
 import { useRoutes } from "react-router-dom";
-import Themeroutes from "./routes/Router";
+import ThemeRoutes from "./routes/Router";
 
 const App = () => {
-  const routing = useRoutes(Themeroutes);
+  const [currentChat, setCurrentChat] = useState(null);
+
+  const routing = useRoutes(ThemeRoutes(setCurrentChat, currentChat));
 
   return <div className="dark">{routing}</div>;
 };
