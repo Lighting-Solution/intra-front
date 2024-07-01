@@ -17,6 +17,11 @@ const Tables = lazy(() => import("../views/ui/Tables"));
 const Forms = lazy(() => import("../views/ui/Forms"));
 const Breadcrumbs = lazy(() => import("../views/ui/Breadcrumbs"));
 
+//Calendar 추가
+const Calendar = lazy(() => import("../views/ui/Calendar.js"));
+
+//DigitalApproval 추가
+const DigitalApproval = lazy(() => import("../views/ui/DigitalApproval.js"));
 /*****Routes******/
 
 const ThemeRoutes = [
@@ -35,6 +40,11 @@ const ThemeRoutes = [
       { path: "/table", exact: true, element: <Tables /> },
       { path: "/forms", exact: true, element: <Forms /> },
       { path: "/breadcrumbs", exact: true, element: <Breadcrumbs /> },
+
+      //Calendar 추가
+      { path: "/calendar", exact: true, element: <Calendar /> },
+      //DigitalApproval 추가
+      { path: "/digitalapproval", exact: true, element: <DigitalApproval /> },
     ],
   },
 ];
