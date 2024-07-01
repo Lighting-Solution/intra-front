@@ -16,6 +16,8 @@ const Tables = lazy(() => import("../views/ui/Tables"));
 const Forms = lazy(() => import("../views/ui/Forms"));
 const Breadcrumbs = lazy(() => import("../views/ui/Breadcrumbs"));
 const ChatLayout = lazy(() => import("../views/ui/ChatLayout"));
+const NoticeBoard = lazy(() => import("../views/ui/NoticeBoard"));
+const FreeBoard = lazy(() => import("../views/ui/FreeBoard"));
 
 /*****Routes******/
 const ThemeRoutes = (setCurrentChat, currentChat) => [
@@ -43,6 +45,16 @@ const ThemeRoutes = (setCurrentChat, currentChat) => [
             currentChat={currentChat}
           />
         ),
+      },
+      {
+        path: "/notice",
+        exact: true,
+        element: <NoticeBoard />,
+      },
+      {
+        path: "/freeboard",
+        exact: true,
+        element: <FreeBoard />,
       },
     ],
   },
