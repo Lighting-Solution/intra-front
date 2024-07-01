@@ -23,5 +23,5 @@ const ChatLayout = ({ setCurrentChat, currentChat }) => {
     </Container>
   );
 };
-//
+
 export default ChatLayout;

@@ -66,7 +66,15 @@ const AddressBookModal = ({ open, onClose, onCreateChat }) => {
         <Button onClick={onClose} color="primary">
           취소
         </Button>
-        <Button onClick={handleCreateChat} color="primary" variant="contained">
+        <Button
+          onClick={handleCreateChat}
+          color="primary"
+          variant="contained"
+          disabled={selectedContacts.length === 0}
+          style={{
+            backgroundColor: selectedContacts.length === 0 ? "gray" : "",
+          }}
+        >
           채팅방 만들기
         </Button>
       </DialogActions>
