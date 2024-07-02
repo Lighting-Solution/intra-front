@@ -22,6 +22,13 @@ const Calendar = lazy(() => import("../views/ui/Calendar.js"));
 //DigitalApproval 추가
 const DigitalApproval = lazy(() => import("../views/ui/DigitalApproval.js"));
 
+//결재 대기 문서
+const PendingDocuments = lazy(() => import("../views/ui/PendingDocuments.js"));
+
+//결재 반려 문서
+const RejectedDocuments = lazy(() =>
+  import("../views/ui/RejectedDocuments.js")
+);
 /*****Routes******/
 
 const ThemeRoutes = [
@@ -44,6 +51,18 @@ const ThemeRoutes = [
       { path: "/calendar", exact: true, element: <Calendar /> },
       //DigitalApproval 추가
       { path: "/digitalapproval", exact: true, element: <DigitalApproval /> },
+      //결재 대기 문서
+      {
+        path: "/digitalapproval/pending",
+        exact: true,
+        element: <PendingDocuments />,
+      },
+      //결재 반려 문서
+      {
+        path: "/digitalapproval/rejected",
+        exact: true,
+        element: <RejectedDocuments />,
+      },
     ],
   },
 ];
