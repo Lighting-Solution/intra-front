@@ -119,7 +119,7 @@ const Tables = () => {
         }
         .sign_date
         {
-            border-bottom: 1px solid black; 
+            border:none;
             border-collapse: collapse;
             display: block;
             text-align: center;

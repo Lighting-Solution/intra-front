@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { Button, Nav, NavItem, NavLink } from "reactstrap";
 import Logo from "./Logo";
 import { Link, useLocation, useNavigate } from "react-router-dom";
@@ -65,12 +65,12 @@ const navigation = [
     icon: "bi bi-file-earmark-check",
     subNav: [
       {
-        title: "Pending Documents",
+        title: "결재 대기 문서",
         href: "/digitalapproval/pending",
         icon: "bi bi-clock",
       },
       {
-        title: "Rejected Documents",
+        title: "결재 반려 문서",
         href: "/digitalapproval/rejected",
         icon: "bi bi-x-circle",
       },
@@ -115,17 +115,19 @@ const Sidebar = () => {
               {navi.subNav ? (
                 <>
                   <NavLink
-                    className="nav-link text-secondary py-3"
+                    className="nav-link text-secondary py-3 d-flex justify-content-between align-items-center"
                     onClick={() => handleNavClick(navi.href, index)}
                   >
-                    <i className={navi.icon}></i>
-                    <span className="ms-3 d-inline-block">{navi.title}</span>
+                    <span>
+                      <i className={navi.icon}></i>
+                      <span className="ms-3 d-inline-block">{navi.title}</span>
+                    </span>
                     <i
                       className={`bi ${
                         collapsedIndex === index
                           ? "bi-chevron-up"
                           : "bi-chevron-down"
-                      } ms-auto`}
+                      }`}
                     ></i>
                   </NavLink>
                   <div
@@ -134,7 +136,6 @@ const Sidebar = () => {
                     }`}
                     id={`subNav${index}`}
                   >
-                    
                     <Nav vertical>
                       {navi.subNav.map((subItem, subIndex) => (
                         <NavItem key={subIndex} className="sidenav-bg">
@@ -150,8 +151,6 @@ const Sidebar = () => {
                             <span className="ms-3 d-inline-block">
                               {subItem.title}
                             </span>
-                            
-
                           </Link>
                         </NavItem>
                       ))}
@@ -163,25 +162,18 @@ const Sidebar = () => {
                   to={navi.href}
                   className={
                     location.pathname === navi.href
-                      ? "text-primary nav-link py-3"
-                      : "nav-link text-secondary py-3"
+                      ? "text-primary nav-link py-3 d-flex justify-content-between align-items-center"
+                      : "nav-link text-secondary py-3 d-flex justify-content-between align-items-center"
                   }
                 >
-                  <i className={navi.icon}></i>
-                  <span className="ms-3 d-inline-block">{navi.title}</span>
+                  <span>
+                    <i className={navi.icon}></i>
+                    <span className="ms-3 d-inline-block">{navi.title}</span>
+                  </span>
                 </Link>
               )}
             </NavItem>
           ))}
-          <Button
-            color="danger"
-            tag="a"
-            target="_blank"
-            className="mt-3"
-            href="https://www.wrappixel.com/templates/xtreme-react-redux-admin/?ref=33"
-          >
-            Upgrade To Pro
-          </Button>
         </Nav>
       </div>
     </div>

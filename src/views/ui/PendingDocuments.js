@@ -1,11 +1,17 @@
 import React from "react";
+import ProjectTables from "../../components/digitalApproval/PendingTable";
+import { Row, Col } from "reactstrap";
 
 const PendingDocuments = () => {
   return (
-    <div>
-      <h2>Pending Documents</h2>
-      {/* 여기에 결재대기 문서 목록을 추가하세요 */}
-    </div>
+    <Row>
+      {/* --------------------------------------------------------------------------------*/}
+      {/* table-1*/}
+      {/* --------------------------------------------------------------------------------*/}
+      <Col lg="12">
+        <ProjectTables />
+      </Col>
+    </Row>
   );
 };
 

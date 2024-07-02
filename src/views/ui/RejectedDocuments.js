@@ -1,12 +1,15 @@
 import React from "react";
+import ProjectTables from "../../components/digitalApproval/RejectedTable";
+import { Row, Col } from "reactstrap";
 
-const RejectedDocuments = () => {
+const PendingDocuments = () => {
   return (
-    <div>
-      <h2>Rejected Documents</h2>
-      {/* 여기에 결재반려 문서 목록을 추가하세요 */}
-    </div>
+    <Row>
+      <Col lg="12">
+        <ProjectTables />
+      </Col>
+    </Row>
   );
 };
 
-export default RejectedDocuments;
+export default PendingDocuments;
