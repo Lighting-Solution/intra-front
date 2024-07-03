@@ -15,7 +15,7 @@ import AddressBookModal from "./AddressBookModal";
 import ContextMenu from "./ContextMenu";
 
 // ChatList 컴포넌트: 채팅방 목록을 표시하고 관리하는 UI 컴포넌트
-const ChatList = ({ setCurrentChat, currentChat }) => {
+const ChatList = ({ setCurrentChat, currentChat, setTestMessages }) => {
   // 상태 관리: 검색어, 버튼 위치, 주소록 모달 상태, 채팅 목록, 컨텍스트 메뉴 상태, 선택된 채팅
   const [searchTerm, setSearchTerm] = useState("");
   const [buttonPosition, setButtonPosition] = useState({ x: 32, y: 32 });
@@ -29,7 +29,7 @@ const ChatList = ({ setCurrentChat, currentChat }) => {
   const wasDragging = useRef(false);
   const offset = useRef({ x: 0, y: 0 });
 
-  // useEffect: 컴포넌트가 마운트될 때 채팅 목록을 API에서 가져옴
+  // useEffect: 컴포넌트가 랜더링될 때 채팅 목록을 API에서 가져옴
   useEffect(() => {
     const fetchChats = async () => {
       try {
@@ -64,9 +64,18 @@ const ChatList = ({ setCurrentChat, currentChat }) => {
     });
 
   // 채팅방 클릭 핸들러
-  const handleChatClick = (chat) => {
+  const handleChatClick = async (chat, roomId) => {
     console.log("Selected chat:", chat);
     setCurrentChat(chat);
+
+    try {
+      const response = await axios.get(
+        `http://localhost:9000/api/rooms/${roomId}/messages`
+      );
+      setTestMessages(response.data);
+    } catch (error) {
+      console.error("Error fetching messages:", error);
+    }
   };
 
   // 새 채팅방 추가 버튼 클릭 핸들러: 주소록 모달 열기
@@ -211,7 +220,7 @@ const ChatList = ({ setCurrentChat, currentChat }) => {
             alignItems="center"
             my={1}
             onContextMenu={(e) => handleContextMenu(e, chat)}
-            onClick={() => handleChatClick(chat)} // Updated to use handleChatClick
+            onClick={() => handleChatClick(chat, 1)} // Updated to use handleChatClick
             style={{
               cursor: "pointer",
               backgroundColor:

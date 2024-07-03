@@ -12,10 +12,17 @@ import SendIcon from "@mui/icons-material/Send";
 import { Client } from "@stomp/stompjs";
 import SockJS from "sockjs-client";
 
-const ChatWindow = ({ currentChat, setCurrentChat }) => {
+const ChatWindow = ({ currentChat, setCurrentChat, testMessages }) => {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
   const [client, setClient] = useState(null);
+
+  useEffect(() => {
+    if (testMessages) {
+      setMessages(testMessages);
+    }
+    console.log("testMessages", testMessages);
+  }, [testMessages]);
 
   // WebSocket 연결 설정
   const connect = useCallback(() => {
@@ -51,7 +58,7 @@ const ChatWindow = ({ currentChat, setCurrentChat }) => {
     if (currentChat && currentChat.id) {
       setMessages([]);
       connect();
-      fetchMessages(currentChat.id); // 채팅방 메시지 불러오기
+      // fetchMessages(currentChat.id); // 채팅방 메시지 불러오기
     }
     return () => {
       if (client) {
@@ -61,16 +68,17 @@ const ChatWindow = ({ currentChat, setCurrentChat }) => {
   }, [currentChat, connect, client]);
 
   // 메시지 목록을 API로부터 불러오는 함수
-  const fetchMessages = async (roomId) => {
-    try {
-      const response = await axios.get(
-        `http://localhost:9000/api/rooms/${roomId}/messages`
-      );
-      setMessages(response.data);
-    } catch (error) {
-      console.error("Error fetching messages:", error);
-    }
-  };
+  // const fetchMessages = async (roomId) => {
+  //   try {
+  //     const response = await axios.get(
+  //       `http://localhost:9000/api/rooms/${roomId}/messages`
+  //     );
+  //     setMessages(response.data);
+  //     console.log(messages);
+  //   } catch (error) {
+  //     console.error("Error fetching messages:", error);
+  //   }
+  // };
 
   // 메시지 전송 핸들러
   const handleSend = () => {
@@ -122,31 +130,31 @@ const ChatWindow = ({ currentChat, setCurrentChat }) => {
             닫기
           </IconButton>
         </Box>
+
         <Box>
-          {messages.map((message, index) => (
+          {testMessages.map((testMessages, index) => (
             <Box
               key={index}
-              my={2}
               display="flex"
               justifyContent={
-                message.sender === "me" ? "flex-end" : "flex-start"
+                testMessages.empId === 1 ? "flex-end" : "flex-start"
               }
             >
               <Paper
                 style={{
                   padding: "8px 16px",
                   backgroundColor:
-                    message.sender === "me" ? "#DCF8C6" : "#FFFFFF",
+                    testMessages.empId === 1 ? "#DCF8C6" : "#FFFFFF", //1은 하드코딩한값
                 }}
               >
-                <Typography variant="body1">{message.content}</Typography>
+                <Typography variant="body1">{testMessages.message}</Typography>
               </Paper>
               <Typography
                 variant="body2"
                 color="textSecondary"
                 style={{ alignSelf: "center", marginLeft: "8px" }}
               >
-                {message.time}
+                {14}
               </Typography>
             </Box>
           ))}

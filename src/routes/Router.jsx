@@ -7,17 +7,17 @@ const FullLayout = lazy(() => import("../layouts/FullLayout.js"));
 /***** Pages ****/
 const Starter = lazy(() => import("../views/Starter.js"));
 const About = lazy(() => import("../views/About.js"));
-const Alerts = lazy(() => import("../views/ui/Alerts"));
-const Badges = lazy(() => import("../views/ui/Badges"));
-const Buttons = lazy(() => import("../views/ui/Buttons"));
-const Cards = lazy(() => import("../views/ui/Cards"));
-const Grid = lazy(() => import("../views/ui/Grid"));
-const Tables = lazy(() => import("../views/ui/Tables"));
-const Forms = lazy(() => import("../views/ui/Forms"));
-const Breadcrumbs = lazy(() => import("../views/ui/Breadcrumbs"));
-const ChatLayout = lazy(() => import("../views/ui/ChatLayout"));
-const NoticeBoard = lazy(() => import("../views/ui/NoticeBoard"));
-const FreeBoard = lazy(() => import("../views/ui/FreeBoard"));
+const Alerts = lazy(() => import("../views/ui/Alerts.js"));
+const Badges = lazy(() => import("../views/ui/Badges.js"));
+const Buttons = lazy(() => import("../views/ui/Buttons.js"));
+const Cards = lazy(() => import("../views/ui/Cards.js"));
+const Grid = lazy(() => import("../views/ui/Grid.js"));
+const Tables = lazy(() => import("../views/ui/Tables.js"));
+const Forms = lazy(() => import("../views/ui/Forms.js"));
+const Breadcrumbs = lazy(() => import("../views/ui/Breadcrumbs.js"));
+const ChatLayout = lazy(() => import("../views/ui/ChatLayout.jsx"));
+const NoticeBoard = lazy(() => import("../views/ui/NoticeBoard.js"));
+const FreeBoard = lazy(() => import("../views/ui/FreeBoard.js"));
 
 /*****Routes******/
 const ThemeRoutes = (setCurrentChat, currentChat) => [
