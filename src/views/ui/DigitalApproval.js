@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from "react";
-import { Button } from "reactstrap";
+import { Button, Row, Col } from "reactstrap";
 import axios from "axios";
-import Modal from "./Modal"; // Import the Modal component
+import Modal from "./Modal"; // Ensure this path is correct
+import ProjectTables from "../../components/digitalApproval/PendingTable"; // Ensure this path is correct
+import RejectedTable from "../../components/digitalApproval/RejectedTable"; // Ensure this path is correct
 import "./DigitalApproval.css";
 
 const Tables = () => {
   const [htmlContent, setHtmlContent] = useState("");
   const [status, setStatus] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false); // State for modal
-
+  const [empId, setEmpId] = useState(0);
   const handleButtonClick = async (status) => {
     setStatus(status);
     try {
@@ -21,38 +23,41 @@ const Tables = () => {
     }
   };
 
-  const approvalRequest = async (status) => {
+
+  const approvalRequest = async (status, empId) => {
+    // 로그인 한 empId 전달 
+    setEmpId(empId);
+    
     try {
-      // Get the HTML content of the container
       const container = document.getElementById("html-content-container");
 
-      var htmlHeadContent = `
-            <meta charset="UTF-8" />
-            <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-            <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-            <title>Login</title>
-            <style>
-             @page {
-            size: 270mm 350mm; 
+      const htmlHeadContent = `
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Login</title>
+        <style>
+          @page {
+            size: 270mm 350mm;
             margin: 20mm;
-        }
-        body {
+          }
+          body {
             font-family: 'Noto Sans KR', sans-serif;
-        }
-        .tbl_outer {
+          }
+          .tbl_outer {
             width: 800px;
             margin: 0 auto;
             border-collapse: collapse;
             background-color: white;
-        }
-        .tbl_inner {
-            margin-top:10px;
+          }
+          .tbl_inner {
+            margin-top: 10px;
             width: 300px;
             border: 1px solid black;
             border-collapse: collapse;
             background-color: white;
-        }
-        .header_cell {
+          }
+          .header_cell {
             width: 300px;
             font-size: 22px;
             font-weight: bold;
@@ -61,16 +66,16 @@ const Tables = () => {
             padding: 3px;
             height: 90px;
             border: 1px solid black;
-        }
-        .content_cell {
+          }
+          .content_cell {
             width: 200px;
             padding: 3px;
             height: 22px;
             vertical-align: middle;
             border: 1px solid black;
             text-align: left;
-        }
-        .title_cell {
+          }
+          .title_cell {
             width: 100px;
             padding: 3px;
             height: 22px;
@@ -79,34 +84,33 @@ const Tables = () => {
             text-align: center;
             font-weight: bold;
             background-color: #ddd;
-        }
-        .sign_type1 {
-            margin-top:10px;
+          }
+          .sign_type1 {
+            margin-top: 10px;
             display: inline-block;
             font-size: 12px;
             padding: 0;
             background-color: white;
-        }
-        .tb_sign_type1 {
-
+          }
+          .tb_sign_type1 {
             border: 1px solid #000;
             border-spacing: 0;
             border-collapse: collapse;
             width: 60px;
             padding: 0;
-        }
-        .sign_member {
+          }
+          .sign_member {
             border-bottom: 1px solid black;
             border-collapse: collapse;
             padding: 0;
             border-spacing: 0;
             width: 60px;
             font-size: 12px;
-        }
-        .sign_rank,
-        .sign_stamp,
-        .sign_name {
-            border-bottom: 1px solid black; 
+          }
+          .sign_rank,
+          .sign_stamp,
+          .sign_name {
+            border-bottom: 1px solid black;
             border-collapse: collapse;
             display: block;
             text-align: center;
@@ -116,10 +120,10 @@ const Tables = () => {
             width: 70px;
             font-size: 12px;
             padding: 0 4px;
-        }
-        .sign_date
-        {
-            border:none;
+          }
+
+          .sign_date {
+            border: none;
             border-collapse: collapse;
             display: block;
             text-align: center;
@@ -129,36 +133,32 @@ const Tables = () => {
             width: 70px;
             font-size: 12px;
             padding: 0 4px;
-        }
-        .stamp_approved img {
+          }
+          .stamp_approved img {
             width: auto;
             height: 40px;
-        }
-        .reason_cell {
+          }
+          .reason_cell {
             width: 300px;
             padding: 3px;
             vertical-align: middle;
             border: 1px solid black;
             text-align: left;
-        }
-
-        .tb_sign_type1 th {
+          }
+          .tb_sign_type1 th {
             background-color: #ddd;
             text-align: center;
             padding: 5px;
             border: 1px solid #000;
-        }
-
-        .tb_sign_type1 tbody {
+          }
+          .tb_sign_type1 tbody {
             border-collapse: collapse;
             border: 1px solid #000;
-        }
-
-        .sign_type1 > table {
+          }
+          .sign_type1 > table {
             border: 1px solid #000;
-        }
-
-        textarea {
+          }
+          textarea {
             width: 100%;
             height: 500px;
             box-sizing: border-box;
@@ -167,26 +167,23 @@ const Tables = () => {
             padding: 5px;
             font-family: 'Malgun Gothic', Dotum, Arial, Tahoma;
             font-size: 12px;
-        }
+          }
+        </style>
+      `;
 
-    </style>
-        `;
-
-      // Serialize the container's HTML content
       const serializer = new XMLSerializer();
       const htmlBodyContent = serializer.serializeToString(container);
-
       const htmlContent = `<html><head>${htmlHeadContent}</head><body>${htmlBodyContent}</body></html>`;
-
-      // URL encoding
       const encodedHtmlContent = encodeURIComponent(htmlContent);
+      
+      
 
-      // Send the encoded HTML content to the server
       const response = await axios.post(
         "http://localhost:9000/api/v1/lighting_solutions/digital/approval/request",
         {
           html: encodedHtmlContent,
           status: status,
+          empId : empId
         },
         {
           headers: {
@@ -195,7 +192,6 @@ const Tables = () => {
         }
       );
 
-      // Handle the response
       console.log("Success:", response.data);
     } catch (error) {
       console.error("Error sending the HTML content", error);
@@ -252,21 +248,29 @@ const Tables = () => {
   };
 
   return (
-    <div className="d-flex">
-      <div className="mainContent flex-grow-1">
-        {!htmlContent && (
-          <>
-            <Button className="btn" color="primary" onClick={handleNewApproval}>
-              새 결재 진행
-            </Button>
-            {isModalOpen && (
-              <Modal
-                closeModal={() => setIsModalOpen(false)}
-                onFileSelect={handleFileSelect}
-              />
-            )}
-          </>
-        )}
+    <div className="d-flex main-container">
+      <div className="left-section">
+        <h5>전자결재</h5>
+        <Button
+          className="new-approval-button"
+          outline
+          color="secondary"
+          onClick={handleNewApproval}
+        >
+          새 결재 진행
+        </Button>
+        <div className="modal-container">
+          {isModalOpen && (
+            <Modal
+              closeModal={() => setIsModalOpen(false)}
+              onFileSelect={handleFileSelect}
+            />
+          )}
+        </div>
+      </div>
+      <div className="vertical-line" />
+      <div className="right-section">
+        <h5>전자결재 홈</h5>
         {htmlContent ? (
           <div>
             <div
@@ -276,12 +280,25 @@ const Tables = () => {
             <Button
               className="btn"
               color="primary"
-              onClick={() => approvalRequest(status)}
+              onClick={() => approvalRequest(status, 1)}
             >
               결재 요청
             </Button>
           </div>
-        ) : null}
+        ) : (
+          <div className="tables-section">
+            <Row>
+              <Col lg="12">
+                <ProjectTables />
+              </Col>
+            </Row>
+            <Row>
+              <Col lg="12">
+                <RejectedTable />
+              </Col>
+            </Row>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -23,7 +23,7 @@ const Modal = ({ closeModal, onFileSelect }) => {
         <button style={styles.closeButton} onClick={closeModal}>
           X
         </button>
-        <h2>파일 선택</h2>
+        <h5>결재양식 선택</h5>
         <div style={styles.fileTree}>
           <div>
             <div style={styles.folder} onClick={() => toggleFolder("general")}>
@@ -145,14 +145,17 @@ const styles = {
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
+    zIndex: 1000,
   },
   modalContent: {
     backgroundColor: "white",
     padding: 20,
     borderRadius: 8,
     position: "relative",
-    width: "450px",
+    width: 450,
     textAlign: "left",
+    zIndex: 1001,
+    boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.1)",
   },
   closeButton: {
     position: "absolute",
@@ -160,15 +163,16 @@ const styles = {
     right: 10,
     border: "none",
     background: "none",
-    fontSize: "20px",
+    fontSize: 20,
     cursor: "pointer",
+    color: "#888",
   },
   fileTree: {
     marginTop: 20,
   },
   folder: {
     cursor: "pointer",
-    fontSize: "16px",
+    fontSize: 16,
     fontWeight: "bold",
     marginTop: 10,
     position: "relative",
@@ -180,7 +184,7 @@ const styles = {
   },
   file: {
     cursor: "pointer",
-    fontSize: "14px",
+    fontSize: 14,
     padding: "2px 0",
     position: "relative",
     display: "flex",
@@ -188,27 +192,27 @@ const styles = {
   },
   branch: {
     position: "absolute",
-    top: "0",
-    left: "-20px",
-    width: "1px",
+    top: 0,
+    left: -20,
+    width: 1,
     height: "100%",
-    backgroundColor: "#888", // 회색
+    backgroundColor: "#888",
   },
   verticalLine: {
-    width: "1px",
-    height: "20px",
-    backgroundColor: "#888", // 회색
+    width: 1,
+    height: 20,
+    backgroundColor: "#888",
     position: "absolute",
-    left: "-20px",
-    top: "0",
+    left: -20,
+    top: 0,
   },
   horizontalLine: {
-    width: "20px",
-    height: "1px",
-    backgroundColor: "#888", // 회색
+    width: 20,
+    height: 1,
+    backgroundColor: "#888",
     position: "absolute",
-    left: "-20px",
-    top: "10px",
+    left: -20,
+    top: 10,
   },
 };
 
