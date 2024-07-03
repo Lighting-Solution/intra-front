@@ -172,8 +172,37 @@ textarea {
   border: 1px solid black;
 }
 #input1 {
-  width: 685px;
+  width: 692px;
 }
-#input2 {
-  width: 685px;
+
+.main-container {
+  width: 100%;
+  display: flex;
+}
+
+.left-section {
+  flex: 0 0 200px;
+  padding: 20px;
+}
+
+.right-section {
+  flex: 1;
+  padding: 20px;
+}
+
+.new-approval-button {
+  font-size: 1.2em;
+  padding: 10px 20px;
+  width: 150px;
+  margin-top: 12px;
+  margin-bottom: 20px;
+}
+
+.vertical-line {
+  border-left: 1px solid #dedede;
+  height: auto;
+}
+
+.tables-section {
+  margin-top: 20px;
 }
