@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
+import axios from "axios";
 import {
   Paper,
   Box,
@@ -13,42 +14,13 @@ import PushPinIcon from "@mui/icons-material/PushPin";
 import AddressBookModal from "./AddressBookModal";
 import ContextMenu from "./ContextMenu";
 
-const chatData = [
-  {
-    id: 1,
-    name: "허각",
-    message: "구정물~",
-    time: "4시간 전",
-    avatar: "https://i.pravatar.cc/150?img=1",
-    pinned: false,
-    pinnedAt: null,
-  },
-  {
-    id: 2,
-    name: "구정모",
-    message: "장웅이가 괴롭힌다",
-    time: "5시간 전",
-    avatar: "https://i.pravatar.cc/150?img=2",
-    pinned: false,
-    pinnedAt: null,
-  },
-  {
-    id: 3,
-    name: "마장용",
-    message: "장웅이 일 안하나",
-    time: "5시간 전",
-    avatar: "https://i.pravatar.cc/150?img=3",
-    pinned: false,
-    pinnedAt: null,
-  },
-  // 더미 데이터 추가
-];
-
+// ChatList 컴포넌트: 채팅방 목록을 표시하고 관리하는 UI 컴포넌트
 const ChatList = ({ setCurrentChat, currentChat }) => {
+  // 상태 관리: 검색어, 버튼 위치, 주소록 모달 상태, 채팅 목록, 컨텍스트 메뉴 상태, 선택된 채팅
   const [searchTerm, setSearchTerm] = useState("");
   const [buttonPosition, setButtonPosition] = useState({ x: 32, y: 32 });
   const [addressBookOpen, setAddressBookOpen] = useState(false);
-  const [chats, setChats] = useState(chatData);
+  const [chats, setChats] = useState([]);
   const [contextMenu, setContextMenu] = useState(null);
   const [selectedChat, setSelectedChat] = useState(null);
   const buttonRef = useRef(null);
@@ -57,11 +29,32 @@ const ChatList = ({ setCurrentChat, currentChat }) => {
   const wasDragging = useRef(false);
   const offset = useRef({ x: 0, y: 0 });
 
+  // useEffect: 컴포넌트가 마운트될 때 채팅 목록을 API에서 가져옴
+  useEffect(() => {
+    const fetchChats = async () => {
+      try {
+        const response = await axios.get("http://localhost:9000/api/rooms");
+        console.log("Fetched chats:", response.data);
+        const adjustedData = response.data.map((chat) => ({
+          ...chat,
+          name: chat.name,
+        }));
+        setChats(adjustedData);
+      } catch (error) {
+        console.error("Error fetching chats:", error);
+      }
+    };
+
+    fetchChats();
+  }, []);
+
+  // 필터링 및 정렬: 검색어와 고정된 채팅방을 기준으로 채팅 목록을 필터링하고 정렬
   const filteredChats = chats
     .filter(
       (chat) =>
         chat.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        chat.message.toLowerCase().includes(searchTerm.toLowerCase())
+        (chat.message &&
+          chat.message.toLowerCase().includes(searchTerm.toLowerCase()))
     )
     .sort((a, b) => {
       if (a.pinned && b.pinned) {
@@ -70,6 +63,7 @@ const ChatList = ({ setCurrentChat, currentChat }) => {
       return b.pinned - a.pinned; // 고정된 채팅방이 상단에
     });
 
+  // 새 채팅방 추가 버튼 클릭 핸들러: 주소록 모달 열기
   const handleAddChat = () => {
     if (!wasDragging.current) {
       setAddressBookOpen(true);
@@ -77,10 +71,11 @@ const ChatList = ({ setCurrentChat, currentChat }) => {
     wasDragging.current = false;
   };
 
+  // 새 채팅방 생성 핸들러: 선택된 연락처로 새 채팅방 생성
   const handleCreateChat = (selectedContacts) => {
     const newChat = {
       id: chats.length + 1,
-      name: selectedContacts.map((contact) => contact.name).join(", "),
+      name: selectedContacts[0].name, // 첫 번째 연락처의 이름만 사용
       message: "새 채팅방",
       time: "방금",
       avatar: selectedContacts[0].avatar,
@@ -90,6 +85,7 @@ const ChatList = ({ setCurrentChat, currentChat }) => {
     setChats([...chats, newChat]);
   };
 
+  // 마우스 다운 핸들러: 드래그 시작
   const handleMouseDown = (e) => {
     isDragging.current = true;
     wasDragging.current = false;
@@ -101,6 +97,7 @@ const ChatList = ({ setCurrentChat, currentChat }) => {
     buttonRef.current.style.cursor = "grabbing";
   };
 
+  // 마우스 이동 핸들러: 드래그 중 버튼 위치 업데이트
   const handleMouseMove = (e) => {
     if (isDragging.current) {
       wasDragging.current = true;
@@ -124,11 +121,13 @@ const ChatList = ({ setCurrentChat, currentChat }) => {
     }
   };
 
+  // 마우스 업 핸들러: 드래그 종료
   const handleMouseUp = () => {
     isDragging.current = false;
     buttonRef.current.style.cursor = "grab";
   };
 
+  // 마운트 시 전역 마우스 이벤트 리스너 등록 및 해제
   useEffect(() => {
     window.addEventListener("mousemove", handleMouseMove);
     window.addEventListener("mouseup", handleMouseUp);
@@ -139,6 +138,7 @@ const ChatList = ({ setCurrentChat, currentChat }) => {
     };
   }, []);
 
+  // 컨텍스트 메뉴 열기 핸들러: 우클릭 시 컨텍스트 메뉴 열기
   const handleContextMenu = (event, chat) => {
     event.preventDefault();
     setSelectedChat(chat);
@@ -152,15 +152,18 @@ const ChatList = ({ setCurrentChat, currentChat }) => {
     );
   };
 
+  // 컨텍스트 메뉴 닫기 핸들러
   const handleClose = () => {
     setContextMenu(null);
   };
 
+  // 채팅방 삭제 핸들러
   const handleDelete = () => {
     setChats(chats.filter((chat) => chat.id !== selectedChat.id));
     handleClose();
   };
 
+  // 채팅방 고정 핸들러
   const handlePin = () => {
     const newChats = chats.map((chat) =>
       chat.id === selectedChat.id
@@ -185,6 +188,7 @@ const ChatList = ({ setCurrentChat, currentChat }) => {
         position: "relative",
       }}
     >
+      {/* 검색창 */}
       <TextField
         fullWidth
         variant="outlined"
@@ -193,6 +197,7 @@ const ChatList = ({ setCurrentChat, currentChat }) => {
         onChange={(e) => setSearchTerm(e.target.value)}
       />
       <Box my={2}>
+        {/* 채팅방 목록 표시 */}
         {filteredChats.map((chat, index) => (
           <Box
             key={index}
@@ -229,6 +234,7 @@ const ChatList = ({ setCurrentChat, currentChat }) => {
           </Box>
         ))}
       </Box>
+      {/* 추가 버튼 */}
       <Fab
         ref={buttonRef}
         color="primary"
@@ -248,11 +254,13 @@ const ChatList = ({ setCurrentChat, currentChat }) => {
       >
         <AddIcon style={{ fontSize: "30px" }} />
       </Fab>
+      {/* 주소록 모달 */}
       <AddressBookModal
         open={addressBookOpen}
         onClose={() => setAddressBookOpen(false)}
         onCreateChat={handleCreateChat}
       />
+      {/* 컨텍스트 메뉴 */}
       <ContextMenu
         contextMenu={contextMenu}
         handleClose={handleClose}
