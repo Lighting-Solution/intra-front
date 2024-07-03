@@ -63,6 +63,12 @@ const ChatList = ({ setCurrentChat, currentChat }) => {
       return b.pinned - a.pinned; // 고정된 채팅방이 상단에
     });
 
+  // 채팅방 클릭 핸들러
+  const handleChatClick = (chat) => {
+    console.log("Selected chat:", chat);
+    setCurrentChat(chat);
+  };
+
   // 새 채팅방 추가 버튼 클릭 핸들러: 주소록 모달 열기
   const handleAddChat = () => {
     if (!wasDragging.current) {
@@ -205,7 +211,7 @@ const ChatList = ({ setCurrentChat, currentChat }) => {
             alignItems="center"
             my={1}
             onContextMenu={(e) => handleContextMenu(e, chat)}
-            onClick={() => setCurrentChat(chat)}
+            onClick={() => handleChatClick(chat)} // Updated to use handleChatClick
             style={{
               cursor: "pointer",
               backgroundColor:
