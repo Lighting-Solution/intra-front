@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import axios from "axios";
 import {
   Paper,
@@ -17,11 +17,12 @@ import SockJS from "sockjs-client";
 const ChatWindow = ({ currentChat, setCurrentChat, testMessages }) => {
   // 세 개의 컴포넌트 받음
   const [messages, setMessages] = useState([]); // 현재 채팅방의 모든 메시지 저장
-  const [filteredMessages, setFilteredMessages] = useState([]); //검색어에 따라 필터링된 메시지 저장
+  const [filteredMessages, setFilteredMessages] = useState([]); // 검색어에 따라 필터링된 메시지 저장
   const [newMessage, setNewMessage] = useState(""); // 사용자가 입력한 새로운 메시지 저장
   const [searchTerm, setSearchTerm] = useState(""); // 검색 입력필드에 입력한 검색어 저장
   const [searchOpen, setSearchOpen] = useState(false); // 검색 입력 필드 열려있는지 여부
-  const [client, setClient] = useState(null); //stomp 클라이언트 객체 저장   WebSocket 연결을 통해 서버와 메시지를 주고받기 위해 사용
+  const [client, setClient] = useState(null); //stomp 클라이언트 객체 저장 WebSocket 연결을 통해 서버와 메시지를 주고받기 위해 사용
+  const messagesEndRef = useRef(null);
 
   useEffect(() => {
     if (testMessages) {
@@ -34,10 +35,15 @@ const ChatWindow = ({ currentChat, setCurrentChat, testMessages }) => {
   // 검색어가 변경될 때마다 필터링된 메시지 목록을 업데이트
   useEffect(() => {
     if (searchTerm) {
-      const filtered = messages.filter((message) =>
-        message.message.toLowerCase().includes(searchTerm.toLowerCase())
+      const matchIndex = messages.findIndex((msg) =>
+        msg.message.toLowerCase().includes(searchTerm.toLowerCase())
       );
-      setFilteredMessages(filtered);
+      if (matchIndex !== -1) {
+        const filtered = messages.slice(matchIndex);
+        setFilteredMessages(filtered);
+      } else {
+        setFilteredMessages([]);
+      }
     } else {
       setFilteredMessages(messages);
     }
@@ -77,7 +83,6 @@ const ChatWindow = ({ currentChat, setCurrentChat, testMessages }) => {
     if (currentChat && currentChat.id) {
       setMessages([]);
       connect();
-      // fetchMessages(currentChat.id); // 채팅방 메시지 불러오기
     }
     return () => {
       if (client) {
@@ -106,6 +111,17 @@ const ChatWindow = ({ currentChat, setCurrentChat, testMessages }) => {
       setNewMessage("");
     }
   };
+
+  // 스크롤을 맨 아래로 이동하는 함수
+  const scrollToBottom = () => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [filteredMessages]);
 
   // 채팅방 나가기 핸들러
   const handleLeave = () => {
@@ -192,6 +208,7 @@ const ChatWindow = ({ currentChat, setCurrentChat, testMessages }) => {
               </Typography>
             </Box>
           ))}
+          <div ref={messagesEndRef} />
         </Box>
       </Box>
       <Box mt={2} display="flex">
