@@ -24,9 +24,8 @@ const ChatWindow = ({ currentChat, setCurrentChat, testMessages }) => {
     console.log("testMessages", testMessages);
   }, [testMessages]);
 
-  // WebSocket 연결 설정
   const connect = useCallback(() => {
-    if (!currentChat || !currentChat.id) return;
+    if (!currentChat || !currentChat.roomId) return;
 
     const socket = new SockJS("http://localhost:9000/stomp/chat");
     const stompClient = new Client({
@@ -34,7 +33,7 @@ const ChatWindow = ({ currentChat, setCurrentChat, testMessages }) => {
       reconnectDelay: 5000,
       onConnect: () => {
         console.log("Connected to WebSocket");
-        stompClient.subscribe(`/sub/chat/room/${currentChat.id}`, (message) => {
+        stompClient.subscribe(`/sub/chat/room/${currentChat.roomId}`, (message) => {
           const receivedMessage = JSON.parse(message.body);
           setMessages((prevMessages) => [...prevMessages, receivedMessage]);
         });
@@ -55,43 +54,24 @@ const ChatWindow = ({ currentChat, setCurrentChat, testMessages }) => {
   }, [currentChat]);
 
   useEffect(() => {
-    if (currentChat && currentChat.id) {
+    if (currentChat && currentChat.roomId) {
       setMessages([]);
       connect();
-      // fetchMessages(currentChat.id); // 채팅방 메시지 불러오기
     }
     return () => {
       if (client) {
         client.deactivate();
       }
     };
-  }, [currentChat, connect, client]);
+  }, [currentChat, connect]);
 
-  // 메시지 목록을 API로부터 불러오는 함수
-  // const fetchMessages = async (roomId) => {
-  //   try {
-  //     const response = await axios.get(
-  //       `http://localhost:9000/api/rooms/${roomId}/messages`
-  //     );
-  //     setMessages(response.data);
-  //     console.log(messages);
-  //   } catch (error) {
-  //     console.error("Error fetching messages:", error);
-  //   }
-  // };
-
-  // 메시지 전송 핸들러
   const handleSend = () => {
     if (newMessage.trim() && client && client.connected) {
       const message = {
-        content: newMessage,
-        sender: "me",
-        time: new Date().toLocaleTimeString(),
-        roomMember: {
-          room: {
-            roomId: currentChat.id,
-          },
-        },
+        message: newMessage,
+        roomId: currentChat.roomId,
+        writer: 'coh',
+        empId: currentChat.myEmpId
       };
       client.publish({
         destination: `/pub/chat/message`,
@@ -101,8 +81,10 @@ const ChatWindow = ({ currentChat, setCurrentChat, testMessages }) => {
     }
   };
 
-  // 채팅방 나가기 핸들러
   const handleLeave = () => {
+    if (client) {
+      client.deactivate();
+    }
     setCurrentChat(null);
   };
 
@@ -117,7 +99,6 @@ const ChatWindow = ({ currentChat, setCurrentChat, testMessages }) => {
     >
       <Box flex={1} style={{ overflowY: "auto" }}>
         <Box display="flex" alignItems="center" mb={2}>
-          <Avatar src={currentChat.avatar} />
           <Box ml={2}>
             <Typography variant="h6">{currentChat.name}</Typography>
           </Box>
@@ -132,22 +113,22 @@ const ChatWindow = ({ currentChat, setCurrentChat, testMessages }) => {
         </Box>
 
         <Box>
-          {testMessages.map((testMessages, index) => (
+          {messages.map((message, index) => (
             <Box
               key={index}
               display="flex"
               justifyContent={
-                testMessages.empId === 1 ? "flex-end" : "flex-start"
+                message.empId === currentChat.myEmpId ? "flex-end" : "flex-start"
               }
             >
               <Paper
                 style={{
                   padding: "8px 16px",
                   backgroundColor:
-                    testMessages.empId === 1 ? "#DCF8C6" : "#FFFFFF", //1은 하드코딩한값
+                    message.empId === currentChat.myEmpId ? "#DCF8C6" : "#FFFFFF",
                 }}
               >
-                <Typography variant="body1">{testMessages.message}</Typography>
+                <Typography variant="body1">{message.message}</Typography>
               </Paper>
               <Typography
                 variant="body2"
