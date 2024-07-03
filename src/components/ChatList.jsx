@@ -64,13 +64,12 @@ const ChatList = ({ setCurrentChat, currentChat, setTestMessages }) => {
     });
 
   // 채팅방 클릭 핸들러
-  const handleChatClick = async (chat, roomId) => {
+  const handleChatClick = async (chat) => {
     console.log("Selected chat:", chat);
     setCurrentChat(chat);
-
     try {
       const response = await axios.get(
-        `http://localhost:9000/api/rooms/${roomId}/messages`
+        `http://localhost:9000/api/rooms/${chat.roomId}/messages`
       );
       setTestMessages(response.data);
     } catch (error) {
