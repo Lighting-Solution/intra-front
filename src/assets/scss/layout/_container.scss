@@ -5,7 +5,7 @@
   flex-grow: 1;
 }
 .wrapper {
-  max-width: 1300px;
+  max-width: 1650px;
   margin: 0 auto;
 }
 .card {
@@ -30,9 +30,9 @@
   margin: 3px;
 }
 
-.table>:not(:first-child) {
+.table > :not(:first-child) {
   border-top: 2px solid;
 }
-.table-borderless>:not(:first-child) {
+.table-borderless > :not(:first-child) {
   border-top-width: 0;
 }
