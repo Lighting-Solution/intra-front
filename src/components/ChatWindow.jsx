@@ -96,8 +96,8 @@ const ChatWindow = ({ currentChat, setCurrentChat, testMessages }) => {
       const message = {
         message: newMessage,
         roomId: currentChat.roomId,
-        writer: 'coh',
-        time: new Date().toLocaleTimeString(),
+        writer: currentChat.myName,
+        sendTime: new Date().toISOString(),
         empId: currentChat.myEmpId
       };
       client.publish({
