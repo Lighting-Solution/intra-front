@@ -7,6 +7,7 @@ import {
   Typography,
   Avatar,
   IconButton,
+  getAccordionUtilityClass,
 } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
 import { Client } from "@stomp/stompjs";
@@ -40,7 +41,7 @@ const ChatWindow = ({ currentChat, setCurrentChat, testMessages }) => {
       },
       onStompError: (frame) => {
         console.error(`Broker reported error: ${frame.headers["message"]}`);
-        console.error(`Additional details: ${frame.body}`);
+        console.error(`Additional details: ${frame.body}`)getAccordionUtilityClas;
       },
       onWebSocketClose: (event) => {
         console.log("WebSocket closed:", event);
