@@ -97,6 +97,7 @@ const ChatWindow = ({ currentChat, setCurrentChat, testMessages }) => {
         message: newMessage,
         roomId: currentChat.roomId,
         writer: 'coh',
+        time: new Date().toLocaleTimeString(),
         empId: currentChat.myEmpId
       };
       client.publish({
@@ -197,7 +198,7 @@ const ChatWindow = ({ currentChat, setCurrentChat, testMessages }) => {
                 style={{ alignSelf: "center", marginLeft: "8px" }}
               >
                 {/* 메시지 시간 불러오기 */}
-                {new Date(testMessages.sendTime).toLocaleTimeString([], {
+                {new Date(message.sendTime).toLocaleTimeString([], {
                   hour: "2-digit",
                   minute: "2-digit",
                   hour12: true,
