@@ -156,6 +156,7 @@ const ChatList = ({ setCurrentChat, currentChat, setTestMessages }) => {
   const handleContextMenu = (event, chat) => {
     event.preventDefault();
     setSelectedChat(chat);
+    console.log('selected', chat);
     setContextMenu(
       contextMenu === null
         ? {
@@ -171,11 +172,19 @@ const ChatList = ({ setCurrentChat, currentChat, setTestMessages }) => {
     setContextMenu(null);
   };
 
-  // 채팅방 삭제 핸들러
-  const handleDelete = () => {
-    setChats(chats.filter((chat) => chat.id !== selectedChat.id));
-    handleClose();
+  //채팅방 삭제 핸들러
+  const handleDelete = async (chat) => {
+    console.log('chat:', chats);
+    try {
+      const response = await axios.post("http://localhost:9000/api/delRoom", selectedChat);
+      console.log("server response:", response.data);
+      setChats(chats.filter((chat) => chat.roomId !== selectedChat.roomId));
+      handleClose();
+    } catch (error) {
+      console.error("Error deleting chat:", error);
+    }
   };
+
 
   // 채팅방 고정 핸들러
   const handlePin = () => {
