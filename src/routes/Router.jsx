@@ -20,7 +20,7 @@ const NoticeBoard = lazy(() => import("../views/ui/NoticeBoard.js"));
 const FreeBoard = lazy(() => import("../views/ui/FreeBoard.js"));
 
 /*****Routes******/
-const ThemeRoutes = (setCurrentChat, currentChat) => [
+const ThemeRoutes = () => [
   {
     path: "/",
     element: <FullLayout />,
@@ -41,8 +41,6 @@ const ThemeRoutes = (setCurrentChat, currentChat) => [
         exact: true,
         element: (
           <ChatLayout
-            setCurrentChat={setCurrentChat}
-            currentChat={currentChat}
           />
         ),
       },

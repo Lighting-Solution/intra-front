@@ -173,7 +173,7 @@ const ChatList = ({ setCurrentChat, currentChat, setTestMessages }) => {
   };
 
   //채팅방 삭제 핸들러
-  const handleDelete = async (chat) => {
+  const handleDelete = async () => {
     console.log('chat:', chats);
     try {
       const response = await axios.post("http://localhost:9000/api/delRoom", selectedChat);

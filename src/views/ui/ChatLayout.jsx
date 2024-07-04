@@ -3,7 +3,8 @@ import { Container, Grid } from "@mui/material";
 import ChatList from "../../components/ChatList";
 import ChatWindow from "../../components/ChatWindow";
 
-const ChatLayout = ({ setCurrentChat, currentChat }) => {
+const ChatLayout = () => {
+  const [currentChat, setCurrentChat] = useState(null);
   const [testMessages, setTestMessages] = useState([]);
 
   useEffect(() => {

@@ -3,9 +3,8 @@ import { useRoutes } from "react-router-dom";
 import ThemeRoutes from "./routes/Router";
 
 const App = () => {
-  const [currentChat, setCurrentChat] = useState(null);
 
-  const routing = useRoutes(ThemeRoutes(setCurrentChat, currentChat));
+  const routing = useRoutes(ThemeRoutes());
 
   return <div className="dark">{routing}</div>;
 };
