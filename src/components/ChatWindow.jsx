@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import axios from "axios";
 import {
   Paper,
@@ -7,23 +7,49 @@ import {
   Typography,
   Avatar,
   IconButton,
+  InputAdornment,
 } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
+import SearchIcon from "@mui/icons-material/Search"; // 추가
 import { Client } from "@stomp/stompjs";
 import SockJS from "sockjs-client";
 
 const ChatWindow = ({ currentChat, setCurrentChat, testMessages }) => {
-  const [messages, setMessages] = useState([]);
-  const [newMessage, setNewMessage] = useState("");
-  const [client, setClient] = useState(null);
+  // 세 개의 컴포넌트 받음
+  const [messages, setMessages] = useState([]); // 현재 채팅방의 모든 메시지 저장
+  const [filteredMessages, setFilteredMessages] = useState([]); // 검색어에 따라 필터링된 메시지 저장
+  const [newMessage, setNewMessage] = useState(""); // 사용자가 입력한 새로운 메시지 저장
+  const [searchTerm, setSearchTerm] = useState(""); // 검색 입력필드에 입력한 검색어 저장
+  const [searchOpen, setSearchOpen] = useState(false); // 검색 입력 필드 열려있는지 여부
+  const [client, setClient] = useState(null); //stomp 클라이언트 객체 저장 WebSocket 연결을 통해 서버와 메시지를 주고받기 위해 사용
+  const messagesEndRef = useRef(null);
 
   useEffect(() => {
     if (testMessages) {
       setMessages(testMessages);
+      setFilteredMessages(testMessages); // 초기 메시지 목록을 필터된 메시지 목록으로 설정
     }
     console.log("testMessages", testMessages);
   }, [testMessages]);
 
+  // 검색어가 변경될 때마다 필터링된 메시지 목록을 업데이트
+  useEffect(() => {
+    if (searchTerm) {
+      const matchIndex = messages.findIndex((msg) =>
+        msg.message.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+      if (matchIndex !== -1) {
+        const filtered = messages.slice(matchIndex);
+        setFilteredMessages(filtered);
+      } else {
+        setFilteredMessages([]);
+      }
+    } else {
+      setFilteredMessages(messages);
+    }
+  }, [searchTerm, messages]);
+
+  // WebSocket 연결 설정
   const connect = useCallback(() => {
     if (!currentChat || !currentChat.roomId) return;
 
@@ -71,6 +97,7 @@ const ChatWindow = ({ currentChat, setCurrentChat, testMessages }) => {
         message: newMessage,
         roomId: currentChat.roomId,
         writer: 'coh',
+        time: new Date().toLocaleTimeString(),
         empId: currentChat.myEmpId
       };
       client.publish({
@@ -81,6 +108,18 @@ const ChatWindow = ({ currentChat, setCurrentChat, testMessages }) => {
     }
   };
 
+  // 스크롤을 맨 아래로 이동하는 함수
+  const scrollToBottom = () => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [filteredMessages]);
+
+  // 채팅방 나가기 핸들러
   const handleLeave = () => {
     if (client) {
       client.deactivate();
@@ -97,21 +136,44 @@ const ChatWindow = ({ currentChat, setCurrentChat, testMessages }) => {
         flexDirection: "column",
       }}
     >
-      <Box flex={1} style={{ overflowY: "auto" }}>
-        <Box display="flex" alignItems="center" mb={2}>
-          <Box ml={2}>
-            <Typography variant="h6">{currentChat.name}</Typography>
-          </Box>
+      <Box display="flex" alignItems="center" mb={2}>
+        <Box ml={2}>
+          <Typography variant="h6">{currentChat.name}</Typography>
+        </Box>
+        <Box ml="auto" display="flex" alignItems="center">
+          {searchOpen ? (
+            <TextField
+              variant="outlined"
+              placeholder="메시지 검색"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              onBlur={() => setSearchOpen(false)} // 필드에서 벗어나면 닫힘
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton onClick={() => setSearchOpen(false)}>
+                      <SearchIcon />
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+            />
+          ) : (
+            <IconButton onClick={() => setSearchOpen(true)}>
+              <SearchIcon />
+            </IconButton>
+          )}
           <IconButton
             variant="contained"
             color="secondary"
-            style={{ marginLeft: "auto" }}
             onClick={handleLeave}
           >
             닫기
           </IconButton>
         </Box>
+      </Box>
 
+      <Box flex={1} style={{ overflowY: "auto" }}>
         <Box>
           {messages.map((message, index) => (
             <Box
@@ -135,10 +197,16 @@ const ChatWindow = ({ currentChat, setCurrentChat, testMessages }) => {
                 color="textSecondary"
                 style={{ alignSelf: "center", marginLeft: "8px" }}
               >
-                {14}
+                {/* 메시지 시간 불러오기 */}
+                {new Date(message.sendTime).toLocaleTimeString([], {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                  hour12: true,
+                })}
               </Typography>
             </Box>
           ))}
+          <div ref={messagesEndRef} />
         </Box>
       </Box>
       <Box mt={2} display="flex">
