@@ -280,7 +280,7 @@ const Tables = () => {
             <Button
               className="btn"
               color="primary"
-              onClick={() => approvalRequest(status, 1)}
+              onClick={() => approvalRequest(status,3)}
             >
               결재 요청
             </Button>
