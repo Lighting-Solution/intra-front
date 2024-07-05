@@ -183,6 +183,18 @@ const ChatWindow = ({ currentChat, setCurrentChat, testMessages }) => {
                 message.empId === currentChat.myEmpId ? "flex-end" : "flex-start"
               }
             >
+              {message.empId !== currentChat.myEmpId && (
+              <Typography
+                variant="body1"
+                style={{
+                  fontWeight: "bold",
+                  marginRight: "8px",
+                  color: "#3f51b5"
+                }}
+              >
+                {message.writer}
+              </Typography>
+            )}
               <Paper
                 style={{
                   padding: "8px 16px",
@@ -190,6 +202,7 @@ const ChatWindow = ({ currentChat, setCurrentChat, testMessages }) => {
                     message.empId === currentChat.myEmpId ? "#DCF8C6" : "#FFFFFF",
                 }}
               >
+                
                 <Typography variant="body1">{message.message}</Typography>
               </Paper>
               <Typography

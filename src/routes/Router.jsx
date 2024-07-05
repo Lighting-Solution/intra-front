@@ -18,6 +18,7 @@ const Breadcrumbs = lazy(() => import("../views/ui/Breadcrumbs.js"));
 const ChatLayout = lazy(() => import("../views/ui/ChatLayout.jsx"));
 const NoticeBoard = lazy(() => import("../views/ui/NoticeBoard.js"));
 const FreeBoard = lazy(() => import("../views/ui/FreeBoard.js"));
+const DocumentComponent = lazy(() => import("../views/ui/DocumentComponent.js"));
 
 /*****Routes******/
 const ThemeRoutes = () => [
@@ -39,10 +40,7 @@ const ThemeRoutes = () => [
       {
         path: "/chat",
         exact: true,
-        element: (
-          <ChatLayout
-          />
-        ),
+        element: (<ChatLayout />),
       },
       {
         path: "/notice",
@@ -53,6 +51,11 @@ const ThemeRoutes = () => [
         path: "/freeboard",
         exact: true,
         element: <FreeBoard />,
+      },
+      {
+        path: "/document",
+        exact: true,
+        element: <DocumentComponent />,
       },
     ],
   },

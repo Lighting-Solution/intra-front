@@ -59,6 +59,11 @@ const navigation = [
     href: "/chat",
     icon: "bi bi-chat",
   },
+  {
+    title: "문서함",
+    href: "/document",
+    icon: "bi bi-chat",
+  },
 ];
 
 const boardNavigation = [
