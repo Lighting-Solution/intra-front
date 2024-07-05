@@ -55,7 +55,7 @@ const navigation = [
     icon: "bi bi-people",
   },
   {
-    title: "메신저", // 추가된 Chat 링크
+    title: "메신저", // Chat
     href: "/chat",
     icon: "bi bi-chat",
   },
