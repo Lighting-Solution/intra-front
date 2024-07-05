@@ -11,7 +11,7 @@ const ChatLayout = () => {
     // testMessages가 변경될 때 messages 상태를 업데이트
 
     setTestMessages(testMessages);
-    console.log("ChatLayout :", testMessages);
+    console.log("ChatLayout의 testMassages :", testMessages);
   }, [testMessages]);
 
   return (
