@@ -19,6 +19,9 @@ const Breadcrumbs = lazy(() => import("../views/ui/Breadcrumbs.js"));
 const NoticeBoard = lazy(() => import("../components/NoticeBoard.jsx"));
 const FreeBoard = lazy(() => import("../components/FreeBoard.jsx"));
 const NoticeWriting = lazy(() => import("../components/NoticeWriting.jsx"));
+const DocumentComponent = lazy(() =>
+  import("../views/ui/DocumentComponent.js")
+);
 
 /*****Routes******/
 const ThemeRoutes = () => [
@@ -54,6 +57,11 @@ const ThemeRoutes = () => [
         path: "/freeboard",
         exact: true,
         element: <FreeBoard />,
+      },
+      {
+        path: "/document",
+        exact: true,
+        element: <DocumentComponent />,
       },
     ],
   },
