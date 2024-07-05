@@ -271,8 +271,6 @@ const ChatWindow = ({ currentChat, setCurrentChat, testMessages }) => {
                       </a>
                     ))}
                 </Typography>
-
-                <Typography variant="body1">{message.message}</Typography>
               </Paper>
               <Typography
                 variant="body2"
