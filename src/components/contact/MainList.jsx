@@ -1,6 +1,9 @@
 import React from 'react';
+import ContactList from './ContactList';
+import Filter from './Filter';
+import ContactFuncBtn from './ContactFuncBtn';
 
-function MainList(props) {
+const MainList = (props) => {
   return (
     <div
       style={{
@@ -10,8 +13,12 @@ function MainList(props) {
         boxShadow: '4px 4px 8px rgba(0, 0, 0, 0.221)',
         borderRadius: '10px',
       }}
-    ></div>
+    >
+      <Filter />
+      <ContactFuncBtn />
+      <ContactList />
+    </div>
   );
-}
+};
 
 export default MainList;
