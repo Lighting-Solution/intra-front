@@ -3,7 +3,8 @@ import { Navigate } from "react-router-dom";
 
 /****Layouts*****/
 const FullLayout = lazy(() => import("../layouts/FullLayout.js"));
-
+const ChatLayout = lazy(() => import("../views/ui/ChatLayout.jsx"));
+const NoticeLayout = lazy(() => import("../views/ui/NoticeLayout.jsx"));
 /***** Pages ****/
 const Starter = lazy(() => import("../views/Starter.js"));
 const About = lazy(() => import("../views/About.js"));
@@ -15,9 +16,9 @@ const Grid = lazy(() => import("../views/ui/Grid.js"));
 const Tables = lazy(() => import("../views/ui/Tables.js"));
 const Forms = lazy(() => import("../views/ui/Forms.js"));
 const Breadcrumbs = lazy(() => import("../views/ui/Breadcrumbs.js"));
-const ChatLayout = lazy(() => import("../views/ui/ChatLayout.jsx"));
-const NoticeBoard = lazy(() => import("../views/ui/NoticeBoard.js"));
-const FreeBoard = lazy(() => import("../views/ui/FreeBoard.js"));
+const NoticeBoard = lazy(() => import("../components/NoticeBoard.jsx"));
+const FreeBoard = lazy(() => import("../components/FreeBoard.jsx"));
+const NoticeWriting = lazy(() => import("../components/NoticeWriting.jsx"));
 
 /*****Routes******/
 const ThemeRoutes = () => [
@@ -39,15 +40,15 @@ const ThemeRoutes = () => [
       {
         path: "/chat",
         exact: true,
-        element: (
-          <ChatLayout
-          />
-        ),
+        element: <ChatLayout />,
       },
       {
-        path: "/notice",
-        exact: true,
-        element: <NoticeBoard />,
+        path: "notice",
+        element: <NoticeLayout />,
+        children: [
+          { path: "", exact: true, element: <NoticeBoard /> },
+          { path: "write", exact: true, element: <NoticeWriting /> },
+        ],
       },
       {
         path: "/freeboard",

@@ -108,11 +108,19 @@ const ChatWindow = ({ currentChat, setCurrentChat, testMessages }) => {
       setNewMessage("");
     }
   };
+  /**
+   * 파일 업로드 프로세스:
+  사용자가 파일을 선택하면 handleFileUpload 함수가 호출
+  선택된 파일을 FormData 객체에 추가
+  axios를 사용하여 파일을 서버로 전송 여기서 POST 요청을 http://localhost:9000/file/upload 엔드포인트로 보냄
+  서버에서 파일이 업로드 되면 서버의 응답에서 원본 파일 이름과 저장된 파일 이름을 분리
+  파일 업로드 메시지(fileMessage) 객체를 생성 후 해당 메시지를 STOMP 클라이언트를 통해 서버로 전송
+   */
 
   const handleFileUpload = async (e) => {
-    const file = e.target.files[0];
+    const file = e.target.files[0]; // 선택된 파일을 가져옴
     const formData = new FormData();
-    formData.append("file", file);
+    formData.append("file", file); // 파일을 FormData 객체에 추가
 
     try {
       const response = await axios.post(
@@ -128,7 +136,7 @@ const ChatWindow = ({ currentChat, setCurrentChat, testMessages }) => {
       const fileMessage = {
         message: `파일 업로드됨: ${originalFileName}`,
         roomId: currentChat.roomId,
-        writer: "coh",
+        writer: currentChat.myName,
         sendTime: new Date().toISOString(),
         empId: currentChat.myEmpId,
         fileUrl: `http://localhost:9000/file/download/${storedFileName}`,
@@ -230,6 +238,11 @@ const ChatWindow = ({ currentChat, setCurrentChat, testMessages }) => {
                       : "#FFFFFF",
                 }}
               >
+                {/* 파일 다운로드 프로세스:
+                메시지 객체에 fileUrl이 포함되어 있는 경우 파일 타입을 확인
+                파일 타입이 이미지인 경우 <img> 태그를 사용하여 이미지를 렌더링
+                파일 타입이 이미지가 아닌 경우 <a> 태그를 사용하여 다운로드 링크를 렌더링
+                href 속성은 파일의 다운로드 URL을 뜻하고 download 속성은 파일을 다운로드하도록 한다 */}
                 <Typography variant="body1">
                   {message.message}
                   {message.fileUrl &&
