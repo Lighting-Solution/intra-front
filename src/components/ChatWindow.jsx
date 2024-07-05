@@ -15,21 +15,22 @@ import { Client } from "@stomp/stompjs";
 import SockJS from "sockjs-client";
 
 const ChatWindow = ({ currentChat, setCurrentChat, testMessages }) => {
-  const [messages, setMessages] = useState([]);
-  const [filteredMessages, setFilteredMessages] = useState([]);
-  const [newMessage, setNewMessage] = useState("");
-  const [searchTerm, setSearchTerm] = useState("");
-  const [searchOpen, setSearchOpen] = useState(false);
-  const [client, setClient] = useState(null);
+  const [messages, setMessages] = useState([]); // 현재 채팅방의 모든 메시지 저장
+  const [filteredMessages, setFilteredMessages] = useState([]); // 검색어에 따라 필터링된 메시지 저장
+  const [newMessage, setNewMessage] = useState(""); // 사용자가 입력한 새로운 메시지 저장
+  const [searchTerm, setSearchTerm] = useState(""); // 검색 입력필드에 입력한 검색어 저장
+  const [searchOpen, setSearchOpen] = useState(false); // 검색 입력 필드 열려있는지 여부
+  const [client, setClient] = useState(null); //stomp 클라이언트 객체 저장 WebSocket 연결을 통해 서버와 메시지를 주고받기 위해 사용
   const messagesEndRef = useRef(null);
 
   useEffect(() => {
     if (testMessages) {
       setMessages(testMessages);
-      setFilteredMessages(testMessages);
+      setFilteredMessages(testMessages); // 초기 메시지 목록을 필터된 메시지 목록으로 설정
     }
   }, [testMessages]);
 
+  // 검색어가 변경될 때마다 필터링된 메시지 목록을 업데이트
   useEffect(() => {
     if (searchTerm) {
       const matchIndex = messages.findIndex((msg) =>
@@ -46,6 +47,7 @@ const ChatWindow = ({ currentChat, setCurrentChat, testMessages }) => {
     }
   }, [searchTerm, messages]);
 
+  // WebSocket 연결 설정
   const connect = useCallback(() => {
     if (!currentChat || !currentChat.roomId) return;
 
@@ -153,6 +155,7 @@ const ChatWindow = ({ currentChat, setCurrentChat, testMessages }) => {
     scrollToBottom();
   }, [filteredMessages]);
 
+  // 채팅방 닫기 핸들러
   const handleLeave = () => {
     if (client) {
       client.deactivate();
@@ -249,6 +252,7 @@ const ChatWindow = ({ currentChat, setCurrentChat, testMessages }) => {
                 color="textSecondary"
                 style={{ alignSelf: "center", marginLeft: "8px" }}
               >
+                {/* 메시지 시간 불러오기 */}
                 {new Date(message.sendTime).toLocaleTimeString([], {
                   hour: "2-digit",
                   minute: "2-digit",
