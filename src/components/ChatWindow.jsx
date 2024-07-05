@@ -97,7 +97,7 @@ const ChatWindow = ({ currentChat, setCurrentChat, testMessages }) => {
       const message = {
         message: newMessage,
         roomId: currentChat.roomId,
-        writer: "coh",
+        writer: currentChat.myName,
         sendTime: new Date().toISOString(),
         empId: currentChat.myEmpId,
       };

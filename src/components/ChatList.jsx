@@ -65,13 +65,18 @@ const ChatList = ({ setCurrentChat, currentChat, setTestMessages }) => {
 
   // 채팅방 클릭 핸들러
   const handleChatClick = async (chat) => {
-    console.log("Selected chat:", chat);
+    console.log("클릭 핸들러:", chat);
     setCurrentChat(chat);
+    console.log("클릭 핸들러 내:", currentChat);
     try {
-      const response = await axios.get(
-        `http://localhost:9000/api/rooms/${chat.roomId}/messages`
+      const response = await axios.post(
+        `http://localhost:9000/api/rooms/messages`, chat
       );
       setTestMessages(response.data);
+      const updatedChat = { ...chat, notificationStatus: false };
+      setChats((prevChats) =>
+        prevChats.map((c) => (c.roomId === chat.roomId ? updatedChat : c))
+      );
     } catch (error) {
       console.error("Error fetching messages:", error);
     }
@@ -156,6 +161,7 @@ const ChatList = ({ setCurrentChat, currentChat, setTestMessages }) => {
   const handleContextMenu = (event, chat) => {
     event.preventDefault();
     setSelectedChat(chat);
+    console.log('selected', chat);
     setContextMenu(
       contextMenu === null
         ? {
@@ -171,11 +177,19 @@ const ChatList = ({ setCurrentChat, currentChat, setTestMessages }) => {
     setContextMenu(null);
   };
 
-  // 채팅방 삭제 핸들러
-  const handleDelete = () => {
-    setChats(chats.filter((chat) => chat.id !== selectedChat.id));
-    handleClose();
+  //채팅방 삭제 핸들러
+  const handleDelete = async () => {
+    console.log('삭제핸들러', chats);
+    try {
+      const response = await axios.post("http://localhost:9000/api/delRoom", selectedChat);
+      console.log("server response:", response.data);
+      setChats(chats.filter((chat) => chat.roomId !== selectedChat.roomId));
+      handleClose();
+    } catch (error) {
+      console.error("Error deleting chat:", error);
+    }
   };
+
 
   // 채팅방 고정 핸들러
   const handlePin = () => {
@@ -223,7 +237,7 @@ const ChatList = ({ setCurrentChat, currentChat, setTestMessages }) => {
             style={{
               cursor: "pointer",
               backgroundColor:
-                currentChat && currentChat.id === chat.id
+                currentChat && currentChat.roomId === chat.roomId
                   ? "#e0f7fa"
                   : "inherit",
             }}
@@ -235,6 +249,22 @@ const ChatList = ({ setCurrentChat, currentChat, setTestMessages }) => {
                 {chat.message}
               </Typography>
             </Box>
+            {chat.notificationStatus && (
+              <Box
+                ml={2}
+                p={1}
+                bgcolor="red"
+                color="white"
+                borderRadius="50%"
+                display="flex"
+                alignItems="center"
+                justifyContent="center"
+                width="24px"
+                height="24px"
+              >
+                N
+              </Box>
+            )}
             {chat.pinned && (
               <IconButton size="small">
                 <PushPinIcon fontSize="small" color="primary" />
