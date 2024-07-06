@@ -2,15 +2,16 @@ import React, { useState, useEffect } from "react";
 import { Button, Row, Col } from "reactstrap";
 import axios from "axios";
 import Modal from "./Modal"; // Ensure this path is correct
-import ProjectTables from "../../components/digitalApproval/PendingTable"; // Ensure this path is correct
+import PendingTable from "../../components/digitalApproval/PendingTable"; // Ensure this path is correct
 import RejectedTable from "../../components/digitalApproval/RejectedTable"; // Ensure this path is correct
 import "./DigitalApproval.css";
 
-const Tables = () => {
+const DigitalApproval = () => {
   const [htmlContent, setHtmlContent] = useState("");
   const [status, setStatus] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false); // State for modal
   const [empId, setEmpId] = useState(0);
+
   const handleButtonClick = async (status) => {
     setStatus(status);
     try {
@@ -23,11 +24,10 @@ const Tables = () => {
     }
   };
 
-
   const approvalRequest = async (status, empId) => {
-    // 로그인 한 empId 전달 
+    // 로그인 한 empId 전달
     setEmpId(empId);
-    
+
     try {
       const container = document.getElementById("html-content-container");
 
@@ -175,15 +175,13 @@ const Tables = () => {
       const htmlBodyContent = serializer.serializeToString(container);
       const htmlContent = `<html><head>${htmlHeadContent}</head><body>${htmlBodyContent}</body></html>`;
       const encodedHtmlContent = encodeURIComponent(htmlContent);
-      
-      
 
       const response = await axios.post(
         "http://localhost:9000/api/v1/lighting_solutions/digital/approval/request",
         {
           html: encodedHtmlContent,
           status: status,
-          empId : empId
+          empId: empId,
         },
         {
           headers: {
@@ -193,9 +191,13 @@ const Tables = () => {
       );
 
       console.log("Success:", response.data);
+      // 여기다가 화면 리로드 기능
+      window.location.replace("/");
     } catch (error) {
       console.error("Error sending the HTML content", error);
     }
+
+    window.location.reload();
   };
 
   useEffect(() => {
@@ -280,7 +282,8 @@ const Tables = () => {
             <Button
               className="btn"
               color="primary"
-              onClick={() => approvalRequest(status,3)}
+              id="approvalRequest"
+              onClick={() => approvalRequest(status, 4)}
             >
               결재 요청
             </Button>
@@ -289,7 +292,7 @@ const Tables = () => {
           <div className="tables-section">
             <Row>
               <Col lg="12">
-                <ProjectTables />
+                <PendingTable />
               </Col>
             </Row>
             <Row>
@@ -304,4 +307,4 @@ const Tables = () => {
   );
 };
 
-export default Tables;
+export default DigitalApproval;

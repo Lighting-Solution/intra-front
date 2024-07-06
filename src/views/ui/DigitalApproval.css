@@ -206,3 +206,8 @@ textarea {
 .tables-section {
   margin-top: 20px;
 }
+
+.btn-primary {
+  margin-right: 100px;
+  float: right;
+}

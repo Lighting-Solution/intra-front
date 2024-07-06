@@ -13,12 +13,12 @@ import {
   CardFooter,
 } from "reactstrap"; // reactstrap에서 Modal과 관련된 컴포넌트 가져오기
 
-const ProjectTables = () => {
+const PendingTable = () => {
   const [pdfUrl, setPdfUrl] = useState(null); // PDF 파일의 URL을 저장할 상태
   const [modalOpen, setModalOpen] = useState(false); // 모달 열기/닫기 상태
   const [tableData, setTableData] = useState([]);
-  const [empId, setEmpId] = useState(3);
-  const [positionId, setPositionId] = useState(1);
+  const [empId, setEmpId] = useState(4);
+  const [positionId, setPositionId] = useState(5);
   const [digitalApprovalId, setDigitalApprovalId] = useState(0);
 
   useEffect(() => {
@@ -95,9 +95,26 @@ const ProjectTables = () => {
     toggleModal(); // 모달 닫기
   };
 
-  const handleReject = () => {
-    // 여기에 반려 처리 로직을 추가할 수 있습니다.
-    console.log("반려 처리");
+  const handleReject = async () => {
+    try {
+      const response = await axios.post(
+        "http://localhost:9000/api/v1/lighting_solutions/digital/approval/requestreject",
+        {
+          empId: empId,
+          digitalApprovalId: digitalApprovalId,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      console.log("Success:", response.data);
+      console.log("empId : ====" + empId);
+    } catch (error) {
+      console.error("Error sending the HTML content", error);
+    }
     toggleModal(); // 모달 닫기
   };
 
@@ -112,6 +129,20 @@ const ProjectTables = () => {
       hour12: false, // Use 24-hour format
     };
     return new Date(dateString).toLocaleDateString(undefined, options);
+  };
+
+  const getStatus = (tdata) => {
+    if (positionId >= 3) {
+      return tdata.managerStatus ? "[대표이사] 결재 대기" : "[부장] 결재 대기";
+    } else if (positionId === 2) {
+      return tdata.managerStatus
+        ? "[대표이사] 결재 대기"
+        : "[" + tdata.empDTO.position.positionName + "] 결재 요청";
+    } else if (positionId === 1) {
+      return "최종 결재 대기";
+    } else {
+      return null;
+    }
   };
 
   return (
@@ -137,8 +168,10 @@ const ProjectTables = () => {
               </tr>
             </thead>
             <tbody>
-              {tableData.map((tdata, index) =>
-                !tdata.ceoStatus && !tdata.type ? ( // Exclude rows where ceoStatus is true or type is true
+              {tableData.map((tdata, index) => {
+                const status = getStatus(tdata);
+
+                return !tdata.ceoStatus && !tdata.digitalApprovalType ? ( // Exclude rows where ceoStatus is true or type is true
                   empId !== 3 ? (
                     !tdata.managerStatus && positionId === 2 ? ( // Only render the row if managerStatus is false, empId is not 3, and position is not 2
                       <tr key={index} className="border-top">
@@ -162,11 +195,12 @@ const ProjectTables = () => {
                           </div>
                         </td>
                         <td>
-                          <span className="p-2 bg-warning rounded-circle d-inline-block ms-3"></span>
+                          <span className="p-2 bg-warning rounded-circle d-inline-block ms-3 align-self-center"></span>{" "}
+                          {status}
                         </td>
                         <td>{tdata.empDTO.department.departmentName}</td>
                       </tr>
-                    ) : positionId != 2 ? (
+                    ) : positionId !== 2 ? (
                       <tr key={index} className="border-top">
                         <td>{formatDate(tdata.digitalApprovalCreateAt)}</td>
                         <td
@@ -188,7 +222,8 @@ const ProjectTables = () => {
                           </div>
                         </td>
                         <td>
-                          <span className="p-2 bg-warning rounded-circle d-inline-block ms-3"></span>
+                          <span className="p-2 bg-warning rounded-circle d-inline-block ms-3 align-self-center"></span>{" "}
+                          {status}
                         </td>
                         <td>{tdata.empDTO.department.departmentName}</td>
                       </tr>
@@ -216,14 +251,15 @@ const ProjectTables = () => {
                           </div>
                         </td>
                         <td>
-                          <span className="p-2 bg-warning rounded-circle d-inline-block ms-3"></span>
+                          <span className="p-2 bg-warning rounded-circle d-inline-block ms-3 align-self-center"></span>{" "}
+                          {status}
                         </td>
                         <td>{tdata.empDTO.department.departmentName}</td>
                       </tr>
                     )
                   )
-                ) : null
-              )}
+                ) : null;
+              })}
             </tbody>
           </Table>
         </CardBody>
@@ -245,19 +281,21 @@ const ProjectTables = () => {
             />
           )}
         </ModalBody>
-        <div className="modal-footer">
-          <Button color="success" onClick={handleApprove}>
-            결재
-          </Button>{" "}
-          {/* 결재 버튼 */}
-          <Button color="danger" onClick={handleReject}>
-            반려
-          </Button>{" "}
-          {/* 반려 버튼 */}
-        </div>
+        {positionId < 3 && (
+          <div className="modal-footer">
+            <Button color="success" onClick={handleApprove}>
+              결재
+            </Button>{" "}
+            {/* 결재 버튼 */}
+            <Button color="danger" onClick={handleReject}>
+              반려
+            </Button>{" "}
+            {/* 반려 버튼 */}
+          </div>
+        )}
       </Modal>
     </div>
   );
 };
 
-export default ProjectTables;
+export default PendingTable;
