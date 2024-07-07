@@ -13,15 +13,17 @@ import {
   CardFooter,
 } from "reactstrap"; // reactstrap에서 Modal과 관련된 컴포넌트 가져오기
 
-const PendingTable = () => {
+const PendingTable = ({ LoginEmpId, LoginPositionId }) => {
   const [pdfUrl, setPdfUrl] = useState(null); // PDF 파일의 URL을 저장할 상태
   const [modalOpen, setModalOpen] = useState(false); // 모달 열기/닫기 상태
   const [tableData, setTableData] = useState([]);
-  const [empId, setEmpId] = useState(4);
-  const [positionId, setPositionId] = useState(5);
+  const [empId, setEmpId] = useState(LoginEmpId);
+  const [positionId, setPositionId] = useState(LoginPositionId);
   const [digitalApprovalId, setDigitalApprovalId] = useState(0);
 
   useEffect(() => {
+    console.log(empId);
+    console.log(positionId);
     axios
       .get(
         "http://localhost:9000/api/v1/lighting_solutions/digital/approval/waiting",
@@ -41,7 +43,7 @@ const PendingTable = () => {
       .catch((error) => {
         console.error("Error fetching project data:", error);
       });
-  }, [empId, digitalApprovalId]);
+  }, [LoginEmpId, LoginPositionId]);
 
   const handleProjectClick = (projectName, digitalApprovalId) => {
     setDigitalApprovalId(digitalApprovalId);
@@ -93,6 +95,7 @@ const PendingTable = () => {
     }
 
     toggleModal(); // 모달 닫기
+    window.location.reload();
   };
 
   const handleReject = async () => {
@@ -110,12 +113,13 @@ const PendingTable = () => {
         }
       );
 
-      console.log("Success:", response.data);
-      console.log("empId : ====" + empId);
+      console.log("currentTime : " + currentTime);
     } catch (error) {
       console.error("Error sending the HTML content", error);
     }
+    const currentTime = new Date();
     toggleModal(); // 모달 닫기
+    window.location.reload();
   };
 
   const formatDate = (dateString) => {
@@ -145,6 +149,32 @@ const PendingTable = () => {
     }
   };
 
+  const renderTableRow = (tdata, index, status) => (
+    <tr key={index} className="border-top">
+      <td>{formatDate(tdata.digitalApprovalCreateAt)}</td>
+      <td
+        onClick={() =>
+          handleProjectClick(tdata.project, tdata.digitalApprovalId)
+        }
+        style={{ cursor: "pointer" }} // Apply clickable style
+      >
+        {tdata.digitalApprovalName}
+      </td>
+      <td>
+        <div className="d-flex align-items-center p-2">
+          <div className="ms-3">
+            <h6 className="mb-0">{tdata.empDTO.empName}</h6>
+          </div>
+        </div>
+      </td>
+      <td>
+        <span className="p-2 bg-warning rounded-circle d-inline-block ms-3 align-self-center"></span>{" "}
+        {status}
+      </td>
+      <td>{tdata.empDTO.department.departmentName}</td>
+    </tr>
+  );
+
   return (
     <div>
       <Card>
@@ -171,94 +201,22 @@ const PendingTable = () => {
               {tableData.map((tdata, index) => {
                 const status = getStatus(tdata);
 
-                return !tdata.ceoStatus && !tdata.digitalApprovalType ? ( // Exclude rows where ceoStatus is true or type is true
-                  empId !== 3 ? (
-                    !tdata.managerStatus && positionId === 2 ? ( // Only render the row if managerStatus is false, empId is not 3, and position is not 2
-                      <tr key={index} className="border-top">
-                        <td>{formatDate(tdata.digitalApprovalCreateAt)}</td>
-                        <td
-                          onClick={() =>
-                            handleProjectClick(
-                              tdata.project,
-                              tdata.digitalApprovalId
-                            )
-                          }
-                          style={{ cursor: "pointer" }} // Apply clickable style
-                        >
-                          {tdata.digitalApprovalName}
-                        </td>
-                        <td>
-                          <div className="d-flex align-items-center p-2">
-                            <div className="ms-3">
-                              <h6 className="mb-0">{tdata.empDTO.empName}</h6>
-                            </div>
-                          </div>
-                        </td>
-                        <td>
-                          <span className="p-2 bg-warning rounded-circle d-inline-block ms-3 align-self-center"></span>{" "}
-                          {status}
-                        </td>
-                        <td>{tdata.empDTO.department.departmentName}</td>
-                      </tr>
-                    ) : positionId !== 2 ? (
-                      <tr key={index} className="border-top">
-                        <td>{formatDate(tdata.digitalApprovalCreateAt)}</td>
-                        <td
-                          onClick={() =>
-                            handleProjectClick(
-                              tdata.project,
-                              tdata.digitalApprovalId
-                            )
-                          }
-                          style={{ cursor: "pointer" }} // Apply clickable style
-                        >
-                          {tdata.digitalApprovalName}
-                        </td>
-                        <td>
-                          <div className="d-flex align-items-center p-2">
-                            <div className="ms-3">
-                              <h6 className="mb-0">{tdata.empDTO.empName}</h6>
-                            </div>
-                          </div>
-                        </td>
-                        <td>
-                          <span className="p-2 bg-warning rounded-circle d-inline-block ms-3 align-self-center"></span>{" "}
-                          {status}
-                        </td>
-                        <td>{tdata.empDTO.department.departmentName}</td>
-                      </tr>
-                    ) : null
-                  ) : (
-                    tdata.managerStatus && (
-                      <tr key={index} className="border-top">
-                        <td>{formatDate(tdata.digitalApprovalCreateAt)}</td>
-                        <td
-                          onClick={() =>
-                            handleProjectClick(
-                              tdata.project,
-                              tdata.digitalApprovalId
-                            )
-                          }
-                          style={{ cursor: "pointer" }} // Apply clickable style
-                        >
-                          {tdata.digitalApprovalName}
-                        </td>
-                        <td>
-                          <div className="d-flex align-items-center p-2">
-                            <div className="ms-3">
-                              <h6 className="mb-0">{tdata.empDTO.empName}</h6>
-                            </div>
-                          </div>
-                        </td>
-                        <td>
-                          <span className="p-2 bg-warning rounded-circle d-inline-block ms-3 align-self-center"></span>{" "}
-                          {status}
-                        </td>
-                        <td>{tdata.empDTO.department.departmentName}</td>
-                      </tr>
-                    )
-                  )
-                ) : null;
+                if (!tdata.ceoStatus && !tdata.digitalApprovalType) {
+                  // Exclude rows where ceoStatus is true or type is true
+                  if (empId !== 3) {
+                    if (!tdata.managerStatus && positionId === 2) {
+                      // Only render the row if managerStatus is false, empId is not 3, and position is 2
+                      return renderTableRow(tdata, index, status);
+                    } else if (positionId !== 2) {
+                      return renderTableRow(tdata, index, status);
+                    }
+                  } else {
+                    if (tdata.managerStatus) {
+                      return renderTableRow(tdata, index, status);
+                    }
+                  }
+                }
+                return null;
               })}
             </tbody>
           </Table>

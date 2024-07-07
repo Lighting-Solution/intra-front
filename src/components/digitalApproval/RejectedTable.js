@@ -12,13 +12,14 @@ import {
   Button,
 } from "reactstrap"; // reactstrap에서 Modal과 관련된 컴포넌트 가져오기
 
-const RejectedTable = () => {
+const RejectedTable = ({ LoginEmpId, LoginPositionId, RejectTime }) => {
   const [pdfUrl, setPdfUrl] = useState(null); // PDF 파일의 URL을 저장할 상태
   const [modalOpen, setModalOpen] = useState(false); // 모달 열기/닫기 상태
   const [tableData, setTableData] = useState([]);
-  const [empId, setEmpId] = useState(4);
-  const [positionId, setPositionId] = useState(5);
+  const [empId, setEmpId] = useState(LoginEmpId);
+  const [positionId, setPositionId] = useState(LoginPositionId);
   const [digitalApprovalId, setDigitalApprovalId] = useState(0);
+  const [time, setTime] = useState(RejectTime);
 
   useEffect(() => {
     axios
@@ -40,7 +41,31 @@ const RejectedTable = () => {
       .catch((error) => {
         console.error("Error fetching project data:", error);
       });
-  }, [empId, digitalApprovalId]);
+  }, [LoginEmpId, LoginPositionId, digitalApprovalId, RejectTime]);
+  /*
+  const formatDate = (dateString) => {
+    if (!dateString) return "";
+
+    const options = {
+      year: "numeric",
+      month: "numeric",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      hour12: false,
+    };
+
+    const formattedDate = new Date(dateString).toLocaleString("ko-KR", options);
+
+    // Adjust the formatting
+    return formattedDate
+      .replace(".", "년 ")
+      .replace(".", "월 ")
+      .replace(".", "일 ")
+      .replace(/\s/g, " ");
+  };
+  */
 
   const formatDate = (dateString) => {
     const options = {
@@ -98,6 +123,32 @@ const RejectedTable = () => {
     }
   };
 
+  const renderTableRow = (tdata, index, status, date) => (
+    <tr key={index} className="border-top">
+      <td>{date}</td>
+      <td
+        onClick={() =>
+          handleProjectClick(tdata.project, tdata.digitalApprovalId)
+        }
+        style={{ cursor: "pointer" }} // Apply clickable style
+      >
+        {tdata.digitalApprovalName}
+      </td>
+      <td>
+        <div className="d-flex align-items-center p-2">
+          <div className="ms-3">
+            <h6 className="mb-0">{tdata.empDTO.empName}</h6>
+          </div>
+        </div>
+      </td>
+      <td>
+        <span className="p-2 bg-danger rounded-circle d-inline-block ms-3 align-self-center"></span>{" "}
+        {status}
+      </td>
+      <td>{tdata.empDTO.department.departmentName}</td>
+    </tr>
+  );
+
   return (
     <div>
       <Card>
@@ -123,93 +174,22 @@ const RejectedTable = () => {
                 if (!tdata.digitalApprovalType) return null; // Skip if digitalApprovalType is false
 
                 const status = getStatus(tdata);
+                const date =
+                  positionId === 1
+                    ? formatDate(tdata.ceoRejectAt)
+                    : formatDate(tdata.managerRejectAt);
 
-                return positionId >= 3 ? (
-                  // Render row if positionId is 3 or greater
-                  <tr key={index} className="border-top">
-                    <td>{formatDate(tdata.digitalApprovalCreateAt)}</td>
-                    <td
-                      onClick={() =>
-                        handleProjectClick(
-                          tdata.project,
-                          tdata.digitalApprovalId
-                        )
-                      }
-                      style={{ cursor: "pointer" }} // Apply clickable style
-                    >
-                      {tdata.digitalApprovalName}
-                    </td>
-                    <td>
-                      <div className="d-flex align-items-center p-2">
-                        <div className="ms-3">
-                          <h6 className="mb-0">{tdata.empDTO.empName}</h6>
-                        </div>
-                      </div>
-                    </td>
-                    <td>
-                      <span className="p-2 bg-danger rounded-circle d-inline-block ms-3 align-self-center"></span>{" "}
-                      {status}
-                    </td>
-                    <td>{tdata.empDTO.department.departmentName}</td>
-                  </tr>
-                ) : // Render different row if positionId is less than 3 and based on tdata.managerStatus
-                positionId == 1 ? (
-                  tdata.managerStatus ? (
-                    <tr key={index} className="border-top">
-                      <td>{formatDate(tdata.digitalApprovalCreateAt)}</td>
-                      <td
-                        onClick={() =>
-                          handleProjectClick(
-                            tdata.project,
-                            tdata.digitalApprovalId
-                          )
-                        }
-                        style={{ cursor: "pointer" }} // Apply clickable style
-                      >
-                        {tdata.digitalApprovalName}
-                      </td>
-                      <td>
-                        <div className="d-flex align-items-center p-2">
-                          <div className="ms-3">
-                            <h6 className="mb-0">{tdata.empDTO.empName}</h6>
-                          </div>
-                        </div>
-                      </td>
-                      <td>
-                        <span className="p-2 bg-danger rounded-circle d-inline-block ms-3 align-self-center"></span>{" "}
-                        {status}
-                      </td>
-                      <td>{tdata.empDTO.department.departmentName}</td>
-                    </tr>
-                  ) : null
-                ) : !tdata.managerStatus ? (
-                  <tr key={index} className="border-top">
-                    <td>{formatDate(tdata.digitalApprovalCreateAt)}</td>
-                    <td
-                      onClick={() =>
-                        handleProjectClick(
-                          tdata.project,
-                          tdata.digitalApprovalId
-                        )
-                      }
-                      style={{ cursor: "pointer" }} // Apply clickable style
-                    >
-                      {tdata.digitalApprovalName}
-                    </td>
-                    <td>
-                      <div className="d-flex align-items-center p-2">
-                        <div className="ms-3">
-                          <h6 className="mb-0">{tdata.empDTO.empName}</h6>
-                        </div>
-                      </div>
-                    </td>
-                    <td>
-                      <span className="p-2 bg-danger rounded-circle d-inline-block ms-3 align-self-center"></span>{" "}
-                      {status}
-                    </td>
-                    <td>{tdata.empDTO.department.departmentName}</td>
-                  </tr>
-                ) : null;
+                return positionId >= 3
+                  ? // Render row if positionId is 3 or greater
+                    renderTableRow(tdata, index, status, date)
+                  : // Render different row if positionId is less than 3 and based on tdata.managerStatus
+                  positionId === 1
+                  ? tdata.managerStatus
+                    ? renderTableRow(tdata, index, status, date)
+                    : null
+                  : !tdata.managerStatus
+                  ? renderTableRow(tdata, index, status, date)
+                  : null;
               })}
             </tbody>
           </Table>
