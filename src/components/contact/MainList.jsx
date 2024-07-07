@@ -3,7 +3,14 @@ import ContactList from "./ContactList";
 import Filter from "./Filter";
 import ContactFuncBtn from "./ContactFuncBtn";
 
-const MainList = ({ title, empDTOList }) => {
+const deleteContacts = () => {};
+
+const designateContactGroup = () => {};
+
+const copyContactGroup = () => {};
+
+const MainList = ({ titleName, subTitleName, contactList, groupId }) => {
+  const [selected, setSelected] = React.useState([]);
   return (
     <div
       style={{
@@ -15,12 +22,19 @@ const MainList = ({ title, empDTOList }) => {
       }}
     >
       <Filter
-        title={title.titleName}
-        subTitle={title.subTitleName}
-        empCount={empDTOList.length}
+        title={titleName}
+        subTitle={subTitleName}
+        empCount={contactList.length}
       />
-      <ContactFuncBtn />
-      <ContactList empDTOList={empDTOList} />
+      <ContactFuncBtn
+        deleteContacts={deleteContacts}
+        designateContactGroup={designateContactGroup}
+        copyContactGroup={copyContactGroup}
+      />
+      <ContactList
+        contactList={contactList}
+        selectedState={{ selected, setSelected }}
+      />
     </div>
   );
 };

@@ -12,7 +12,7 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
 const DepartmentList = ({
   department,
-  teamDTOList,
+  teamList,
   expanded,
   handleChange,
   handleItemClick,
@@ -35,12 +35,17 @@ const DepartmentList = ({
       </AccordionSummary>
       <AccordionDetails>
         <List component="div" disablePadding>
-          {teamDTOList.map((team) => (
+          {teamList.map((team) => (
             <ListItem
               button
               key={team.departmentId}
               onClick={() =>
-                handleItemClick(team.departmentName, "부서", team.departmentId)
+                handleItemClick(
+                  team.departmentId,
+                  department.departmentName,
+                  team.departmentName,
+                  "사내"
+                )
               }
               style={getButtonStyle(team.departmentName)}
             >

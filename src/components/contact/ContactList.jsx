@@ -1,45 +1,50 @@
-import React from 'react';
 import {
   Box,
+  Checkbox,
+  Paper,
   Table,
   TableBody,
   TableCell,
   TableContainer,
   TableHead,
   TableRow,
-  Paper,
-  Checkbox,
-  IconButton,
-} from '@mui/material';
-import TableSortLabel from '@mui/material/TableSortLabel';
-import Pagination from '@mui/material/Pagination';
-import Stack from '@mui/material/Stack';
-import DeleteIcon from '@mui/icons-material/Delete';
-import SettingsIcon from '@mui/icons-material/Settings';
+} from "@mui/material";
+import Pagination from "@mui/material/Pagination";
+import Stack from "@mui/material/Stack";
+import TableSortLabel from "@mui/material/TableSortLabel";
+import React from "react";
 
-const ContactList = ({ empDTOList }) => {
-  const [order, setOrder] = React.useState('asc');
-  const [orderBy, setOrderBy] = React.useState('empName');
-  const [selected, setSelected] = React.useState([]);
+const ContactList = ({ contactList, selectedState }) => {
+  const { selected, setSelected } = selectedState;
+  const [order, setOrder] = React.useState("asc");
+  const [orderBy, setOrderBy] = React.useState("name");
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
 
   const handleRequestSort = (event, property) => {
-    const isAsc = orderBy === property && order === 'asc';
-    setOrder(isAsc ? 'desc' : 'asc');
+    const isAsc = orderBy === property && order === "asc";
+    setOrder(isAsc ? "desc" : "asc");
     setOrderBy(property);
   };
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelected = empDTOList.map((n) => n.empId);
+      let newSelected = [];
+      contactList.forEach((item) => {
+        if ("empId" in item) {
+          newSelected.push(item.empId);
+        } else if ("personalContactId" in item) {
+          newSelected.push(item.personalContactId);
+        }
+      });
       setSelected(newSelected);
-      return;
+    } else {
+      setSelected([]);
     }
-    setSelected([]);
   };
 
   const handleCheckboxClick = (event, id) => {
+    event.stopPropagation();
     const selectedIndex = selected.indexOf(id);
     let newSelected = [];
 
@@ -52,10 +57,14 @@ const ContactList = ({ empDTOList }) => {
     } else if (selectedIndex > 0) {
       newSelected = newSelected.concat(
         selected.slice(0, selectedIndex),
-        selected.slice(selectedIndex + 1),
+        selected.slice(selectedIndex + 1)
       );
     }
     setSelected(newSelected);
+  };
+
+  const handleRowClick = (id) => {
+    console.log(`Row with id ${id} clicked`);
   };
 
   const handleChangePage = (event, newPage) => setPage(newPage);
@@ -68,87 +77,86 @@ const ContactList = ({ empDTOList }) => {
   const isSelected = (id) => selected.indexOf(id) !== -1;
 
   const emptyRows =
-    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - empDTOList.length) : 0;
+    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - contactList.length) : 0;
 
   return (
-    <Box sx={{ width: '100%' }}>
+    <Box sx={{ width: "100%" }}>
       <TableContainer component={Paper}>
-        <Table sx={{ minWidth: 750 }} aria-labelledby='tableTitle'>
+        <Table sx={{ minWidth: 750 }} aria-labelledby="tableTitle">
           <TableHead>
             <TableRow>
-              <TableCell padding='checkbox'>
+              <TableCell padding="checkbox">
                 <Checkbox
-                  color='primary'
+                  color="primary"
                   indeterminate={
-                    selected.length > 0 && selected.length < empDTOList.length
+                    selected.length > 0 && selected.length < contactList.length
                   }
                   checked={
-                    empDTOList.length > 0 &&
-                    selected.length === empDTOList.length
+                    contactList.length > 0 &&
+                    selected.length === contactList.length
                   }
                   onChange={handleSelectAllClick}
-                  inputProps={{ 'aria-label': 'select all' }}
+                  inputProps={{ "aria-label": "select all" }}
                 />
               </TableCell>
               <TableCell
-                key='empName'
-                sortDirection={orderBy === 'empName' ? order : false}
+                key="name"
+                sortDirection={orderBy === "name" ? order : false}
               >
                 <TableSortLabel
-                  active={orderBy === 'empName'}
-                  direction={orderBy === 'empName' ? order : 'asc'}
-                  onClick={(event) => handleRequestSort(event, 'empName')}
+                  active={orderBy === "name"}
+                  direction={orderBy === "name" ? order : "asc"}
+                  onClick={(event) => handleRequestSort(event, "name")}
                 >
                   Name
                 </TableSortLabel>
               </TableCell>
               <TableCell
-                key='companyName'
-                sortDirection={orderBy === 'companyName' ? order : false}
+                key="companyName"
+                sortDirection={orderBy === "companyName" ? order : false}
               >
                 <TableSortLabel
-                  active={orderBy === 'companyName'}
-                  direction={orderBy === 'companyName' ? order : 'asc'}
-                  onClick={(event) => handleRequestSort(event, 'companyName')}
+                  active={orderBy === "companyName"}
+                  direction={orderBy === "companyName" ? order : "asc"}
+                  onClick={(event) => handleRequestSort(event, "companyName")}
                 >
                   Company
                 </TableSortLabel>
               </TableCell>
-              {/* Add other headers as needed */}
+              {/* 필드 동적 추가 필요 */}
             </TableRow>
           </TableHead>
           <TableBody>
-            {empDTOList
+            {contactList
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map((row, index) => {
                 const isItemSelected = isSelected(row.empId);
+                const labelId = `enhanced-table-checkbox-${index}`;
                 return (
                   <TableRow
                     hover
-                    onClick={(event) => handleCheckboxClick(event, row.empId)}
-                    role='checkbox'
+                    onClick={() => handleRowClick(row.empId)}
+                    role="checkbox"
                     aria-checked={isItemSelected}
                     tabIndex={-1}
                     key={row.empId}
                     selected={isItemSelected}
                   >
-                    <TableCell padding='checkbox'>
+                    <TableCell padding="checkbox">
                       <Checkbox
-                        color='primary'
+                        color="primary"
                         checked={isItemSelected}
                         onChange={(event) =>
                           handleCheckboxClick(event, row.empId)
                         }
-                        inputProps={{
-                          'aria-labelledby': `enhanced-table-checkbox-${index}`,
-                        }}
+                        inputProps={{ "aria-labelledby": labelId }}
                       />
                     </TableCell>
                     <TableCell
-                      component='th'
-                      id={`enhanced-table-checkbox-${index}`}
-                      scope='row'
-                      padding='none'
+                      component="th"
+                      id={labelId}
+                      scope="row"
+                      padding="none"
                     >
                       {row.empName}
                     </TableCell>
@@ -167,20 +175,20 @@ const ContactList = ({ empDTOList }) => {
       </TableContainer>
       <Box
         sx={{
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
           py: 1,
         }}
       >
         <Stack spacing={2}>
           <Pagination
-            count={Math.ceil(empDTOList.length / rowsPerPage)}
+            count={Math.ceil(contactList.length / rowsPerPage)}
             page={page + 1}
             onChange={(event, value) => setPage(value - 1)}
-            color='primary'
-            size='medium'
-            shape='rounded'
+            color="primary"
+            size="medium"
+            shape="rounded"
           />
         </Stack>
       </Box>
