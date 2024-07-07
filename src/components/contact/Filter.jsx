@@ -5,13 +5,12 @@ import {
   FormControl,
   Select,
   MenuItem,
-  InputLabel,
   TextField,
   IconButton,
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 
-const Filter = () => {
+const Filter = ({ title, subTitle, empCount }) => {
   return (
     <Box
       sx={{
@@ -34,7 +33,7 @@ const Filter = () => {
             color: 'rgb(122, 121, 121)',
           }}
         >
-          {subTitle}
+          {subTitle} ( {empCount} )
         </Typography>
       </Box>
       <Box sx={{ display: 'flex', alignItems: 'center' }}>

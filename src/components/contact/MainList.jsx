@@ -3,7 +3,7 @@ import ContactList from './ContactList';
 import Filter from './Filter';
 import ContactFuncBtn from './ContactFuncBtn';
 
-const MainList = (props) => {
+const MainList = ({ title, empDTOList }) => {
   return (
     <div
       style={{
@@ -14,9 +14,13 @@ const MainList = (props) => {
         borderRadius: '10px',
       }}
     >
-      <Filter />
+      <Filter
+        title={title.titleName}
+        subTitle={title.subTitleName}
+        empCount={empDTOList.length}
+      />
       <ContactFuncBtn />
-      <ContactList />
+      <ContactList empDTOList={empDTOList} />
     </div>
   );
 };
