@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import {
   Accordion,
   AccordionDetails,
@@ -7,12 +7,12 @@ import {
   ListItem,
   ListItemText,
   Typography,
-} from '@mui/material';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+} from "@mui/material";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
 const DepartmentList = ({
   department,
-  groupDTOList,
+  teamDTOList,
   expanded,
   handleChange,
   handleItemClick,
@@ -29,32 +29,27 @@ const DepartmentList = ({
         aria-controls={`panel${department.departmentId}-content`}
         id={`panel${department.departmentId}-header`}
       >
-        <Typography style={{ fontWeight: 'bold' }}>
+        <Typography style={{ fontWeight: "bold" }}>
           {department.departmentName}
         </Typography>
       </AccordionSummary>
       <AccordionDetails>
-        <List component='div' disablePadding>
-          {groupDTOList
-            .filter((group) => group.departmentId === department.departmentId)
-            .map((group) => (
-              <ListItem
-                button
-                key={group.personalGroupId}
-                onClick={() =>
-                  handleItemClick(
-                    group.personalGroupName,
-                    group.personalGroupId,
-                  )
-                }
-                style={getButtonStyle(group.personalGroupName)}
-              >
-                <ListItemText
-                  primary={group.personalGroupName}
-                  primaryTypographyProps={getTextProps(group.personalGroupName)}
-                />
-              </ListItem>
-            ))}
+        <List component="div" disablePadding>
+          {teamDTOList.map((team) => (
+            <ListItem
+              button
+              key={team.departmentId}
+              onClick={() =>
+                handleItemClick(team.departmentName, "부서", team.departmentId)
+              }
+              style={getButtonStyle(team.departmentName)}
+            >
+              <ListItemText
+                primary={team.departmentName}
+                primaryTypographyProps={getTextProps(team.departmentName)}
+              />
+            </ListItem>
+          ))}
         </List>
       </AccordionDetails>
     </Accordion>
