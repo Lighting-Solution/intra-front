@@ -1,180 +1,226 @@
-import React, { useEffect } from "react";
-import Calendar from "tui-calendar"; /* ES6 */
-import "tui-calendar/dist/tui-calendar.css";
+import React, { useState, useEffect } from "react";
+import { Calendar, momentLocalizer } from "react-big-calendar";
+import moment from "moment";
+import axios from "axios";
+import Modal from "react-modal";
+import "react-big-calendar/lib/css/react-big-calendar.css";
+import "./Calendar.css";
 
-// If you use the default popups, use this.
-import "tui-date-picker/dist/tui-date-picker.css";
-import "tui-time-picker/dist/tui-time-picker.css";
-import "../ui/Calendar.css";
+const localizer = momentLocalizer(moment);
 
-const myTheme = {
-  // Theme object to extends default dark theme.
-};
+const MyCalendar = (props) => {
+  const [events, setEvents] = useState([]);
+  const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [newEvent, setNewEvent] = useState({
+    id: null,
+    title: "",
+    content: "",
+    start: new Date(),
+    end: new Date(),
+  });
 
-const today = new Date();
-
-const getDate = (type, date, value, operator) => {
-  const newDate = new Date(date);
-  if (type === "date") {
-    if (operator === "+") {
-      newDate.setDate(newDate.getDate() + value);
-    } else {
-      newDate.setDate(newDate.getDate() - value);
-    }
-  } else if (type === "hours") {
-    if (operator === "+") {
-      newDate.setHours(newDate.getHours() + value);
-    } else {
-      newDate.setHours(newDate.getHours() - value);
-    }
-  }
-  return newDate;
-};
-
-const CalendarComponent = () => {
   useEffect(() => {
-    const calendar = new Calendar("#calendar", {
-      defaultView: "month",
-      taskView: true,
-      scheduleView: true,
-      useDetailPopup: true,
-      useCreationPopup: true,
-      template: {
-        monthDayname(dayname) {
-          return `<span class="calendar-week-dayname-name">${dayname.label}</span>`;
-        },
-        milestone(schedule) {
-          return `<span style="color:#fff;background-color: ${schedule.bgColor};">${schedule.title}</span>`;
-        },
-        milestoneTitle() {
-          return "Milestone";
-        },
-        allday(schedule) {
-          return `${schedule.title}<i class="fa fa-refresh"></i>`;
-        },
-        alldayTitle() {
-          return "All Day";
-        },
-      },
-      theme: myTheme,
-      week: {
-        showTimezoneCollapseButton: true,
-        timezonesCollapsed: true,
-      },
-      month: {
-        startDayOfWeek: 0,
-      },
-      timezones: [
+    axios
+      .get("http://localhost:9000/api/v1/lighting_solutions/calendar/events")
+      .then((response) => {
+        setEvents(
+          response.data.map((event) => ({
+            id: event.calendarId,
+            title: event.calendarTitle,
+            content: event.calendarContent,
+            start: new Date(event.calendarStartAt),
+            end: new Date(event.calendarEndAt),
+          }))
+        );
+      })
+      .catch((error) => {
+        console.error("There was an error fetching the events!", error);
+      });
+  }, []);
+
+  const handleSelectSlot = ({ start, end }) => {
+    setNewEvent({ id: null, title: "", content: "", start, end });
+    setModalIsOpen(true);
+  };
+
+  const handleSelectEvent = (event) => {
+    setNewEvent(event);
+    setModalIsOpen(true);
+  };
+
+  const handleAddEvent = () => {
+    axios
+      .post("http://localhost:9000/api/v1/lighting_solutions/calendar/events", {
+        calendarTitle: newEvent.title,
+        calendarContent: newEvent.content,
+        calendarStartAt: newEvent.start,
+        calendarEndAt: newEvent.end,
+      })
+      .then((response) => {
+        setEvents([
+          ...events,
+          {
+            id: response.data.calendarId,
+            title: response.data.calendarTitle,
+            content: response.data.calendarContent,
+            start: new Date(response.data.calendarStartAt),
+            end: new Date(response.data.calendarEndAt),
+          },
+        ]);
+        setModalIsOpen(false);
+      })
+      .catch((error) => {
+        console.error("There was an error adding the event!", error);
+      });
+  };
+
+  const handleUpdateEvent = () => {
+    axios
+      .put(
+        `http://localhost:9000/api/v1/lighting_solutions/calendar/events/${newEvent.id}`,
         {
-          timezoneOffset: 540,
-          displayLabel: "GMT+09:00",
-          tooltip: "Seoul",
-        },
-        {
-          timezoneOffset: -420,
-          displayLabel: "GMT-08:00",
-          tooltip: "Los Angeles",
-        },
-      ],
-    });
+          calendarTitle: newEvent.title,
+          calendarContent: newEvent.content,
+          calendarStartAt: newEvent.start,
+          calendarEndAt: newEvent.end,
+        }
+      )
+      .then((response) => {
+        const updatedEvents = events.map((event) =>
+          event.id === newEvent.id
+            ? {
+                id: response.data.calendarId,
+                title: response.data.calendarTitle,
+                content: response.data.calendarContent,
+                start: new Date(response.data.calendarStartAt),
+                end: new Date(response.data.calendarEndAt),
+              }
+            : event
+        );
+        setEvents(updatedEvents);
+        setModalIsOpen(false);
+      })
+      .catch((error) => {
+        console.error("There was an error updating the event!", error);
+      });
+  };
 
-    const calendars = [
-      {
-        id: "0",
-        name: "Private",
-        bgColor: "#9e5fff",
-        borderColor: "#9e5fff",
-      },
-      {
-        id: "1",
-        name: "Company",
-        bgColor: "#00a9ff",
-        borderColor: "#00a9ff",
-      },
-    ];
+  const handleDeleteEvent = () => {
+    axios
+      .delete(
+        `http://localhost:9000/api/v1/lighting_solutions/calendar/events/${newEvent.id}`
+      )
+      .then(() => {
+        const updatedEvents = events.filter(
+          (event) => event.id !== newEvent.id
+        );
+        setEvents(updatedEvents);
+        setModalIsOpen(false);
+      })
+      .catch((error) => {
+        console.error("There was an error deleting the event!", error);
+      });
+  };
 
-    const schedules = [
-      {
-        id: "1",
-        calendarId: "0",
-        title: "TOAST UI Calendar Study",
-        category: "time",
-        dueDateClass: "",
-        start: today.toISOString(),
-        end: getDate("hours", today, 3, "+").toISOString(),
-      },
-      {
-        id: "2",
-        calendarId: "0",
-        title: "Practice",
-        category: "milestone",
-        dueDateClass: "",
-        start: getDate("date", today, 1, "+").toISOString(),
-        end: getDate("date", today, 1, "+").toISOString(),
-        isReadOnly: true,
-      },
-      {
-        id: "3",
-        calendarId: "0",
-        title: "FE Workshop",
-        category: "allday",
-        dueDateClass: "",
-        start: getDate("date", today, 2, "-").toISOString(),
-        end: getDate("date", today, 1, "-").toISOString(),
-        isReadOnly: true,
-      },
-      {
-        id: "4",
-        calendarId: "0",
-        title: "Report",
-        category: "time",
-        dueDateClass: "",
-        start: today.toISOString(),
-        end: getDate("hours", today, 1, "+").toISOString(),
-      },
-    ];
-
-    // 캘린더에 일정 추가
-    calendar.createSchedules(schedules);
-    // 캘린더 설정 추가
-    calendar.setCalendars(calendars);
-
-    // 일정 생성 이벤트 핸들러 추가
-    calendar.on("beforeCreateSchedule", (event) => {
-      const { start, end, title, calendarId } = event;
-      calendar.createSchedules([
-        {
-          id: String(Math.random()), // 임의의 ID 생성
-          calendarId: calendarId || "0", // 기본 캘린더 ID 설정
-          title,
-          category: "time",
-          dueDateClass: "",
-          start,
-          end,
-        },
-      ]);
-    });
-
-    // 일정 수정 이벤트 핸들러 추가
-    calendar.on("beforeUpdateSchedule", (event) => {
-      const { schedule, changes } = event;
-
-      calendar.updateSchedule(schedule.id, schedule.calendarId, changes);
-    });
-
-    // 일정 삭제 이벤트 핸들러 추가
-    calendar.on("beforeDeleteSchedule", (event) => {
-      const { id, calendarId } = event.schedule;
-
-      calendar.deleteSchedule(id, calendarId);
-    });
-
-    return () => {
-      calendar.destroy(); // 컴포넌트가 언마운트될 때 Calendar 인스턴스 해제
-    };
-  }, []); // 컴포넌트가 처음 마운트될 때 한 번만 실행
-
-  return <div id="calendar"></div>;
+  return (
+    <div>
+      <Calendar
+        localizer={localizer}
+        defaultDate={new Date()}
+        defaultView="month"
+        events={events}
+        selectable
+        onSelectSlot={handleSelectSlot}
+        onSelectEvent={handleSelectEvent}
+        style={{ height: "90vh", background: "white" }}
+      />
+      <Modal
+        isOpen={modalIsOpen}
+        onRequestClose={() => setModalIsOpen(false)}
+        contentLabel={newEvent.id ? "Edit Event" : "Add Event"}
+        className="custom-modal"
+        overlayClassName="custom-overlay"
+      >
+        <h2>{newEvent.id ? "Edit Event" : "Add Event"}</h2>
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            newEvent.id ? handleUpdateEvent() : handleAddEvent();
+          }}
+        >
+          <div className="form-group">
+            <label>Title</label>
+            <input
+              type="text"
+              className="form-control"
+              value={newEvent.title}
+              onChange={(e) =>
+                setNewEvent({ ...newEvent, title: e.target.value })
+              }
+              required
+            />
+          </div>
+          <div className="form-group">
+            <label>Content</label>
+            <input
+              type="text"
+              className="form-control"
+              value={newEvent.content}
+              onChange={(e) =>
+                setNewEvent({ ...newEvent, content: e.target.value })
+              }
+              required
+            />
+          </div>
+          <div className="form-group">
+            <label>Start Date</label>
+            <input
+              type="datetime-local"
+              className="form-control"
+              value={moment(newEvent.start).format("YYYY-MM-DDTHH:mm")}
+              onChange={(e) =>
+                setNewEvent({ ...newEvent, start: new Date(e.target.value) })
+              }
+              required
+            />
+          </div>
+          <div className="form-group">
+            <label>End Date</label>
+            <input
+              type="datetime-local"
+              className="form-control"
+              value={moment(newEvent.end).format("YYYY-MM-DDTHH:mm")}
+              onChange={(e) =>
+                setNewEvent({ ...newEvent, end: new Date(e.target.value) })
+              }
+              required
+            />
+          </div>
+          <div className="button-group">
+            <button type="submit" className="btn btn-primary">
+              {newEvent.id ? "Update Event" : "Add Event"}
+            </button>
+            {newEvent.id && (
+              <button
+                type="button"
+                className="btn btn-danger"
+                onClick={handleDeleteEvent}
+              >
+                Delete Event
+              </button>
+            )}
+            <button
+              type="button"
+              className="btn btn-secondary"
+              onClick={() => setModalIsOpen(false)}
+            >
+              Cancel
+            </button>
+          </div>
+        </form>
+      </Modal>
+    </div>
+  );
 };
 
-export default CalendarComponent;
+export default MyCalendar;
