@@ -41,11 +41,9 @@ const RejectedTable = lazy(() =>
 // Login 페이지 추가
 const Login = lazy(() => import("../views/ui/Login.js"));
 
-/*****Routes******/
-
-const DocumentComponent = lazy(() =>
-  import("../views/ui/DocumentComponent.js")
-);
+// document 추가
+const DocumentComponent = lazy(() => import("../views/ui/document/DocumentComponent.js"));
+const DocumentDetail = lazy(() => import("../views/ui/document/DocumentDetail.js"))
 
 /*****Routes******/
 const ThemeRoutes = () => [
