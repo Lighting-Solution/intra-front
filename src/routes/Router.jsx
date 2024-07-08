@@ -5,6 +5,8 @@ import { Navigate } from "react-router-dom";
 const FullLayout = lazy(() => import("../layouts/FullLayout.js"));
 const ChatLayout = lazy(() => import("../views/ui/ChatLayout.jsx"));
 const NoticeLayout = lazy(() => import("../views/ui/NoticeLayout.jsx"));
+const DocumentLayout = lazy(() => import("../views/ui/document/DocumentLayout.js"));
+
 /***** Pages ****/
 const Starter = lazy(() => import("../views/Starter.js"));
 const About = lazy(() => import("../views/About.js"));
@@ -75,6 +77,14 @@ const ThemeRoutes = () => [
         element: <ChatLayout />,
       },
       {
+        path: "/document",
+        element: <DocumentLayout />, // 새로운 DocumentLayout 사용
+        children: [
+          { path: "", exact: true, element: <DocumentComponent /> },
+          { path: "detail/:id", exact: true, element: <DocumentDetail /> },
+        ],
+      },
+      {
         path: "notice",
         element: <NoticeLayout />,
         children: [
@@ -97,11 +107,7 @@ const ThemeRoutes = () => [
         exact: true,
         element: <FreeBoard />,
       },
-      {
-        path: "/document",
-        exact: true,
-        element: <DocumentComponent />,
-      },
+      
     ],
   },
 ];
