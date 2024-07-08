@@ -55,7 +55,7 @@ const navigation = [
     icon: "bi bi-people",
   },
   {
-    title: "Calendar",
+    title: "캘린더",
     href: "/calendar",
     icon: "bi bi-calendar",
   },

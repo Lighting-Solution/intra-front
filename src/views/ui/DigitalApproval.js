@@ -11,7 +11,6 @@ const Tables = () => {
   const [status, setStatus] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false); // State for modal
   const [empId, setEmpId] = useState(0);
-
   const handleButtonClick = async (status) => {
     setStatus(status);
     try {
@@ -25,7 +24,9 @@ const Tables = () => {
   };
 
   const approvalRequest = async (status, empId) => {
+    // 로그인 한 empId 전달
     setEmpId(empId);
+
     try {
       const container = document.getElementById("html-content-container");
 
@@ -119,6 +120,7 @@ const Tables = () => {
             font-size: 12px;
             padding: 0 4px;
           }
+
           .sign_date {
             border: none;
             border-collapse: collapse;
@@ -275,7 +277,7 @@ const Tables = () => {
             <Button
               className="btn"
               color="primary"
-              onClick={() => approvalRequest(status, 1)}
+              onClick={() => approvalRequest(status, 2)}
             >
               결재 요청
             </Button>
