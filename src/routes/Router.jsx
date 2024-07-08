@@ -5,6 +5,8 @@ import { Navigate } from "react-router-dom";
 const FullLayout = lazy(() => import("../layouts/FullLayout.js"));
 const ChatLayout = lazy(() => import("../views/ui/ChatLayout.jsx"));
 const NoticeLayout = lazy(() => import("../views/ui/NoticeLayout.jsx"));
+const DocumentLayout = lazy(() => import("../views/ui/document/DocumentLayout.js"));
+
 /***** Pages ****/
 const Starter = lazy(() => import("../views/Starter.js"));
 const About = lazy(() => import("../views/About.js"));
@@ -19,9 +21,9 @@ const Breadcrumbs = lazy(() => import("../views/ui/Breadcrumbs.js"));
 const NoticeBoard = lazy(() => import("../components/NoticeBoard.jsx"));
 const FreeBoard = lazy(() => import("../components/FreeBoard.jsx"));
 const NoticeWriting = lazy(() => import("../components/NoticeWriting.jsx"));
-const DocumentComponent = lazy(() =>
-  import("../views/ui/DocumentComponent.js")
-);
+const DocumentComponent = lazy(() => import("../views/ui/document/DocumentComponent.js"));
+const DocumentDetail = lazy(() => import("../views/ui/document/DocumentDetail.js"));
+
 
 /*****Routes******/
 const ThemeRoutes = () => [
@@ -46,6 +48,14 @@ const ThemeRoutes = () => [
         element: <ChatLayout />,
       },
       {
+        path: "/document",
+        element: <DocumentLayout />, // 새로운 DocumentLayout 사용
+        children: [
+          { path: "", exact: true, element: <DocumentComponent /> },
+          { path: "detail/:id", exact: true, element: <DocumentDetail /> },
+        ],
+      },
+      {
         path: "notice",
         element: <NoticeLayout />,
         children: [
@@ -58,11 +68,7 @@ const ThemeRoutes = () => [
         exact: true,
         element: <FreeBoard />,
       },
-      {
-        path: "/document",
-        exact: true,
-        element: <DocumentComponent />,
-      },
+      
     ],
   },
 ];

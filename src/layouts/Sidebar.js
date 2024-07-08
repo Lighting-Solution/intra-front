@@ -62,7 +62,7 @@ const navigation = [
   {
     title: "문서함",
     href: "/document",
-    icon: "bi bi-chat",
+    icon: "bi bi-card-text",
   },
 ];
 
