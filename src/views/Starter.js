@@ -4,6 +4,7 @@ import Feeds from "../components/dashboard/Feeds";
 import ProjectTables from "../components/dashboard/ProjectTable";
 import TopCards from "../components/dashboard/TopCards";
 import Blog from "../components/dashboard/Blog";
+import Menu from "../components/dashboard/menu";
 import bg1 from "../assets/images/bg/bg1.jpg";
 import bg2 from "../assets/images/bg/bg2.jpg";
 import bg3 from "../assets/images/bg/bg3.jpg";
@@ -101,19 +102,11 @@ const Starter = () => {
           <ProjectTables />
         </Col>
       </Row>
-      {/***Blog Cards***/}
+      {/* Add Menu */}
       <Row>
-        {BlogData.map((blg, index) => (
-          <Col sm="6" lg="6" xl="3" key={index}>
-            <Blog
-              image={blg.image}
-              title={blg.title}
-              subtitle={blg.subtitle}
-              text={blg.description}
-              color={blg.btnbg}
-            />
-          </Col>
-        ))}
+        <Col lg="12">
+          <Menu />
+        </Col>
       </Row>
     </div>
   );
