@@ -10,8 +10,8 @@ const DigitalApproval = () => {
   const [htmlContent, setHtmlContent] = useState("");
   const [status, setStatus] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false); // State for modal
-  const [empId, setEmpId] = useState(3);
-  const [positionId, setPositionId] = useState(1);
+  const [empId, setEmpId] = useState(1);
+  const [positionId, setPositionId] = useState(5);
 
   useEffect(() => {
     if (htmlContent) {

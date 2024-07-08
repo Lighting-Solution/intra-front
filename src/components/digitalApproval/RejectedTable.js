@@ -42,30 +42,6 @@ const RejectedTable = ({ LoginEmpId, LoginPositionId, RejectTime }) => {
         console.error("Error fetching project data:", error);
       });
   }, [LoginEmpId, LoginPositionId, digitalApprovalId, RejectTime]);
-  /*
-  const formatDate = (dateString) => {
-    if (!dateString) return "";
-
-    const options = {
-      year: "numeric",
-      month: "numeric",
-      day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-      second: "2-digit",
-      hour12: false,
-    };
-
-    const formattedDate = new Date(dateString).toLocaleString("ko-KR", options);
-
-    // Adjust the formatting
-    return formattedDate
-      .replace(".", "년 ")
-      .replace(".", "월 ")
-      .replace(".", "일 ")
-      .replace(/\s/g, " ");
-  };
-  */
 
   const formatDate = (dateString) => {
     const options = {
@@ -174,10 +150,9 @@ const RejectedTable = ({ LoginEmpId, LoginPositionId, RejectTime }) => {
                 if (!tdata.digitalApprovalType) return null;
 
                 const status = getStatus(tdata);
-                const date =
-                  positionId === 1
-                    ? formatDate(tdata.ceoRejectAt)
-                    : formatDate(tdata.managerRejectAt);
+                const date = tdata.managerStatus
+                  ? formatDate(tdata.ceoRejectAt)
+                  : formatDate(tdata.managerRejectAt);
 
                 return positionId >= 3
                   ? renderTableRow(tdata, index, status, date)
