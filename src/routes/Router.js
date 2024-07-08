@@ -1,5 +1,6 @@
 import { lazy } from "react";
 import { Navigate } from "react-router-dom";
+import PrivateRoute from "../components/Login/PrivateRoute.js";
 
 /****Layouts*****/
 const FullLayout = lazy(() => import("../layouts/FullLayout.js"));
@@ -29,12 +30,20 @@ const PendingDocuments = lazy(() => import("../views/ui/PendingDocuments.js"));
 const RejectedDocuments = lazy(() =>
   import("../views/ui/RejectedDocuments.js")
 );
+
+// Login 페이지 추가
+const Login = lazy(() => import("../views/ui/Login.js"));
 /*****Routes******/
 
 const ThemeRoutes = [
   {
+    path: "/login",
+    exact: true,
+    element: <Login />,
+  },
+  {
     path: "/",
-    element: <FullLayout />,
+    element: <PrivateRoute element={<FullLayout />} />,
     children: [
       { path: "/", element: <Navigate to="/starter" /> },
       { path: "/starter", exact: true, element: <Starter /> },
@@ -47,17 +56,13 @@ const ThemeRoutes = [
       { path: "/table", exact: true, element: <Tables /> },
       { path: "/forms", exact: true, element: <Forms /> },
       { path: "/breadcrumbs", exact: true, element: <Breadcrumbs /> },
-      //Calendar 추가
       { path: "/calendar", exact: true, element: <Calendar /> },
-      //DigitalApproval 추가
       { path: "/digitalapproval", exact: true, element: <DigitalApproval /> },
-      //결재 대기 문서
       {
         path: "/digitalapproval/pending",
         exact: true,
         element: <PendingDocuments />,
       },
-      //결재 반려 문서
       {
         path: "/digitalapproval/rejected",
         exact: true,

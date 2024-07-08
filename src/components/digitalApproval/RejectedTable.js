@@ -171,7 +171,7 @@ const RejectedTable = ({ LoginEmpId, LoginPositionId, RejectTime }) => {
             </thead>
             <tbody>
               {tableData.map((tdata, index) => {
-                if (!tdata.digitalApprovalType) return null; // Skip if digitalApprovalType is false
+                if (!tdata.digitalApprovalType) return null;
 
                 const status = getStatus(tdata);
                 const date =
@@ -180,10 +180,8 @@ const RejectedTable = ({ LoginEmpId, LoginPositionId, RejectTime }) => {
                     : formatDate(tdata.managerRejectAt);
 
                 return positionId >= 3
-                  ? // Render row if positionId is 3 or greater
-                    renderTableRow(tdata, index, status, date)
-                  : // Render different row if positionId is less than 3 and based on tdata.managerStatus
-                  positionId === 1
+                  ? renderTableRow(tdata, index, status, date)
+                  : positionId === 1
                   ? tdata.managerStatus
                     ? renderTableRow(tdata, index, status, date)
                     : null
