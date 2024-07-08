@@ -13,9 +13,11 @@ import {
 import SettingsIcon from "@mui/icons-material/Settings";
 import AddIcon from "@mui/icons-material/Add";
 import axios from "axios";
-import CreatePersonalGroup from "./CreatePersonalGroup";
-import DepartmentList from "./DepartmentList";
-import PersonalGroupList from "./PersonalGroupList";
+import CreatePersonalGroup from "./group/CreatePersonalGroup";
+import DepartmentList from "./group/DepartmentList";
+import PersonalGroupList from "./group/PersonalGroupList";
+import CreateContact from "./group/CreateContact";
+import SettingPersonalGroup from "./group/SettingPersonalGroup";
 
 const GroupList = ({
   id,
@@ -26,15 +28,16 @@ const GroupList = ({
 }) => {
   const [expanded, setExpanded] = useState(false);
   const [selected, setSelected] = useState("사내 전체 주소록");
-  const [openCreateModal, setOpenCreateModal] = useState(false);
-  const [existingGroupNames, setExistingGroupNames] = useState([]);
+  const [openGroupCreateModal, setOpenGroupCreateModal] = useState(false);
+  const [openPersonalCreateModal, setOpenPersonalCreateModal] = useState(false);
+  const [openUpdateGroupModal, setOpenSettingGroupModal] = useState(false);
+  const [groupNames, setGroupNames] = useState([]);
 
   useEffect(() => {
-    if (!Array.isArray(groupList)) {
-      return;
+    if (Array.isArray(groupList)) {
+      const names = groupList.map((group) => group.personalGroupName);
+      setGroupNames(names);
     }
-    const fetchedGroupNames = groupList.map((group) => group.groupName);
-    setExistingGroupNames(fetchedGroupNames);
   }, [groupList]);
 
   const handleChange = (panel) => (event, newExpanded) => {
@@ -42,10 +45,12 @@ const GroupList = ({
   };
 
   const handleItemClick = (groupId, titleName, subTitleName, type) => {
-    if (groupId === 0 && type === "사내") setSelected("사내 전체 주소록");
-    else if (groupId === 0 && type === "개인") setSelected("개인 전체 주소록");
-    else setSelected(subTitleName);
+    setSelected(subTitleName);
     updateContacts(groupId, titleName, subTitleName, type);
+
+    if (type === "개인") {
+      updateGroupList();
+    }
   };
 
   const getButtonStyle = (item) =>
@@ -53,12 +58,28 @@ const GroupList = ({
   const getTextProps = (item) =>
     selected === item ? { style: { fontWeight: "bold" } } : {};
 
-  const openModal = () => {
-    setOpenCreateModal(true);
+  const openGroupModal = () => {
+    setOpenGroupCreateModal(true);
   };
 
-  const closeModal = () => {
-    setOpenCreateModal(false);
+  const closeGroupModal = () => {
+    setOpenGroupCreateModal(false);
+  };
+
+  const openPersonalModal = () => {
+    setOpenPersonalCreateModal(true);
+  };
+
+  const closePersonalModal = () => {
+    setOpenPersonalCreateModal(false);
+  };
+
+  const openSettingGroupModal = () => {
+    setOpenSettingGroupModal(true);
+  };
+
+  const closeSettingGroupModal = () => {
+    setOpenSettingGroupModal(false);
   };
 
   const handleCreateGroup = async (groupName) => {
@@ -77,17 +98,72 @@ const GroupList = ({
       );
 
       if (response.status === 200) {
-        const data = response.data;
-        console.log("New group created:", data);
-        closeModal();
+        closeGroupModal();
         updateGroupList(); // 그룹 리스트 업데이트
       } else {
         console.error("Failed to create group");
-        // 실패 처리 로직
       }
     } catch (error) {
       console.error("Error creating group:", error);
-      // 에러 처리 로직
+    }
+  };
+
+  const handleCreateContact = async (contact) => {
+    try {
+      const response = await axios.post(
+        `http://localhost:9000/api/v1/intranet/contact/personal-contact`,
+        contact,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (response.status === 200) {
+        closePersonalModal();
+        updateContacts(0, "개인 주소록", "전체 주소록", "개인");
+      } else {
+        console.error("Failed to create contact");
+      }
+    } catch (error) {
+      console.error("Error creating contact:", error);
+    }
+  };
+
+  const handleUpdateGroup = async (groupData) => {
+    try {
+      const response = await axios.put(
+        `
+        http://localhost:9000/api/v1/intranet/contact/personal-group`,
+        groupData
+      );
+      if (response.status === 200) {
+        closeSettingGroupModal();
+        updateContacts(0, "개인 주소록", "전체 주소록", "개인");
+        updateGroupList();
+      } else {
+        console.error("Failed to update contact");
+      }
+    } catch (error) {
+      console.error("Error updating contact:", error);
+    }
+  };
+
+  const handleDeleteGroup = async (groupId) => {
+    try {
+      const response = await axios.delete(`
+        http://localhost:9000/api/v1/intranet/contact/group/${groupId}`);
+
+      if (response.status === 200) {
+        closeSettingGroupModal();
+        updateContacts(0, "개인 주소록", "전체 주소록", "개인");
+        updateGroupList();
+      } else {
+        console.error("Failed to delete contact");
+      }
+    } catch (error) {
+      console.error("Error deleting contact:", error);
     }
   };
 
@@ -106,9 +182,9 @@ const GroupList = ({
       <Button
         variant="outlined"
         style={{ width: "100%", marginBottom: "10px" }}
-        onClick={openModal} // 연락처 추가 버튼 클릭 시 모달 열기
+        onClick={openPersonalModal}
       >
-        연락처 추가
+        개인 연락처 추가
       </Button>
       <Typography
         variant="subtitle1"
@@ -135,7 +211,7 @@ const GroupList = ({
             .filter((department) => department.departmentId % 100 === 0)
             .map((department) => (
               <DepartmentList
-                key={department.departmentId}
+                key={`company-${department.departmentId}`}
                 department={department}
                 teamList={departmentList.filter(
                   (dept) =>
@@ -163,56 +239,82 @@ const GroupList = ({
         개인 주소록
         <IconButton
           style={{ marginLeft: "auto" }}
-          onClick={() => console.log("Settings clicked")}
+          onClick={openSettingGroupModal}
         >
           <SettingsIcon />
         </IconButton>
       </Typography>
-      <List>
-        <ListItem
-          button
-          onClick={() =>
-            handleItemClick(0, "개인 주소록", "전체 주소록", "개인")
-          }
-          style={getButtonStyle("개인 전체 주소록")}
-        >
-          <ListItemText
-            primary="전체 주소록"
-            primaryTypographyProps={getTextProps("개인 전체 주소록")}
-          />
-        </ListItem>
-        {groupList?.length > 0 &&
-          groupList.map((group) => (
-            <PersonalGroupList
-              key={group.personalGroupId}
-              group={group}
-              handleItemClick={handleItemClick}
-              getButtonStyle={getButtonStyle}
-              getTextProps={getTextProps}
+      <div style={{ maxHeight: "300px", overflowY: "auto" }}>
+        <List>
+          <ListItem
+            button
+            onClick={() =>
+              handleItemClick(0, "개인 주소록", "전체 주소록", "개인")
+            }
+            style={getButtonStyle("개인 전체 주소록")}
+          >
+            <ListItemText
+              primary="전체 주소록"
+              primaryTypographyProps={getTextProps("개인 전체 주소록")}
             />
-          ))}
-        <Button
-          variant="outlined"
-          startIcon={<AddIcon />}
-          sx={{
-            marginRight: "8px",
-            color: "rgba(0, 0, 0, 0.483)",
-            border: "1px solid rgba(0, 0, 0, 0)",
-          }}
-          onClick={openModal} // 주소록 추가 버튼 클릭 시 모달 열기
-        >
-          주소록 추가
-        </Button>
-      </List>
+          </ListItem>
+          {groupList?.length > 0 &&
+            groupList.map((group) => (
+              <PersonalGroupList
+                key={`personal-${group.personalGroupId}`}
+                group={group}
+                handleItemClick={handleItemClick}
+                getButtonStyle={getButtonStyle}
+                getTextProps={getTextProps}
+              />
+            ))}
+          <Button
+            variant="outlined"
+            startIcon={<AddIcon />}
+            sx={{
+              marginRight: "8px",
+              color: "rgba(0, 0, 0, 0.483)",
+              border: "1px solid rgba(0, 0, 0, 0)",
+            }}
+            onClick={openGroupModal}
+          >
+            주소록 추가
+          </Button>
+        </List>
+      </div>
 
-      <Dialog open={openCreateModal} onClose={closeModal}>
-        <DialogTitle>주소록 추가</DialogTitle>
+      <Dialog open={openPersonalCreateModal} onClose={closePersonalModal}>
+        <DialogTitle>개인 연락처 추가</DialogTitle>
+        <DialogContent>
+          <CreateContact
+            onCreate={handleCreateContact}
+            onCancel={closePersonalModal}
+            id={id}
+          />
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={openGroupCreateModal} onClose={closeGroupModal}>
+        <DialogTitle>개인 주소록 추가</DialogTitle>
         <DialogContent>
           <CreatePersonalGroup
-            onCreate={handleCreateGroup} // 그룹 생성 콜백 전달
-            onCancel={closeModal}
+            onCreate={handleCreateGroup}
+            onCancel={closeGroupModal}
+            existingGroupNames={groupNames}
             id={id}
-            existingGroupNames={existingGroupNames}
+          />
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={openUpdateGroupModal} onClose={closeSettingGroupModal}>
+        <DialogTitle>주소록 설정</DialogTitle>
+        <DialogContent>
+          <SettingPersonalGroup
+            onUpdate={handleUpdateGroup}
+            onDelete={handleDeleteGroup}
+            onCancel={closeSettingGroupModal}
+            existingGroupNames={groupNames}
+            groupList={groupList}
           />
         </DialogContent>
       </Dialog>

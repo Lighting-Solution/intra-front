@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Box,
   Typography,
@@ -10,7 +10,14 @@ import {
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 
-const Filter = ({ title, subTitle, empCount }) => {
+const Filter = ({ title, subTitle, empCount, searchContact }) => {
+  const [searchField, setSearchField] = useState("all");
+  const [searchText, setSearchText] = useState("");
+
+  const handleSearch = () => {
+    searchContact(searchField, searchText);
+  };
+
   return (
     <Box
       sx={{
@@ -41,21 +48,25 @@ const Filter = ({ title, subTitle, empCount }) => {
           <Select
             labelId="address-book-select-label"
             id="address-book-select"
-            defaultValue="전체"
+            value={searchField}
+            onChange={(e) => setSearchField(e.target.value)}
             sx={{ height: "40px", fontSize: "1em" }}
           >
-            <MenuItem value="전체">전체</MenuItem>
-            <MenuItem value="이름">이름</MenuItem>
-            <MenuItem value="회사">회사</MenuItem>
+            <MenuItem value="all">전체</MenuItem>
+            <MenuItem value="name">이름</MenuItem>
+            <MenuItem value="mp">전화번호</MenuItem>
+            <MenuItem value="company">회사</MenuItem>
           </Select>
         </FormControl>
         <TextField
           variant="outlined"
           size="small"
           placeholder="검색"
+          value={searchText}
+          onChange={(e) => setSearchText(e.target.value)}
           InputProps={{
             endAdornment: (
-              <IconButton>
+              <IconButton onClick={handleSearch}>
                 <SearchIcon />
               </IconButton>
             ),

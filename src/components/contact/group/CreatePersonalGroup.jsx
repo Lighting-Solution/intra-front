@@ -1,16 +1,28 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button, TextField } from "@mui/material";
 
 const CreatePersonalGroup = ({ onCreate, onCancel, existingGroupNames }) => {
   const [groupName, setGroupName] = useState("");
 
+  useEffect(() => {
+    console.log("Existing Group Names: ", existingGroupNames);
+  }, [existingGroupNames]);
+
   const handleCreate = () => {
-    // 중복 체크 로직 추가
-    if (existingGroupNames.includes(groupName)) {
+    const trimmedGroupName = groupName.trim().toLowerCase();
+    const normalizedExistingGroupNames = existingGroupNames.map((name) =>
+      name.toLowerCase()
+    );
+
+    if (trimmedGroupName === "") {
+      alert("값이 필요합니다.");
+      return;
+    }
+    if (normalizedExistingGroupNames.includes(trimmedGroupName)) {
       alert("이미 존재하는 그룹명입니다.");
       return;
     }
-    onCreate(groupName); // 그룹 추가 콜백 호출
+    onCreate(trimmedGroupName); // 그룹 추가 콜백 호출
   };
 
   return (

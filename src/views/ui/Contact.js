@@ -1,9 +1,9 @@
 import { Container } from "@mui/material";
-import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import GroupList from "../../components/contact/GroupList";
 import MainList from "../../components/contact/MainList";
-import { useNavigate } from "react-router-dom";
 
 function Contact() {
   const navigate = useNavigate(); // 페이지 이동
@@ -18,7 +18,7 @@ function Contact() {
 
   const updateGroupList = async () => {
     try {
-      const response = axios.get(
+      const response = await axios.get(
         `http://localhost:9000/api/v1/intranet/contact/personal-group/${id}`
       );
       setGroupList(response.data);
@@ -89,10 +89,6 @@ function Contact() {
     fetchData();
   }, [navigate]);
 
-  useEffect(() => {
-    console.log("ContactList updated: ", contactList);
-  }, [contactList]);
-
   return (
     <Container
       maxWidth="xl"
@@ -113,9 +109,11 @@ function Contact() {
       </div>
       <div style={{ width: "80%" }}>
         <MainList
+          id={id}
           titleName={titleName}
           subTitleName={subTitleName}
           contactList={contactList}
+          setContactList={setContactList}
           groupId={groupId}
         />
       </div>
