@@ -1,16 +1,33 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import { CKEditor } from "@ckeditor/ckeditor5-react";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
-import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "./NoticeWriting.css";
 
-const NoticeWriting = () => {
+const NoticeEditing = () => {
+  const { id } = useParams();
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [isNotice, setIsNotice] = useState(false);
   const [file, setFile] = useState(null);
+  const [existingNotice, setExistingNotice] = useState(null);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    axios
+      .get(`http://localhost:9000/api/notices/${id}`)
+      .then((response) => {
+        const notice = response.data;
+        setTitle(notice.noticeTitle);
+        setContent(notice.noticeContent);
+        setIsNotice(notice.importantNotice);
+        setExistingNotice(notice); // 기존 공지사항 데이터를 저장
+      })
+      .catch((error) => {
+        console.error("There was an error fetching the notice!", error);
+      });
+  }, [id]);
 
   const handleTitleChange = (e) => {
     setTitle(e.target.value);
@@ -34,9 +51,12 @@ const NoticeWriting = () => {
       new Blob(
         [
           JSON.stringify({
+            noticePostId: id,
             noticeTitle: title,
             noticeContent: content,
             importantNotice: isNotice,
+            noticeHits: existingNotice.noticeHits, // 기존 조회수 유지
+            noticeGood: existingNotice.noticeGood, // 기존 좋아요 수 유지
           }),
         ],
         { type: "application/json" }
@@ -47,8 +67,8 @@ const NoticeWriting = () => {
     }
 
     try {
-      const response = await axios.post(
-        "http://localhost:9000/api/notices/create?accountId=admin&accountPw=1234",
+      const response = await axios.put(
+        `http://localhost:9000/api/notices/update/${id}?accountId=admin&accountPw=1234`,
         formData,
         {
           headers: {
@@ -57,19 +77,19 @@ const NoticeWriting = () => {
         }
       );
       console.log(response.data);
-      navigate("/notice");
+      navigate(`/notice/${id}`);
     } catch (error) {
-      console.error("There was an error creating the notice!", error);
+      console.error("There was an error updating the notice!", error);
     }
   };
 
   const handleCancel = () => {
-    navigate("/notice");
+    navigate(`/notice/${id}`);
   };
 
   return (
     <div className="notice-writing">
-      <h1>글쓰기</h1>
+      <h1>수정하기</h1>
       <form onSubmit={handleSubmit}>
         <div className="form-group">
           <label htmlFor="toBoard">To</label>
@@ -98,19 +118,6 @@ const NoticeWriting = () => {
               onChange={handleContentChange}
               config={{
                 extraPlugins: [MyCustomUploadAdapterPlugin],
-                image: {
-                  toolbar: [
-                    "imageTextAlternative",
-                    "|",
-                    "imageStyle:full",
-                    "imageStyle:side",
-                    "|",
-                    "imageResize:original",
-                    "imageResize:50",
-                    "imageResize:75",
-                    "imageResize:100",
-                  ],
-                },
               }}
               className="ckeditor"
             />
@@ -140,7 +147,7 @@ const NoticeWriting = () => {
         </div>
         <div className="form-group button-group">
           <button type="submit" className="btn btn-primary">
-            등록
+            수정
           </button>
           <button
             type="button"
@@ -177,7 +184,7 @@ class MyUploadAdapter {
             .post("http://localhost:9000/api/files/upload", data)
             .then((response) => {
               resolve({
-                default: `http://localhost:9000/uploads/${response.data}`,
+                default: response.data,
               });
             })
             .catch((error) => {
@@ -192,4 +199,4 @@ class MyUploadAdapter {
   }
 }
 
-export default NoticeWriting;
+export default NoticeEditing;

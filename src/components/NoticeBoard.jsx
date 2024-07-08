@@ -1,72 +1,104 @@
-import React, { useState } from "react";
-import {
-  Button,
-  Table,
-  Pagination,
-  PaginationItem,
-  PaginationLink,
-} from "reactstrap";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import "./NoticeBoard.css"; // Importing the CSS file for styling
+import ReactPaginate from "react-paginate";
+import { FaPen, FaTrash, FaBullhorn } from "react-icons/fa";
 
 const NoticeBoard = () => {
-  const [posts, setPosts] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const postsPerPage = 20;
+  const [notices, setNotices] = useState([]);
+  const [currentPage, setCurrentPage] = useState(0);
+  const noticesPerPage = 10;
   const navigate = useNavigate();
 
+  useEffect(() => {
+    const fetchNotices = async () => {
+      try {
+        const response = await axios.get("http://localhost:9000/api/notices");
+        setNotices(response.data);
+      } catch (error) {
+        console.error("There was an error fetching the notices!", error);
+      }
+    };
+
+    fetchNotices();
+  }, []);
+
+  const pageCount = Math.ceil(notices.length / noticesPerPage);
+  const offset = currentPage * noticesPerPage;
+  const currentNotices = notices.slice(offset, offset + noticesPerPage);
+
+  const handlePageClick = ({ selected }) => {
+    setCurrentPage(selected);
+  };
+
   const handleWriteClick = () => {
-    navigate("/notice/write");
+    navigate("write");
   };
-
-  const handlePageChange = (pageNumber) => {
-    setCurrentPage(pageNumber);
-  };
-
-  const indexOfLastPost = currentPage * postsPerPage;
-  const indexOfFirstPost = indexOfLastPost - postsPerPage;
-  const currentPosts = posts.slice(indexOfFirstPost, indexOfLastPost);
-
-  const renderPosts = currentPosts.map((post, index) => (
-    <tr key={index}>
-      <th scope="row">{post.id}</th>
-      <td>{post.title}</td>
-      <td>{post.author}</td>
-      <td>{post.date}</td>
-      <td>{post.views}</td>
-      <td>{post.likes}</td>
-    </tr>
-  ));
-
-  const totalPages = Math.ceil(posts.length / postsPerPage);
 
   return (
-    <div className="container mt-5">
+    <div className="board-content">
       <h1>사내 공지</h1>
-      <Button color="primary" onClick={handleWriteClick}>
-        새 글쓰기
-      </Button>
-      <Table hover className="mt-3">
-        <thead>
-          <tr>
-            <th>번호</th>
-            <th>제목</th>
-            <th>작성자</th>
-            <th>작성일</th>
-            <th>조회</th>
-            <th>좋아요</th>
-          </tr>
-        </thead>
-        <tbody>{renderPosts}</tbody>
-      </Table>
-      <Pagination aria-label="Page navigation">
-        {[...Array(totalPages)].map((_, i) => (
-          <PaginationItem key={i} active={i + 1 === currentPage}>
-            <PaginationLink onClick={() => handlePageChange(i + 1)}>
-              {i + 1}
-            </PaginationLink>
-          </PaginationItem>
+      <div className="board-controls">
+        <div className="board-actions">
+          <button className="icon-button" onClick={handleWriteClick}>
+            <FaPen /> 새 글쓰기
+          </button>
+          <button className="icon-button">
+            <FaTrash /> 삭제
+          </button>
+          <button className="icon-button">
+            <FaBullhorn /> 공지로 등록
+          </button>
+        </div>
+        <div className="board-filters">
+          <select className="filter-select">
+            <option value="latest">최신순</option>
+            <option value="oldest">오래된 순</option>
+          </select>
+          <input type="text" placeholder="검색" className="search-input" />
+        </div>
+      </div>
+      <div className="board-list">
+        <div className="board-header">
+          <div className="board-col">번호</div>
+          <div className="board-col">제목</div>
+          <div className="board-col">작성일</div>
+          <div className="board-col">조회</div>
+          <div className="board-col">좋아요</div>
+        </div>
+        {currentNotices.map((notice, index) => (
+          <div key={notice.noticePostId} className="board-item">
+            <div className="board-col">{offset + index + 1}</div>
+            <div
+              className="board-col"
+              onClick={() => navigate(`/notice/${notice.noticePostId}`)}
+              style={{ cursor: "pointer", color: "blue" }}
+            >
+              {notice.noticeTitle || "N/A"}
+            </div>
+            <div className="board-col">
+              {new Date(
+                notice.noticeUpdatedAt || notice.noticeCreatedAt
+              ).toLocaleDateString() || "N/A"}
+            </div>
+            <div className="board-col">{notice.noticeHits || 0}</div>
+            <div className="board-col">{notice.noticeGood || 0}</div>
+          </div>
         ))}
-      </Pagination>
+      </div>
+      <ReactPaginate
+        previousLabel={"<"}
+        nextLabel={">"}
+        breakLabel={"..."}
+        breakClassName={"break-me"}
+        pageCount={pageCount}
+        marginPagesDisplayed={2}
+        pageRangeDisplayed={5}
+        onPageChange={handlePageClick}
+        containerClassName={"pagination"}
+        activeClassName={"active"}
+      />
     </div>
   );
 };

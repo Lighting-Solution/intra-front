@@ -19,6 +19,8 @@ const Breadcrumbs = lazy(() => import("../views/ui/Breadcrumbs.js"));
 const NoticeBoard = lazy(() => import("../components/NoticeBoard.jsx"));
 const FreeBoard = lazy(() => import("../components/FreeBoard.jsx"));
 const NoticeWriting = lazy(() => import("../components/NoticeWriting.jsx"));
+const NoticeDetail = lazy(() => import("../components/NoticeDetail.jsx"));
+const NoticeEditing = lazy(() => import("../components/NoticeEditing.jsx"));
 const DocumentComponent = lazy(() =>
   import("../views/ui/DocumentComponent.js")
 );
@@ -51,6 +53,8 @@ const ThemeRoutes = () => [
         children: [
           { path: "", exact: true, element: <NoticeBoard /> },
           { path: "write", exact: true, element: <NoticeWriting /> },
+          { path: ":id", exact: true, element: <NoticeDetail /> },
+          { path: "edit/:id", exact: true, element: <NoticeEditing /> },
         ],
       },
       {
