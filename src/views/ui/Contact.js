@@ -102,7 +102,6 @@ function Contact() {
         const response = await axios.get(
           `http://localhost:9000/api/v1/intranet/contact/list/all/${id}`
         );
-        console.log("Initial response data: ", response.data);
         setGroupList(response.data.groupDTOList);
         setDepartmentList(response.data.departmentDTOList);
         setContactList(response.data.empList);

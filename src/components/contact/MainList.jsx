@@ -26,18 +26,32 @@ const MainList = ({
   const isPersonalContactList =
     contactList?.[0]?.personalContactId !== undefined;
 
-  const deleteContacts = async () => {
+  const deleteContacts = async (contactId) => {
     try {
-      const response = await axios.delete(
-        `http://localhost:9000/api/v1/intranet/contact/personal-contact`,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: "1",
-          },
-          data: { contactId: selected }, // DELETE 요청의 본문에 데이터를 포함
-        }
-      );
+      let response;
+      if (selected && selected.length !== 0) {
+        response = await axios.delete(
+          `http://localhost:9000/api/v1/intranet/contact/personal-contact`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: "1",
+            },
+            data: { contactId: selected },
+          }
+        );
+      } else {
+        response = await axios.delete(
+          `http://localhost:9000/api/v1/intranet/contact/personal-contact`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: "1",
+            },
+            data: { contactId: [contactId] },
+          }
+        );
+      }
 
       if (response.status === 200) {
         console.log("Contacts deleted successfully");
@@ -55,7 +69,7 @@ const MainList = ({
     try {
       const response = await axios.post(
         `http://localhost:9000/api/v1/intranet/contact/contact-group`,
-        { groupId, contactId: selected },
+        { groupId: groupIds, contactId: selected },
         {
           headers: {
             "Content-Type": "application/json",
@@ -161,6 +175,7 @@ const MainList = ({
           deleteContacts={deleteContacts}
           designateContactGroup={handleOpenGroupSelect}
           onGroupDelete={onGroupDelete}
+          currentGroupId={groupId}
         />
       ) : (
         <EmpContactList
