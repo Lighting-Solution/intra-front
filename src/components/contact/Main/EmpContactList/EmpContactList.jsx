@@ -124,7 +124,6 @@ const EmpContactList = ({
         }}
       >
         <ContactFuncBtn
-          updateContact={updateContact}
           deleteContacts={deleteContacts}
           designateContactGroup={designateContactGroup}
           copyContactGroup={copyContactGroup}

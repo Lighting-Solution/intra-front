@@ -15,6 +15,7 @@ const PersonalContactList = ({
   deleteContacts,
   designateContactGroup,
   copyContactGroup,
+  onGroupDelete,
 }) => {
   const { selected, setSelected } = selectedState;
   const [order, setOrder] = useState("asc");
@@ -110,8 +111,8 @@ const PersonalContactList = ({
     updateContact(updatedContact);
   };
 
-  const handleDelete = (contactId) => {
-    deleteContacts(contactId);
+  const handleDelete = () => {
+    deleteContacts();
   };
 
   return (
@@ -125,10 +126,10 @@ const PersonalContactList = ({
         }}
       >
         <ContactFuncBtn
-          updateContact={updateContact}
           deleteContacts={deleteContacts}
           designateContactGroup={designateContactGroup}
           copyContactGroup={copyContactGroup}
+          showButtons={true}
         />
         <Box sx={{ display: "flex", alignItems: "center" }}>
           <TablePagination
@@ -182,6 +183,7 @@ const PersonalContactList = ({
           contact={selectedContact}
           onSave={handleSave}
           onDelete={handleDelete}
+          onGroupDelete={onGroupDelete}
         />
       )}
     </Box>

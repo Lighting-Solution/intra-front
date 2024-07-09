@@ -16,6 +16,8 @@ const TablePagination = ({
   page,
   handleChangePage,
 }) => {
+  const safeCount = count || 0; // Ensure count is a valid number
+
   return (
     <>
       <FormControl sx={{ minWidth: 120, mr: 2 }}>
@@ -33,7 +35,7 @@ const TablePagination = ({
       </FormControl>
       <Stack spacing={2}>
         <Pagination
-          count={count}
+          count={safeCount}
           page={page + 1}
           onChange={(event, value) => handleChangePage(event, value - 1)}
           color="primary"

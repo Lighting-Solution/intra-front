@@ -1,78 +1,141 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import EmpContactList from "./Main/EmpContactList/EmpContactList";
-import PersonalContactList from "./Main/PersonalContactList/PersonalContactList";
 import Filter from "./Main/Filter";
+import PersonalContactList from "./Main/PersonalContactList/PersonalContactList";
+import GroupSelectContact from "./Main/GroupSelectContact";
 import axios from "axios";
 
 const MainList = ({
-  id,
+  type,
   titleName,
   subTitleName,
   contactList,
   groupId,
   setContactList,
+  groups,
+  onGroupDelete,
 }) => {
-  const [empList, setEmpList] = React.useState([]);
-  const [personalContactList, setPersonalContactList] = React.useState([]);
-  const [selected, setSelected] = React.useState([]);
-  const isPersonalContactList = contactList[0]?.personalContactId !== undefined;
+  const [selected, setSelected] = useState([]);
+  const [filteredContactList, setFilteredContactList] = useState(contactList);
+  const [openGroupSelect, setOpenGroupSelect] = useState(false);
 
-  const searchContact = async (field, text) => {
-    let response;
+  useEffect(() => {
+    setFilteredContactList(contactList);
+  }, [contactList]);
+
+  const isPersonalContactList =
+    contactList?.[0]?.personalContactId !== undefined;
+
+  const deleteContacts = async () => {
     try {
-      if (groupId > 0) {
-        const hasPersonalContactId = "PersonalContactId" in contactList;
-        response = await axios.get(
-          hasPersonalContactId
-            ? `http://localhost:9000/api/v1/intranet/contact/list/search?empId=&groupId=${groupId}&departmentId=&filterType=${field}&filterContent=${text}&sortType=&groupType=`
-            : `http://localhost:9000/api/v1/intranet/contact/list/search?empId=&groupId=&departmentId=${groupId}&filterType=${field}&filterContent=${text}&sortType=&groupType=`,
-          {
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
-      } else {
-        if (titleName === "개인 주소록") {
-          response = await axios.get(
-            `http://localhost:9000/api/v1/intranet/contact/list/search?empId=${id}&groupId=&departmentId=&filterType=${field}&filterContent=${text}&sortType=&groupType=personal`,
-            {
-              headers: {
-                "Content-Type": "application/json",
-              },
-            }
-          );
-        } else {
-          response = await axios.get(
-            `http://localhost:9000/api/v1/intranet/contact/list/search?empId=${id}&groupId=&departmentId=&filterType=${field}&filterContent=${text}&sortType=&groupType=company`,
-            {
-              headers: {
-                "Content-Type": "application/json",
-              },
-            }
-          );
+      const response = await axios.delete(
+        `http://localhost:9000/api/v1/intranet/contact/personal-contact`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "1",
+          },
+          data: { contactId: selected }, // DELETE 요청의 본문에 데이터를 포함
         }
-      }
+      );
+
       if (response.status === 200) {
-        setContactList(response.data);
-        response.data?.personalContactList !== undefined
-          ? setEmpList(response.data.EmpList)
-          : setPersonalContactList(response.data.personalContactList);
+        console.log("Contacts deleted successfully");
+        await setContactList(groupId, titleName, subTitleName, type);
+        setSelected([]);
       } else {
-        console.error("Failed to search contact");
+        console.error("Failed to delete contacts");
       }
     } catch (error) {
-      console.error("Error search contact:", error);
+      console.error("Error deleting contacts:", error);
     }
   };
 
-  const deleteContacts = (contactId) => {};
+  const designateContactGroup = async (groupIds) => {
+    try {
+      const response = await axios.post(
+        `http://localhost:9000/api/v1/intranet/contact/contact-group`,
+        { groupId, contactId: selected },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "1",
+          },
+        }
+      );
 
-  const designateContactGroup = (contactIds, groupIds) => {};
+      if (response.status === 200) {
+        console.log("Contacts designated successfully");
+        await setContactList(groupId, titleName, subTitleName, type);
+        setSelected([]);
+      } else {
+        console.error("Failed to designate contacts");
+      }
+    } catch (error) {
+      console.error("Error designating contacts:", error);
+    }
+  };
 
-  const copyContactGroup = (contactIds, groupId) => {};
+  const updateContact = async (editContact) => {
+    try {
+      const response = await axios.put(
+        `http://localhost:9000/api/v1/intranet/contact/personal-contact`,
+        editContact,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "1",
+          },
+        }
+      );
 
-  const updateContact = (editContact) => {};
+      if (response.status === 200) {
+        console.log("Contact updated successfully");
+        await setContactList(groupId, titleName, subTitleName, type);
+      } else {
+        console.error("Failed to update contact");
+      }
+    } catch (error) {
+      console.error("Error updating contact:", error);
+    }
+  };
+
+  const handleSearch = (field, text) => {
+    const lowerText = text.toLowerCase();
+    const filteredList = contactList.filter((contact) => {
+      if (field === "all") {
+        return (
+          contact.personalContactName?.toLowerCase().includes(lowerText) ||
+          contact.personalContactMP?.toLowerCase().includes(lowerText) ||
+          contact.company?.companyName?.toLowerCase().includes(lowerText) ||
+          contact.empName?.toLowerCase().includes(lowerText) ||
+          contact.empMP?.toLowerCase().includes(lowerText)
+        );
+      } else if (field === "name") {
+        return (
+          contact.personalContactName?.toLowerCase().includes(lowerText) ||
+          contact.empName?.toLowerCase().includes(lowerText)
+        );
+      } else if (field === "mp") {
+        return (
+          contact.personalContactMP?.toLowerCase().includes(lowerText) ||
+          contact.empMP?.toLowerCase().includes(lowerText)
+        );
+      } else if (field === "company") {
+        return contact.company?.companyName?.toLowerCase().includes(lowerText);
+      }
+      return false;
+    });
+    setFilteredContactList(filteredList);
+  };
+
+  const handleOpenGroupSelect = () => {
+    if (selected.length === 0) {
+      alert("연락처를 선택하여 주세요.");
+      return;
+    }
+    setOpenGroupSelect(true);
+  };
 
   return (
     <div
@@ -88,27 +151,32 @@ const MainList = ({
         title={titleName}
         subTitle={subTitleName}
         empCount={contactList.length}
-        searchContact={searchContact}
+        onSearch={handleSearch}
       />
       {isPersonalContactList ? (
         <PersonalContactList
-          contactList={contactList}
+          contactList={filteredContactList}
           selectedState={{ selected, setSelected }}
           updateContact={updateContact}
           deleteContacts={deleteContacts}
-          designateContactGroup={designateContactGroup}
-          copyContactGroup={copyContactGroup}
+          designateContactGroup={handleOpenGroupSelect}
+          onGroupDelete={onGroupDelete}
         />
       ) : (
         <EmpContactList
-          contactList={contactList}
+          contactList={filteredContactList}
           selectedState={{ selected, setSelected }}
           updateContact={updateContact}
           deleteContacts={deleteContacts}
-          designateContactGroup={designateContactGroup}
-          copyContactGroup={copyContactGroup}
+          designateContactGroup={handleOpenGroupSelect}
         />
       )}
+      <GroupSelectContact
+        open={openGroupSelect}
+        onClose={() => setOpenGroupSelect(false)}
+        groups={groups}
+        onConfirm={designateContactGroup}
+      />
     </div>
   );
 };

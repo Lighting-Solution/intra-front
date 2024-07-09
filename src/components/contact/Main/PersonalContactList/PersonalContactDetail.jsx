@@ -7,6 +7,7 @@ import {
   Button,
   TextField,
   Grid,
+  Box,
 } from "@mui/material";
 
 const PersonalContactDetail = ({
@@ -15,6 +16,8 @@ const PersonalContactDetail = ({
   contact,
   onSave,
   onDelete,
+  onGroupDelete,
+  currentGroupId,
 }) => {
   const [editContact, setEditContact] = useState({});
 
@@ -36,6 +39,11 @@ const PersonalContactDetail = ({
 
   const handleDelete = () => {
     onDelete(editContact.personalContactId);
+    onClose();
+  };
+
+  const handleGroupRemove = () => {
+    onGroupDelete(currentGroupId, editContact.personalContactId);
     onClose();
   };
 
@@ -194,6 +202,9 @@ const PersonalContactDetail = ({
         </Grid>
       </DialogContent>
       <DialogActions>
+        <Button onClick={handleGroupRemove} color="secondary">
+          그룹 해제
+        </Button>
         <Button onClick={handleDelete} color="secondary">
           삭제
         </Button>

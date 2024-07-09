@@ -2,14 +2,15 @@ import React from "react";
 import { Box, Button } from "@mui/material";
 import GroupIcon from "@mui/icons-material/Group";
 import DeleteIcon from "@mui/icons-material/Delete";
-import CopyIcon from "@mui/icons-material/FileCopy";
 
 const ContactFuncBtn = ({
-  updateContact,
   deleteContacts,
   designateContactGroup,
   copyContactGroup,
+  showButtons,
 }) => {
+  if (!showButtons) return null;
+
   return (
     <Box
       sx={{
@@ -21,6 +22,7 @@ const ContactFuncBtn = ({
       <Button
         variant="outlined"
         startIcon={<GroupIcon />}
+        onClick={designateContactGroup}
         sx={{
           marginRight: "8px",
           color: "rgba(0, 0, 0, 0.845)",
@@ -32,6 +34,7 @@ const ContactFuncBtn = ({
       <Button
         variant="outlined"
         startIcon={<DeleteIcon />}
+        onClick={deleteContacts}
         sx={{
           marginRight: "8px",
           color: "rgba(0, 0, 0, 0.845)",
@@ -39,17 +42,6 @@ const ContactFuncBtn = ({
         }}
       >
         삭제
-      </Button>
-      <Button
-        variant="outlined"
-        startIcon={<CopyIcon />}
-        sx={{
-          marginRight: "8px",
-          color: "rgba(0, 0, 0, 0.845)",
-          border: "1px solid rgba(0, 0, 0, 0.154)",
-        }}
-      >
-        주소록 복사
       </Button>
     </Box>
   );

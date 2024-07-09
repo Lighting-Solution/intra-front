@@ -10,12 +10,12 @@ import {
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 
-const Filter = ({ title, subTitle, empCount, searchContact }) => {
+const Filter = ({ title, subTitle, empCount, onSearch }) => {
   const [searchField, setSearchField] = useState("all");
   const [searchText, setSearchText] = useState("");
 
   const handleSearch = () => {
-    searchContact(searchField, searchText);
+    onSearch(searchField, searchText);
   };
 
   return (

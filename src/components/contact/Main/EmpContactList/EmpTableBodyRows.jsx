@@ -1,10 +1,9 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
+import React from "react";
 import { TableBody, TableCell, TableRow, Checkbox } from "@mui/material";
 import { stableSort, getComparator } from "../../utils/utils";
 
 const EmpTableBodyRows = ({
-  contactList = [],
+  contactList,
   order,
   orderBy,
   page,
@@ -15,11 +14,11 @@ const EmpTableBodyRows = ({
   selectedColumns,
 }) => {
   const isSelected = (id) => selected.indexOf(id) !== -1;
-  const empList = contactList?.empList || [];
-  const validContactList = Array.isArray(contactList) ? contactList : [];
+  const empList = contactList ? contactList : [];
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - empList.length) : 0;
-  if (validContactList.length === 0) {
+
+  if (empList.length === 0) {
     return (
       <TableBody>
         <TableRow>
@@ -30,15 +29,15 @@ const EmpTableBodyRows = ({
       </TableBody>
     );
   }
+
   return (
     <TableBody>
-      {stableSort(validContactList, getComparator(order, orderBy))
+      {stableSort(empList, getComparator(order, orderBy))
         .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
         .map((row, index) => {
           const isItemSelected = isSelected(row.empId);
           const labelId = `enhanced-table-checkbox-${index}`;
           const uniqueKey = `row-${row.empId}-${index}`;
-
           return (
             <TableRow
               hover
@@ -48,6 +47,7 @@ const EmpTableBodyRows = ({
               tabIndex={-1}
               key={uniqueKey}
               selected={isItemSelected}
+              style={{ cursor: "pointer" }}
             >
               <TableCell padding="checkbox">
                 <Checkbox

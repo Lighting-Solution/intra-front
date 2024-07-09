@@ -11,6 +11,7 @@ function Contact() {
   const [groupId, setGroupId] = useState(0); // 선택한 그룹 PK
   const [titleName, setTitleName] = useState("사내 주소록"); // 선택한 그룹의 상위 주소록
   const [subTitleName, setSubTitleName] = useState("전체 주소록"); // 선택한 그룹의 하위 주소록
+  const [type, setType] = useState("사내");
 
   const [groupList, setGroupList] = useState([]); // 개인 주소록 리스트
   const [departmentList, setDepartmentList] = useState([]); // 사내 주소록 리스트
@@ -27,11 +28,12 @@ function Contact() {
     }
   };
 
-  const fetchContacts = async (groupId, titleName, subTitleName, type) => {
+  const fetchContacts = async (groupId, titleName, subTitleName, typeId) => {
     try {
       let response;
-      switch (type) {
+      switch (typeId) {
         case "사내":
+          setType("사내");
           if (groupId === 0) {
             response = await axios.get(
               "http://localhost:9000/api/v1/intranet/contact/list/all-emp"
@@ -43,6 +45,7 @@ function Contact() {
           }
           break;
         case "개인":
+          setType("개인");
           if (groupId === 0) {
             response = await axios.get(
               `http://localhost:9000/api/v1/intranet/contact/list/all-contact/${id}`
@@ -59,8 +62,6 @@ function Contact() {
           return;
       }
 
-      console.log("Response data: ", response.data);
-
       setContactList(response.data);
       setGroupId(groupId);
       setTitleName(titleName);
@@ -68,6 +69,30 @@ function Contact() {
     } catch (error) {
       console.error("Error fetching contacts:", error);
       navigate("/");
+    }
+  };
+
+  const handleGroupDelete = async (groupId, contactId) => {
+    try {
+      const response = await axios.delete(
+        `http://localhost:9000/api/v1/intranet/contact/contact-group`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "1",
+          },
+          data: { groupId: [groupId], contactId: [contactId] },
+        }
+      );
+
+      if (response.status === 200) {
+        console.log("Group deleted from contact successfully");
+        await fetchContacts(0, titleName, subTitleName, type);
+      } else {
+        console.error("Failed to delete group from contact");
+      }
+    } catch (error) {
+      console.error("Error deleting group from contact:", error);
     }
   };
 
@@ -109,12 +134,14 @@ function Contact() {
       </div>
       <div style={{ width: "80%" }}>
         <MainList
-          id={id}
+          type={type}
           titleName={titleName}
           subTitleName={subTitleName}
           contactList={contactList}
-          setContactList={setContactList}
+          setContactList={fetchContacts}
           groupId={groupId}
+          groups={groupList}
+          onGroupDelete={handleGroupDelete}
         />
       </div>
     </Container>

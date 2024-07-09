@@ -69,10 +69,22 @@ const ColumnSelector = ({ open, onClose, selectedColumns, onChange }) => {
               <Checkbox
                 checked={
                   selectedColumns.includes(column) ||
-                  ["empName", "empMP", "companyName"].includes(column)
+                  [
+                    "empName",
+                    "empMP",
+                    "companyName",
+                    "personalContactName",
+                    "personalContactMP",
+                  ].includes(column)
                 }
                 onChange={(e) => onChange(column, e.target.checked)}
-                disabled={["empName", "empMP", "companyName"].includes(column)}
+                disabled={[
+                  "empName",
+                  "empMP",
+                  "companyName",
+                  "personalContactName",
+                  "personalContactMP",
+                ].includes(column)}
               />
             }
             label={columnNames[column]}

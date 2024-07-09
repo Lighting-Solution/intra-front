@@ -28,7 +28,7 @@ const CreatePersonalGroup = ({ onCreate, onCancel, existingGroupNames }) => {
   return (
     <div>
       <TextField
-        label="Group Name"
+        label="주소록 이름"
         variant="outlined"
         fullWidth
         value={groupName}
