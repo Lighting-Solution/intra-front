@@ -14,6 +14,7 @@ const DigitalApproval = () => {
   const [positionId, setPositionId] = useState(
     localStorage.getItem("positionId")
   );
+
   useEffect(() => {
     if (htmlContent) {
       const container = document.getElementById("html-content-container");
