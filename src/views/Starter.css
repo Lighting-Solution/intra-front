@@ -1,0 +1,76 @@
+.calendar-container {
+    transform: scale(0.8); /* 캘린더 크기 조정 */
+    transform-origin: top left;
+    width: 100%;
+    height: 100%;
+  }
+  
+  .calendar-container .rbc-toolbar {
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  .calendar-container .rbc-btn-group {
+    display: none; /* 이전, 다음 버튼 숨기기 */
+  }
+  
+  .calendar-container .rbc-toolbar-label {
+    font-size: 1.2em; /* 월, 년도 글꼴 크기 조정 */
+    margin: 0 auto;
+  }
+  
+  .calendar-container .rbc-month-view {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+  
+  .calendar-container .rbc-row-bg {
+    display: flex;
+  }
+  
+  .calendar-container .rbc-day-bg {
+    flex: 1;
+    aspect-ratio: 1 / 1;
+    height: auto;
+  }
+  
+  .dashboard-noticeboard {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .dashboard-noticeboard .board-content {
+    padding: 0;
+  }
+  
+  .dashboard-noticeboard .board-list {
+    margin-top: 20px;
+  }
+  
+  .dashboard-noticeboard .board-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  .dashboard-noticeboard .board-item-title {
+    font-size: 16px;
+    color: #333;
+    flex: 1;
+  }
+  
+  .dashboard-noticeboard .board-item-title:hover {
+    text-decoration: underline;
+  }
+  
+  .dashboard-noticeboard .board-item-date,
+  .dashboard-noticeboard .board-item-likes {
+    font-size: 14px;
+    color: #888;
+  }
+  
