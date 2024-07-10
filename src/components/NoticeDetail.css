@@ -1,0 +1,124 @@
+.notice-detail {
+  padding: 20px;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  margin-top: 20px;
+}
+
+.notice-header {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.notice-actions {
+  display: flex;
+}
+
+.action-item {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  margin-left: 10px;
+  font-size: 16px;
+  color: #555;
+}
+
+.action-item:hover {
+  color: #000;
+}
+
+.icon {
+  margin-right: 4px;
+}
+
+.notice-title {
+  margin: 0;
+  font-size: 28px;
+  margin-bottom: 10px;
+  margin-top: -20px;
+}
+
+.divider {
+  border: none;
+  border-top: 2px solid #797676;
+  margin-top: 30px ;
+  margin-bottom: 40px;
+}
+
+.notice-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 16px;
+  color: #888;
+  margin-bottom: 20px;
+}
+
+.notice-date,
+.notice-like {
+  margin-right: 15px;
+}
+
+.notice-content {
+  font-size: 16px;
+  line-height: 1.6;
+  color: #333;
+}
+
+.notice-content p {
+  margin-top: 20px; /* 원하는 margin-top 값으로 설정 */
+}
+
+.like-icon {
+  cursor: pointer;
+  font-size: 24px;
+  color: #e74c3c;
+}
+
+.like-count {
+  margin-left: 5px;
+  font-size: 16px;
+  color: #333;
+}
+
+.notice-footer {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 20px;
+}
+
+.btn-secondary {
+  background-color: #666;
+  border: none;
+  padding: 8px 16px;
+  cursor: pointer;
+  color: #fff;
+}
+
+.btn-secondary:hover {
+  background-color: #444;
+}
+
+/* 다음 공지사항 스타일 */
+.next-notices {
+  margin-top: 40px;
+}
+
+.board-list {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.board-header,
+.board-item {
+  display: flex;
+  padding: 10px 0;
+  border-bottom: 1px solid #cecdcd;
+}
+
+.board-col {
+  flex: 1;
+  text-align: center;
+}
