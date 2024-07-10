@@ -1,21 +1,21 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 
-const AddAttendeeModal = ({ closeModal, onAddAttendee }) => {
+const AddAttendeeModal = ({ closeModal, onAddAttendee, calendar }) => {
   const [openFolders, setOpenFolders] = useState({
-    SERVICE_BUSINESS_DIVISION: false,
-    sbd_webService: false,
-    sbd_consultationService: false,
-    MANAGEMENT_SUPPORT_DIVISION: false,
-    msd_hello: false,
-    msd_money: false,
-    msd_sales: false,
-    SOLUTION_DEVELOPMENT_DIVISION: false,
-    sdd_development_1: false,
-    sdd_development_2: false,
-    sdd_engineer_1: false,
-    sdd_engineer_2: false,
-    sdd_design: false,
+    SERVICE_BUSINESS_DIVISION: false, // 서비스 사업부
+    sbd_webService: false, // 웹 서비스팀
+    sbd_consultationService: false, // 상담 서비스팀
+    MANAGEMENT_SUPPORT_DIVISION: false, // 관리 지원부
+    msd_hello: false, // 인사팀
+    msd_money: false, // 회계팀
+    msd_sales: false, // 영업팀
+    SOLUTION_DEVELOPMENT_DIVISION: false, // 솔루션 개발부
+    sdd_development_1: false, // 개발 1팀
+    sdd_development_2: false, // 개발 2팀
+    sdd_engineer_1: false, // 설계 1팀
+    sdd_engineer_2: false, // 설계 2팀
+    sdd_design: false, // 디자인팀
   });
 
   const [employees, setEmployees] = useState({});
@@ -42,34 +42,34 @@ const AddAttendeeModal = ({ closeModal, onAddAttendee }) => {
     try {
       let team;
       switch (folderKey) {
-        case "sbd_webService":
+        case "웹 서비스팀":
           team = "sbd_webService";
           break;
-        case "sbd_consultationService":
+        case "상담 서비스팀":
           team = "sbd_consultationService";
           break;
-        case "msd_hello":
+        case "인사팀":
           team = "msd_hello";
           break;
-        case "msd_money":
+        case "회계팀":
           team = "msd_money";
           break;
-        case "msd_sales":
+        case "영업팀":
           team = "msd_sales";
           break;
-        case "sdd_development_1":
+        case "개발 1팀":
           team = "sdd_development_1";
           break;
-        case "sdd_development_2":
+        case "개발 2팀":
           team = "sdd_development_2";
           break;
-        case "sdd_engineer_1":
+        case "설계 1팀":
           team = "sdd_engineer_1";
           break;
-        case "sdd_engineer_2":
+        case "설계 2팀":
           team = "sdd_engineer_2";
           break;
-        case "sdd_design":
+        case "디자인팀":
           team = "sdd_design";
           break;
         default:
@@ -88,32 +88,42 @@ const AddAttendeeModal = ({ closeModal, onAddAttendee }) => {
       }
 
       const participantDTO = {
+        participantId: null,
         empDTO: {
           empId: employee.empId,
           empName: employee.empName,
-          // Include other empDTO fields as needed
+          department: {
+            departmentId: employee.department.departmentId,
+            departmentName: employee.department.departmentName,
+          },
         },
         calendarDTO: {
-          // Ensure calendarDTO is populated correctly
-          // For example, if it requires an id or calendarId
-          // calendarId: 'your_calendar_id',
+          calendarId: calendar.calendarId,
+          calendarTitle: calendar.calendarTitle,
+          calendarCreateAt: calendar.calendarCreateAt,
+          calendarContent: calendar.calendarContent,
+          calendarStartAt: calendar.calendarStartAt,
+          calendarEndAt: calendar.calendarEndAt,
         },
-        team: team,
-        employeeName: employeeName,
+        team: employee.department.departmentName,
+        employeeName: employee.empName,
       };
 
+      /*
       const response = await axios.post(
         "http://localhost:9000/api/v1/lighting_solutions/participant/add",
         participantDTO
       );
+      */
 
-      console.log("Participant added successfully:", response.data);
+      //console.log("Participant added successfully:", response.data);
 
+      // 참석자 추가 함수 호출
       onAddAttendee(team, employeeName);
       closeModal();
     } catch (error) {
       console.error("Failed to add participant:", error);
-      // Handle error (e.g., show error message to user)
+      // 에러 처리 로직 추가
     }
   };
 
@@ -126,10 +136,8 @@ const AddAttendeeModal = ({ closeModal, onAddAttendee }) => {
           <div
             key={employee.empId}
             style={styles.file}
-            onClick={() => handleSelect(teamKey, employee.empName)}
+            onClick={() => handleSelect(teamName, employee.empName)}
           >
-            <div style={styles.verticalLine}></div>
-            <div style={styles.horizontalLine}></div>
             {employee.empName}
           </div>
         ))}
@@ -162,7 +170,7 @@ const AddAttendeeModal = ({ closeModal, onAddAttendee }) => {
                   {openFolders.sbd_webService ? "📂" : "📁"} 웹 서비스팀
                 </div>
                 {openFolders.sbd_webService &&
-                  renderEmployees("sbd_webService", "Web Service Team")}
+                  renderEmployees("sbd_webService", "웹 서비스팀")}
                 <div
                   style={styles.folder}
                   onClick={() => toggleFolder("sbd_consultationService")}
@@ -328,6 +336,18 @@ const styles = {
     position: "relative",
     display: "flex",
     alignItems: "center",
+  },
+  branch: {
+    position: "absolute",
+    top: 0,
+    left: -12,
+    height: "100%",
+    borderLeft: "2px solid #888",
+  },
+  employee: {
+    fontSize: 14,
+    marginLeft: 20,
+    marginTop: 5,
   },
   verticalLine: {
     width: 1,

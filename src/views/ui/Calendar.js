@@ -12,8 +12,8 @@ const localizer = momentLocalizer(moment);
 
 const MyCalendar = (props) => {
   const [events, setEvents] = useState([]);
-  const [mainModalIsOpen, setMainModalIsOpen] = useState(false); // Main modal state
-  const [attendeeModalIsOpen, setAttendeeModalIsOpen] = useState(false); // Attendee modal state
+  const [mainModalIsOpen, setMainModalIsOpen] = useState(false);
+  const [attendeeModalIsOpen, setAttendeeModalIsOpen] = useState(false);
   const [newEvent, setNewEvent] = useState({
     id: null,
     title: "",
@@ -21,12 +21,14 @@ const MyCalendar = (props) => {
     start: new Date(),
     end: new Date(),
     attendees: [],
+    createAt: new Date(),
   });
 
   useEffect(() => {
     fetchEvents();
   }, []);
 
+  // 이벤트 상태 업데이트
   const fetchEvents = () => {
     axios
       .get("http://localhost:9000/api/v1/lighting_solutions/calendar/events")
@@ -39,6 +41,7 @@ const MyCalendar = (props) => {
             start: new Date(event.calendarStartAt),
             end: new Date(event.calendarEndAt),
             attendees: event.attendees || [],
+            createAt: new Date(event.calendarCreateAt),
           }))
         );
       })
@@ -47,6 +50,7 @@ const MyCalendar = (props) => {
       });
   };
 
+  // 특정 세부 정보에 newEvent 상태 업데이트, 모달 열기
   const fetchEventDetails = (eventId) => {
     axios
       .get(
@@ -61,8 +65,9 @@ const MyCalendar = (props) => {
           start: new Date(eventData.calendarStartAt),
           end: new Date(eventData.calendarEndAt),
           attendees: eventData.attendees || [],
+          createAt: new Date(eventData.calendarCreateAt),
         });
-        setMainModalIsOpen(true); // Open the edit event modal
+        setMainModalIsOpen(true);
       })
       .catch((error) => {
         console.error(
@@ -72,6 +77,7 @@ const MyCalendar = (props) => {
       });
   };
 
+  // 캘린더 슬롯 선택 시 newEvent 상태 업데이트 및 모달 열기
   const handleSelectSlot = ({ start, end }) => {
     setNewEvent({
       id: null,
@@ -80,31 +86,33 @@ const MyCalendar = (props) => {
       start,
       end,
       attendees: [],
+      createAt: new Date(),
     });
     setMainModalIsOpen(true);
   };
 
+  // 캘린더 이벤트 선택 시 세부 정보 가져오기
   const handleSelectEvent = (event) => {
-    fetchEventDetails(event.id); // Fetch event details including attendees
+    fetchEventDetails(event.id);
   };
 
+  // 새로운 이벤트 추가
   const handleAddEvent = () => {
-    // Convert start and end dates to ISO strings in Korea Standard Time (KST)
-    const startKST = moment(newEvent.start)
-      .tz("Asia/Seoul")
-      .format("YYYY-MM-DDTHH:mm:ss");
-    const endKST = moment(newEvent.end)
-      .tz("Asia/Seoul")
-      .format("YYYY-MM-DDTHH:mm:ss");
-    console.log(startKST);
-    console.log(endKST);
+    const startKST = moment(newEvent.start).tz("Asia/Seoul").toISOString();
+    const endKST = moment(newEvent.end).tz("Asia/Seoul").toISOString();
+    const attendees = newEvent.attendees || [];
+
     axios
       .post("http://localhost:9000/api/v1/lighting_solutions/calendar/events", {
+        calendarId: newEvent.id,
         calendarTitle: newEvent.title,
         calendarContent: newEvent.content,
         calendarStartAt: startKST,
         calendarEndAt: endKST,
-        attendees: newEvent.attendees,
+        calendarCreateAt: moment(newEvent.createAt)
+          .tz("Asia/Seoul")
+          .toISOString(),
+        attendees: attendees,
       })
       .then((response) => {
         const newEventData = response.data;
@@ -117,8 +125,11 @@ const MyCalendar = (props) => {
             start: new Date(newEventData.calendarStartAt),
             end: new Date(newEventData.calendarEndAt),
             attendees: newEventData.attendees || [],
+            createAt: new Date(newEventData.calendarCreateAt),
           },
         ]);
+        // 참가자 추가 요청
+        addAttendeesToEvent(newEventData.calendarId, attendees);
         setMainModalIsOpen(false);
         clearNewEventState();
       })
@@ -127,11 +138,11 @@ const MyCalendar = (props) => {
       });
   };
 
+  // 이벤트 업데이트
   const handleUpdateEvent = () => {
     const startKST = moment(newEvent.start).tz("Asia/Seoul").toISOString();
     const endKST = moment(newEvent.end).tz("Asia/Seoul").toISOString();
-    console.log(startKST);
-    console.log(endKST);
+
     axios
       .put(
         `http://localhost:9000/api/v1/lighting_solutions/calendar/events/${newEvent.id}`,
@@ -141,6 +152,9 @@ const MyCalendar = (props) => {
           calendarStartAt: startKST,
           calendarEndAt: endKST,
           attendees: newEvent.attendees,
+          calendarCreateAt: moment(newEvent.createAt)
+            .tz("Asia/Seoul")
+            .toISOString(),
         }
       )
       .then((response) => {
@@ -154,6 +168,7 @@ const MyCalendar = (props) => {
                 start: new Date(updatedEventData.calendarStartAt),
                 end: new Date(updatedEventData.calendarEndAt),
                 attendees: updatedEventData.attendees || [],
+                createAt: new Date(updatedEventData.calendarCreateAt),
               }
             : event
         );
@@ -166,6 +181,7 @@ const MyCalendar = (props) => {
       });
   };
 
+  // 이벤트 삭제
   const handleDeleteEvent = () => {
     axios
       .delete(
@@ -184,15 +200,39 @@ const MyCalendar = (props) => {
       });
   };
 
-  const handleAddAttendee = (department, employee) => {
-    const newAttendee = { department, employee };
+  // 참가자 추가 요청
+  const addAttendeesToEvent = (eventId, attendees) => {
+    const attendeeRequests = attendees.map((attendee) =>
+      axios.post(
+        "http://localhost:9000/api/v1/lighting_solutions/calendar/attendees",
+        {
+          eventId: eventId,
+          team: attendee.team,
+          employee: attendee.employee,
+        }
+      )
+    );
+
+    Promise.all(attendeeRequests)
+      .then(() => {
+        fetchEvents(); // 참가자 추가 후 이벤트 목록 업데이트
+      })
+      .catch((error) => {
+        console.error("There was an error adding the attendees!", error);
+      });
+  };
+
+  // 참가자 추가
+  const handleAddAttendee = (team, employee) => {
+    const newAttendee = { team, employee };
     setNewEvent((prevEvent) => ({
       ...prevEvent,
       attendees: [...prevEvent.attendees, newAttendee],
     }));
-    setAttendeeModalIsOpen(false); // Close the attendee selection modal
+    setAttendeeModalIsOpen(false);
   };
 
+  // 참가자 제거
   const handleRemoveAttendee = (attendeeIndex) => {
     const updatedAttendees = [...newEvent.attendees];
     updatedAttendees.splice(attendeeIndex, 1);
@@ -202,6 +242,7 @@ const MyCalendar = (props) => {
     }));
   };
 
+  // 초기화
   const clearNewEventState = () => {
     setNewEvent({
       id: null,
@@ -210,6 +251,7 @@ const MyCalendar = (props) => {
       start: new Date(),
       end: new Date(),
       attendees: [],
+      createAt: new Date(),
     });
   };
 
@@ -226,13 +268,12 @@ const MyCalendar = (props) => {
         onSelectEvent={handleSelectEvent}
         style={{ height: "86vh", background: "white" }}
       />
-      {/* Main Modal for Add/Edit Event */}
       <Modal
         isOpen={mainModalIsOpen}
         onRequestClose={() => setMainModalIsOpen(false)}
         contentLabel={newEvent.id ? "Edit Event" : "Add Event"}
         className="custom-modal"
-        overlayClassName="custom-overlay" // This is where you define the class for the overlay
+        overlayClassName="custom-overlay"
       >
         <h2>{newEvent.id ? "Edit Event" : "Add Event"}</h2>
         <form
@@ -293,7 +334,7 @@ const MyCalendar = (props) => {
             <label>Attendees</label>
             {newEvent.attendees.map((attendee, index) => (
               <div key={index} className="attendee-item">
-                <span>{`${attendee.department} - ${attendee.employee}`}</span>
+                <span>{`${attendee.team} - ${attendee.employee}`}</span>
                 <button
                   type="button"
                   className="btn btn-sm ml-2"
@@ -306,7 +347,7 @@ const MyCalendar = (props) => {
             <button
               type="button"
               className="btn btn-sm btn-primary mt-2"
-              onClick={() => setAttendeeModalIsOpen(true)} // Open modal for attendee selection
+              onClick={() => setAttendeeModalIsOpen(true)}
             >
               Add Attendee
             </button>
@@ -334,19 +375,26 @@ const MyCalendar = (props) => {
           </div>
         </form>
       </Modal>
-      {/* Modal for Add Attendee */}
       <Modal
         isOpen={attendeeModalIsOpen}
         onRequestClose={() => setAttendeeModalIsOpen(false)}
         contentLabel="Add Attendee"
         className="attendee-modal"
-        overlayClassName="custom-overlay" // This is where you define the class for the overlay
+        overlayClassName="custom-overlay"
       >
         <h2>Add Attendee</h2>
         <AddAttendeeModal
           isOpen={attendeeModalIsOpen}
           closeModal={() => setAttendeeModalIsOpen(false)}
           onAddAttendee={handleAddAttendee}
+          calendar={{
+            calendarId: newEvent.id,
+            calendarTitle: newEvent.title,
+            calendarCreateAt: newEvent.createAt,
+            calendarContent: newEvent.content,
+            calendarStartAt: newEvent.start,
+            calendarEndAt: newEvent.end,
+          }}
         />
         <button
           type="button"
