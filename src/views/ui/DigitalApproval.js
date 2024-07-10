@@ -10,10 +10,8 @@ const DigitalApproval = () => {
   const [htmlContent, setHtmlContent] = useState("");
   const [status, setStatus] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false); // State for modal
-  const [empId, setEmpId] = useState(localStorage.getItem("empId"));
-  const [positionId, setPositionId] = useState(
-    localStorage.getItem("positionId")
-  );
+  const [empId, setEmpId] = useState(1);
+  const [positionId, setPositionId] = useState(5);
 
   useEffect(() => {
     if (htmlContent) {
@@ -54,12 +52,7 @@ const DigitalApproval = () => {
     setStatus(status);
     try {
       const response = await axios.get(
-        `http://localhost:9002/api/v1/lighting_solutions/security/digital/approval/form?status=${status}`,
-        {
-          headers: {
-            Authorization: localStorage.getItem("authToken"),
-          },
-        }
+        `http://localhost:9000/api/v1/lighting_solutions/digital/approval/form?status=${status}`
       );
       setHtmlContent(response.data);
     } catch (error) {
@@ -217,7 +210,7 @@ const DigitalApproval = () => {
       const encodedHtmlContent = encodeURIComponent(htmlContent);
 
       const response = await axios.post(
-        "http://localhost:9002/api/v1/lighting_solutions/security/digital/approval/request",
+        "http://localhost:9000/api/v1/lighting_solutions/digital/approval/request",
         {
           html: encodedHtmlContent,
           status: status,
@@ -226,7 +219,6 @@ const DigitalApproval = () => {
         {
           headers: {
             "Content-Type": "application/json",
-            Authorization: localStorage.getItem("authToken"),
           },
         }
       );
@@ -298,10 +290,7 @@ const DigitalApproval = () => {
           <div className="tables-section">
             <Row>
               <Col lg="12">
-                <PendingTable
-                  LoginEmpId={localStorage.getItem("empId")}
-                  LoginPositionId={localStorage.getItem("positionId")}
-                />
+                <PendingTable LoginEmpId={empId} LoginPositionId={positionId} />
               </Col>
             </Row>
             <Row>

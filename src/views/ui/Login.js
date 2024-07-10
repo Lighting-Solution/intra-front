@@ -11,26 +11,25 @@ import Button from "@mui/joy/Button";
 import Link from "@mui/joy/Link";
 
 const Login = () => {
-  const [accountId, setAccountId] = useState("user1");
-  const [accountPw, setAccountPw] = useState("user1password");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
   const navigate = useNavigate();
+
+  useEffect(() => {
+    // 로그인 페이지가 로드될 때마다 localStorage 초기화
+    localStorage.removeItem("authToken");
+  }, []);
 
   const handleLogin = (e) => {
     e.preventDefault();
-    const apiUrl =
-      "http://localhost:9002/api/v1/lighting_solutions/security/login";
-    const postData = { accountId, accountPw };
+    const apiUrl = "http://localhost:8000/login";
+    const postData = { username, password };
 
     axios
       .post(apiUrl, postData)
       .then((response) => {
         localStorage.setItem("authToken", response.data.token);
-        localStorage.setItem("empId", response.data.empId);
-        localStorage.setItem("positionId", response.data.positionId);
-        localStorage.setItem("empName", response.data.empName);
-        localStorage.setItem("departmentId", response.data.departmentId);
-        console.log(localStorage.getItem("positionId"));
-        console.log(localStorage.getItem("departmentId"));
+        console.log(response.data.token);
         navigate("/starter");
       })
       .catch((error) => {
@@ -64,16 +63,16 @@ const Login = () => {
           <FormLabel>Username</FormLabel>
           <Input
             type="text"
-            value={accountId}
-            onChange={(e) => setAccountId(e.target.value)}
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
           />
         </FormControl>
         <FormControl>
           <FormLabel>Password</FormLabel>
           <Input
             type="password"
-            value={accountPw}
-            onChange={(e) => setAccountPw(e.target.value)}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
           />
         </FormControl>
         <Button type="submit" sx={{ mt: 1 /* margin top */ }}>

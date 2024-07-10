@@ -27,18 +27,6 @@ const Header = () => {
   const showMobilemenu = () => {
     document.getElementById("sidebarArea").classList.toggle("showSidebar");
   };
-
-  const handleLogout = () => {
-    // 로컬 스토리지에서 사용자 데이터 삭제
-    localStorage.removeItem("authToken");
-    localStorage.removeItem("empId");
-    localStorage.removeItem("positionId");
-    localStorage.removeItem("empName");
-    localStorage.removeItem("departmentId");
-
-    // 로그인 페이지로 리다이렉트
-    window.location.href = "/login";
-  };
   return (
     <Navbar color="primary" dark expand="md">
       <div className="d-flex align-items-center">
@@ -108,7 +96,7 @@ const Header = () => {
             <DropdownItem divider />
             <DropdownItem>My Balance</DropdownItem>
             <DropdownItem>Inbox</DropdownItem>
-            <DropdownItem onClick={handleLogout}>Logout</DropdownItem>
+            <DropdownItem>Logout</DropdownItem>
           </DropdownMenu>
         </Dropdown>
       </Collapse>
