@@ -1,16 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import "./NoticeBoard.css"; // Importing the CSS file for styling
+import "./NoticeBoardUser.css";
 import ReactPaginate from "react-paginate";
-import { FaPen, FaTrash, FaBullhorn, FaHeart } from "react-icons/fa"; // FaHeart 아이콘 추가
 import { BsFillMegaphoneFill } from "react-icons/bs"; // Importing the icon
+import { FaHeart } from "react-icons/fa"; // Importing the FaHeart icon
 import TextField from "@mui/material/TextField";
 
-const NoticeBoard = () => {
+const NoticeBoardUser = () => {
   const [notices, setNotices] = useState([]);
   const [currentPage, setCurrentPage] = useState(0);
-  const [selectedNotices, setSelectedNotices] = useState([]); // 선택된 공지사항 ID 목록
   const [searchTerm, setSearchTerm] = useState(""); // 검색어 상태
   const [sortOrder, setSortOrder] = useState("latest"); // 정렬 상태
   const noticesPerPage = 10;
@@ -71,42 +70,6 @@ const NoticeBoard = () => {
     setCurrentPage(selected);
   };
 
-  const handleWriteClick = () => {
-    navigate("write", {
-      state: { accountId: "admin", accountPw: "1234" },
-    });
-  };
-
-  const handleCheckboxChange = (noticeId) => {
-    if (selectedNotices.includes(noticeId)) {
-      setSelectedNotices(selectedNotices.filter((id) => id !== noticeId));
-    } else {
-      setSelectedNotices([...selectedNotices, noticeId]);
-    }
-  };
-
-  const handleDeleteClick = async () => {
-    if (window.confirm("선택한 공지를 삭제하시겠습니까?")) {
-      try {
-        await Promise.all(
-          selectedNotices.map((id) =>
-            axios.delete(`http://localhost:9000/api/notices/delete/${id}`, {
-              params: { accountId: "admin", accountPw: "1234" },
-            })
-          )
-        );
-        setNotices(
-          notices.filter(
-            (notice) => !selectedNotices.includes(notice.noticePostId)
-          )
-        );
-        setSelectedNotices([]);
-      } catch (error) {
-        console.error("There was an error deleting the notices!", error);
-      }
-    }
-  };
-
   const formatDateTime = (dateTimeString) => {
     const date = new Date(dateTimeString);
 
@@ -124,65 +87,10 @@ const NoticeBoard = () => {
     return formattedDateTime;
   };
 
-  const handleImportantClick = async () => {
-    if (window.confirm("선택한 공지를 중요 공지로 등록하시겠습니까?")) {
-      try {
-        await Promise.all(
-          selectedNotices.map((id) => {
-            const formData = new FormData();
-            formData.append(
-              "noticePostDTO",
-              new Blob(
-                [
-                  JSON.stringify({
-                    noticePostId: id,
-                    importantNotice: true,
-                  }),
-                ],
-                { type: "application/json" }
-              )
-            );
-            formData.append("accountId", "admin");
-            formData.append("accountPw", "1234");
-
-            return axios.put(
-              `http://localhost:9000/api/notices/update/${id}`,
-              formData,
-              {
-                headers: { "Content-Type": "multipart/form-data" },
-              }
-            );
-          })
-        );
-        setNotices(
-          notices.map((notice) =>
-            selectedNotices.includes(notice.noticePostId)
-              ? { ...notice, importantNotice: true }
-              : notice
-          )
-        );
-        setSelectedNotices([]);
-      } catch (error) {
-        console.error("There was an error updating the notices!", error);
-      }
-    }
-  };
-
   return (
     <div className="board-content">
       <h1>사내 공지</h1>
       <div className="board-controls">
-        <div className="board-actions">
-          <button className="icon-button" onClick={handleWriteClick}>
-            <FaPen /> 새 글쓰기
-          </button>
-          <button className="icon-button" onClick={handleDeleteClick}>
-            <FaTrash /> 삭제
-          </button>
-          <button className="icon-button" onClick={handleImportantClick}>
-            <FaBullhorn /> 공지로 등록
-          </button>
-        </div>
         <div className="board-filters">
           <select
             className="filter-select"
@@ -205,7 +113,6 @@ const NoticeBoard = () => {
       <div className="fixed-header">
         <div className="board-list">
           <div className="board-header">
-            <div className="board-col">선택</div>
             <div className="board-col">번호</div>
             <div className="board-col">제목</div>
             <div className="board-col">작성일</div>
@@ -219,13 +126,6 @@ const NoticeBoard = () => {
           {/* 공지사항 목록 출력 */}
           {currentNotices.map((notice, index) => (
             <div key={notice.noticePostId} className="board-item">
-              <div className="board-col">
-                <input
-                  type="checkbox"
-                  checked={selectedNotices.includes(notice.noticePostId)}
-                  onChange={() => handleCheckboxChange(notice.noticePostId)}
-                />
-              </div>
               <div className="board-col">
                 {notice.importantNotice ? (
                   <BsFillMegaphoneFill style={{ color: "orange" }} />
@@ -272,4 +172,4 @@ const NoticeBoard = () => {
   );
 };
 
-export default NoticeBoard;
+export default NoticeBoardUser;

@@ -1,4 +1,4 @@
-.notice-detail {
+.freepost-detail {
   padding: 20px;
   background-color: #fff;
   border: 1px solid #ddd;
@@ -6,13 +6,13 @@
   margin-top: 20px;
 }
 
-.notice-header {
+.freepost-header {
   display: flex;
   justify-content: flex-end;
   align-items: center;
 }
 
-.notice-actions {
+.freepost-actions {
   display: flex;
 }
 
@@ -21,7 +21,7 @@
   align-items: center;
   cursor: pointer;
   margin-left: 10px;
-  font-size: 16px;
+  font-size: 16px; /* 아이콘과 텍스트 크기를 키움 */
   color: #555;
 }
 
@@ -33,47 +33,44 @@
   margin-right: 4px;
 }
 
-.notice-title {
+.freepost-title {
   margin: 0;
-  font-size: 28px;
-  margin-bottom: 10px;
-  margin-top: -20px;
+  font-size: 28px; /* 제목 크기를 키움 */
+  margin-bottom: 10px; /* 제목과 작성자 사이 간격 추가 */
+  margin-top: -20px; /* 제목 위치를 더 위로 올림 */
 }
 
 .divider {
   border: none;
-  border-top: 2px solid #797676;
-  margin-top: 30px ;
+  border-top: 2px solid #797676; /* 구분선을 더 진하게 */
+  margin-top:30px ;
   margin-bottom: 40px;
 }
 
-.notice-meta {
+.freepost-meta {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 16px;
+  font-size: 16px; /* 메타 정보 글씨 크기 키움 */
   color: #888;
   margin-bottom: 20px;
 }
 
-.notice-date,
-.notice-like {
+.freepost-author,
+.freepost-date,
+.freepost-like {
   margin-right: 15px;
 }
 
-.notice-content {
+.freepost-content {
   font-size: 16px;
-  line-height: 1.6;
+  line-height: 6;
   color: #333;
-}
-
-.notice-content p {
-  margin-top: 20px; /* 원하는 margin-top 값으로 설정 */
 }
 
 .like-icon {
   cursor: pointer;
-  font-size: 24px;
+  font-size: 24px; /* 좋아요 아이콘 크기 키움 */
   color: #e74c3c;
 }
 
@@ -83,10 +80,10 @@
   color: #333;
 }
 
-.notice-footer {
+.freepost-footer {
   display: flex;
-  justify-content: flex-end;
-  margin-top: 20px;
+  justify-content: flex-end; /* 버튼을 우측으로 옮기기 */
+  margin-top: 70px;
 }
 
 .btn-secondary {
@@ -94,31 +91,9 @@
   border: none;
   padding: 8px 16px;
   cursor: pointer;
-  color: #fff;
+  color: #fff; /* 버튼 텍스트 색상 흰색으로 */
 }
 
 .btn-secondary:hover {
   background-color: #444;
-}
-
-/* 다음 공지사항 스타일 */
-.next-notices {
-  margin-top: 40px;
-}
-
-.board-list {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.board-header,
-.board-item {
-  display: flex;
-  padding: 10px 0;
-  border-bottom: 1px solid #cecdcd;
-}
-
-.board-col {
-  flex: 1;
-  text-align: center;
 }

@@ -184,7 +184,7 @@ class MyUploadAdapter {
             .post("http://localhost:9000/api/files/upload", data)
             .then((response) => {
               resolve({
-                default: response.data,
+                default: `http://localhost:9000/uploads/${response.data}`,
               });
             })
             .catch((error) => {

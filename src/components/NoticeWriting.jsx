@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { CKEditor } from "@ckeditor/ckeditor5-react";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import "./NoticeWriting.css";
 
@@ -11,6 +11,8 @@ const NoticeWriting = () => {
   const [isNotice, setIsNotice] = useState(false);
   const [file, setFile] = useState(null);
   const navigate = useNavigate();
+  const location = useLocation();
+  const { accountId, accountPw } = location.state || {};
 
   const handleTitleChange = (e) => {
     setTitle(e.target.value);
@@ -27,6 +29,11 @@ const NoticeWriting = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (accountId !== "admin" || accountPw !== "1234") {
+      alert("권한이 없습니다.");
+      return;
+    }
 
     const formData = new FormData();
     formData.append(
@@ -48,12 +55,13 @@ const NoticeWriting = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:9000/api/notices/create?accountId=admin&accountPw=1234",
+        "http://localhost:9000/api/notices/create",
         formData,
         {
           headers: {
             "Content-Type": "multipart/form-data",
           },
+          params: { accountId, accountPw },
         }
       );
       console.log(response.data);
@@ -98,19 +106,6 @@ const NoticeWriting = () => {
               onChange={handleContentChange}
               config={{
                 extraPlugins: [MyCustomUploadAdapterPlugin],
-                image: {
-                  toolbar: [
-                    "imageTextAlternative",
-                    "|",
-                    "imageStyle:full",
-                    "imageStyle:side",
-                    "|",
-                    "imageResize:original",
-                    "imageResize:50",
-                    "imageResize:75",
-                    "imageResize:100",
-                  ],
-                },
               }}
               className="ckeditor"
             />

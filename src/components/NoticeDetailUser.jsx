@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { FaEdit, FaTrashAlt, FaHeart } from "react-icons/fa";
-import "./NoticeDetail.css";
+import { FaHeart } from "react-icons/fa";
+import "./NoticeDetailUser.css";
 
-const NoticeDetail = () => {
+const NoticeDetailUser = () => {
   const { id } = useParams();
   const [notice, setNotice] = useState(null);
   const [nextNotices, setNextNotices] = useState([]);
@@ -45,21 +45,6 @@ const NoticeDetail = () => {
     fetchNextNotices();
   }, [id]);
 
-  const handleEdit = () => {
-    navigate(`/notice/edit/${id}`);
-  };
-
-  const handleDelete = async () => {
-    try {
-      await axios.delete(`http://localhost:9000/api/notices/delete/${id}`, {
-        params: { accountId: "admin", accountPw: "1234" },
-      });
-      navigate("/notice");
-    } catch (error) {
-      console.error("There was an error deleting the notice!", error);
-    }
-  };
-
   const formatDateTime = (dateTimeString) => {
     const date = new Date(dateTimeString);
 
@@ -99,50 +84,38 @@ const NoticeDetail = () => {
 
   return (
     <div className="notice-detail">
-      <div className="notice-header">
-        <div className="notice-actions">
-          <div className="action-item" onClick={handleEdit}>
-            <FaEdit className="icon" />
-            <span>수정</span>
-          </div>
-          <div className="action-item" onClick={handleDelete}>
-            <FaTrashAlt className="icon" />
-            <span>삭제</span>
-          </div>
-        </div>
-      </div>
-      <h1 className="notice-title">{notice.noticeTitle}</h1>
+      <h1>{notice.noticeTitle}</h1>
       <div className="notice-meta">
-        <span className="notice-date">
+        <span>
           {formatDateTime(notice.noticeUpdatedAt || notice.noticeCreatedAt) ||
             "N/A"}
         </span>
-        <div className="notice-like">
-          <FaHeart className="like-icon" onClick={handleLike} title="좋아요" />
-          <span className="like-count">{notice.noticeGood}</span>
-        </div>
       </div>
       <hr className="divider" />
-      <div className="notice-content">
-        <div dangerouslySetInnerHTML={{ __html: notice.noticeContent }} />
-        {notice.files && notice.files.length > 0 && (
-          <div className="notice-files">
-            {notice.files.map((file) => (
-              <div key={file.fileId}>
-                <a
-                  href={`http://localhost:9000/uploads/${file.filePath}`}
-                  download
-                >
-                  {file.fileName}
-                </a>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
+      {notice.files && notice.files.length > 0 && (
+        <div className="notice-files">
+          {notice.files.map((file) => (
+            <div key={file.fileId}>
+              <a
+                href={`http://localhost:9000/uploads/${file.filePath}`}
+                download
+              >
+                {file.fileName}
+              </a>
+            </div>
+          ))}
+        </div>
+      )}
+      <div
+        className="notice-content"
+        dangerouslySetInnerHTML={{ __html: notice.noticeContent }}
+      />
       <div className="notice-footer">
+        <button onClick={handleLike} className="btn btn-success">
+          좋아요 {notice.noticeGood}
+        </button>
         <button onClick={handleBack} className="btn btn-secondary">
-          리스트로
+          뒤로가기
         </button>
       </div>
       <hr className="divider" />
@@ -175,4 +148,4 @@ const NoticeDetail = () => {
   );
 };
 
-export default NoticeDetail;
+export default NoticeDetailUser;
