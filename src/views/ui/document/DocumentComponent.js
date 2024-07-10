@@ -10,7 +10,7 @@ const DocumentComponent = () => {
   const [file, setFile] = useState(null);
   const [category, setCategory] = useState('');
   const [writerEmpId, setWriterEmpId] = useState('');
-  const [currentEmpId, setCurrentEmpId] = useState(1); // 예시를 위한 empId 값 설정
+  const [currentEmpId, setCurrentEmpId] = useState(1); // 예시를 위한 empId설정 수정해야함ㅋ
   const [page, setPage] = useState(0);
   const [size, setSize] = useState(10);
   const [totalPages, setTotalPages] = useState(0);
@@ -21,10 +21,10 @@ const DocumentComponent = () => {
     console.log(`${categoryName} clicked`);
     setSelectedCategory(categoryName);
     setPage(0); // 카테고리 변경 시 첫 페이지로 초기화
-    fetchDocuments(categoryName, 0, size);
+    fetchDocuments(categoryName, page, size);
   };
 
-  const fetchDocuments = async (categoryName, page, size) => {
+  const fetchDocuments = async (categoryName, page = 0, size) => {
     try {
       const response = await fetch('http://localhost:9000/document/api/docsList', {
         method: 'POST',
@@ -53,7 +53,6 @@ const DocumentComponent = () => {
     formData.append('file', file);
     formData.append('category', category);
     formData.append('writerEmpId', currentEmpId); // 로그인한 유저의 아이디를 넣기
-    
 
     try {
       const response = await fetch('http://localhost:9000/document/api/creation', {
@@ -99,17 +98,6 @@ const DocumentComponent = () => {
         </div>
       </div>
       <div className="document-main">
-        <div className="document-header">
-          <h2>내부 프로젝트 - 문서함</h2>
-          <ul>
-            <li>카테고리별로 구분하는 기능</li>
-            <li>검색기능</li>
-            <li>페이징기능</li>
-            <li>날짜 조회 기능</li>
-            <li>페이징 갯수 선택 기능(선택)</li>
-            <li>보존기간 후 삭제(선택)</li>
-          </ul>
-        </div>
         <table className="document-list">
           <thead>
             <tr>
@@ -154,7 +142,7 @@ const DocumentComponent = () => {
                 <input type="file" onChange={handleFileChange} />
               </div>
               <div className="form-group">
-              <label>Category:</label>
+                <label>Category:</label>
                 <select value={category} onChange={(e) => setCategory(e.target.value)}>
                   <option value="">Select Category</option>
                   <option value="service">서비스사업부</option>
