@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './DocumentComponent.css';
 import { useNavigate } from 'react-router-dom';
 
@@ -14,24 +14,32 @@ const DocumentComponent = () => {
   const [page, setPage] = useState(0);
   const [size, setSize] = useState(10);
   const [totalPages, setTotalPages] = useState(0);
-  const [selectedCategory, setSelectedCategory] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('public');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [searchType, setSearchType] = useState('title'); // 검색 조건 상태 추가
   const navigate = useNavigate();
 
+  // 컴포넌트가 불러와질 때 호출되는 함수 -> 공통 문서를 가져오겠다
+  useEffect(() => {
+    fetchDocuments('public', null, null, 0, size);
+  }, []);
+
+  // 사이드바 클릭 시 동작하는 코드
   const handleCategoryClick = async (categoryName) => {
     console.log(`${categoryName} clicked`);
     setSelectedCategory(categoryName);
     setPage(0); // 카테고리 변경 시 첫 페이지로 초기화
-    fetchDocuments(categoryName, page, size);
+    fetchDocuments(categoryName, null, null, 0, size);
   };
 
-  const fetchDocuments = async (categoryName, page = 0, size) => {
+  const fetchDocuments = async (categoryName, searchTerm, searchType, page, size) => {
     try {
       const response = await fetch('http://localhost:9000/document/api/docsList', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ empId: currentEmpId, categoryName, page, size })
+        body: JSON.stringify({ empId: currentEmpId, categoryName, searchTerm, searchType, page, size })
       });
       const data = await response.json();
       setDocuments(data.content);
@@ -70,7 +78,7 @@ const DocumentComponent = () => {
         setWriterEmpId('');
         // 새로 등록된 문서를 포함하여 목록을 다시 로드
         if (selectedCategory) {
-          fetchDocuments(selectedCategory, page, size);
+          fetchDocuments(selectedCategory, searchTerm, searchType, page, size);
         }
       } else {
         console.error('Error submitting document');
@@ -82,8 +90,26 @@ const DocumentComponent = () => {
 
   const handlePageChange = (newPage) => {
     setPage(newPage);
-    fetchDocuments(selectedCategory, newPage, size);
+    fetchDocuments(selectedCategory, searchTerm, searchType, newPage, size);
   };
+
+  const handleSearchTermChange = (e) => {
+    setSearchTerm(e.target.value);
+  };
+
+  const handleSearchTypeChange = (e) => {
+    setSearchType(e.target.value);
+  };
+
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+    fetchDocuments(selectedCategory ,searchTerm, searchType, 0, size);
+  };
+
+  const handleSearchCategoryType = (e) => {
+    e.preventDefault();
+    setSelectedCategory(e.target.value);
+  }
 
   return (
     <div className="document-component">
@@ -98,6 +124,45 @@ const DocumentComponent = () => {
         </div>
       </div>
       <div className="document-main">
+        <div className="document-header">
+         {/* 검색하는 부분 */}
+          <form onSubmit={handleSearchSubmit}>
+          <select value={selectedCategory} onChange={handleSearchCategoryType}> {/* 화면에 보이는 부분 */}
+              <option value="public">공통</option>
+              <option value="service">서비스</option>
+              <option value="manage">관리</option>
+              <option value="solution">솔루션</option>
+              <option value="approval">전자결재</option>
+            </select>
+            <select value={searchType} onChange={handleSearchTypeChange}>
+              <option value="title">제목</option>
+              <option value="writer">작성자</option>
+              <option value="date">기간</option>
+            </select>
+            {searchType !== 'date' ? (
+              <input
+                type="text"
+                placeholder="검색어를 입력하세요"
+                value={searchTerm}
+                onChange={handleSearchTermChange}
+              />
+            ) : (
+              <div>
+                <input
+                  type="date"
+                  value={searchTerm.startDate || ''}
+                  onChange={e => setSearchTerm({ ...searchTerm, startDate: e.target.value })}
+                />
+                <input
+                  type="date"
+                  value={searchTerm.endDate || ''}
+                  onChange={e => setSearchTerm({ ...searchTerm, endDate: e.target.value })}
+                />
+              </div>
+            )}
+            <button type="submit">검색</button>
+          </form>
+        </div>
         <table className="document-list">
           <thead>
             <tr>
