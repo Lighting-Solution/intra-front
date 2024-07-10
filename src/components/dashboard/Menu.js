@@ -1,5 +1,8 @@
+// components/Menu.js
+
 import React from "react";
 import { BiCoffee, BiFoodMenu, BiDish } from "react-icons/bi";
+
 const Menu = () => {
   const weeklyMenu = [
     {
@@ -28,6 +31,7 @@ const Menu = () => {
       icon: <BiFoodMenu size={60} />,
     },
   ];
+
   return (
     <div className="mt-4">
       <h4 className="mb-3">주간 식단표</h4>
@@ -54,4 +58,5 @@ const Menu = () => {
     </div>
   );
 };
+
 export default Menu;
