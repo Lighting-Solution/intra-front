@@ -13,7 +13,6 @@ import {
 
 const GroupSelectContact = ({ open, onClose, groups, onConfirm }) => {
   const [selectedGroups, setSelectedGroups] = useState([]);
-
   useEffect(() => {
     if (!open) {
       setSelectedGroups([]); // 모달 창이 닫힐 때 선택 상태 초기화

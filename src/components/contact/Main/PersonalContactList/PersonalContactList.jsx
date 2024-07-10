@@ -16,6 +16,7 @@ const PersonalContactList = ({
   designateContactGroup,
   copyContactGroup,
   onGroupDelete,
+  currentGroupId,
 }) => {
   const { selected, setSelected } = selectedState;
   const [order, setOrder] = useState("asc");
@@ -111,8 +112,8 @@ const PersonalContactList = ({
     updateContact(updatedContact);
   };
 
-  const handleDelete = () => {
-    deleteContacts();
+  const handleDelete = (contactId) => {
+    deleteContacts(contactId);
   };
 
   return (
@@ -184,6 +185,7 @@ const PersonalContactList = ({
           onSave={handleSave}
           onDelete={handleDelete}
           onGroupDelete={onGroupDelete}
+          currentGroupId={currentGroupId}
         />
       )}
     </Box>
