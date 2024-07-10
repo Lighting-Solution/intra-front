@@ -31,7 +31,7 @@ const MainList = ({
       let response;
       if (selected && selected.length !== 0) {
         response = await axios.delete(
-          `http://localhost:9000/api/v1/intranet/contact/personal-contact`,
+          `http://localhost:9000/api/v1/lighting_solutions/contact/personal-contact`,
           {
             headers: {
               "Content-Type": "application/json",
@@ -42,7 +42,7 @@ const MainList = ({
         );
       } else {
         response = await axios.delete(
-          `http://localhost:9000/api/v1/intranet/contact/personal-contact`,
+          `http://localhost:9000/api/v1/lighting_solutions/contact/personal-contact`,
           {
             headers: {
               "Content-Type": "application/json",
@@ -68,7 +68,7 @@ const MainList = ({
   const designateContactGroup = async (groupIds) => {
     try {
       const response = await axios.post(
-        `http://localhost:9000/api/v1/intranet/contact/contact-group`,
+        `http://localhost:9000/api/v1/lighting_solutions/contact/contact-group`,
         { groupId: groupIds, contactId: selected },
         {
           headers: {
@@ -93,7 +93,7 @@ const MainList = ({
   const updateContact = async (editContact) => {
     try {
       const response = await axios.put(
-        `http://localhost:9000/api/v1/intranet/contact/personal-contact`,
+        `http://localhost:9000/api/v1/lighting_solutions/contact/personal-contact`,
         editContact,
         {
           headers: {

@@ -85,7 +85,7 @@ const GroupList = ({
   const handleCreateGroup = async (groupName) => {
     try {
       const response = await axios.post(
-        `http://localhost:9000/api/v1/intranet/contact/personal-group`,
+        `http://localhost:9000/api/v1/lighting_solutions/contact/personal-group`,
         {
           empId: id,
           personalGroupName: groupName,
@@ -111,7 +111,7 @@ const GroupList = ({
   const handleCreateContact = async (contact) => {
     try {
       const response = await axios.post(
-        `http://localhost:9000/api/v1/intranet/contact/personal-contact`,
+        `http://localhost:9000/api/v1/lighting_solutions/contact/personal-contact`,
         contact,
         {
           headers: {
@@ -135,7 +135,7 @@ const GroupList = ({
     try {
       const response = await axios.put(
         `
-        http://localhost:9000/api/v1/intranet/contact/personal-group`,
+        http://localhost:9000/api/v1/lighting_solutions/contact/personal-group`,
         groupData
       );
       if (response.status === 200) {
@@ -153,7 +153,7 @@ const GroupList = ({
   const handleDeleteGroup = async (groupId) => {
     try {
       const response = await axios.delete(`
-        http://localhost:9000/api/v1/intranet/contact/group/${groupId}`);
+        http://localhost:9000/api/v1/lighting_solutions/contact/group/${groupId}`);
 
       if (response.status === 200) {
         closeSettingGroupModal();
