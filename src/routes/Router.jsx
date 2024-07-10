@@ -5,7 +5,9 @@ import { Navigate } from "react-router-dom";
 const FullLayout = lazy(() => import("../layouts/FullLayout.js"));
 const ChatLayout = lazy(() => import("../views/ui/ChatLayout.jsx"));
 const NoticeLayout = lazy(() => import("../views/ui/NoticeLayout.jsx"));
-const DocumentLayout = lazy(() => import("../views/ui/document/DocumentLayout.js"));
+const DocumentLayout = lazy(() =>
+  import("../views/ui/document/DocumentLayout.js")
+);
 
 /***** Pages ****/
 const Starter = lazy(() => import("../views/Starter.js"));
@@ -42,8 +44,12 @@ const RejectedTable = lazy(() =>
 const Login = lazy(() => import("../views/ui/Login.js"));
 
 // document 추가
-const DocumentComponent = lazy(() => import("../views/ui/document/DocumentComponent.js"));
-const DocumentDetail = lazy(() => import("../views/ui/document/DocumentDetail.js"))
+const DocumentComponent = lazy(() =>
+  import("../views/ui/document/DocumentComponent.js")
+);
+const DocumentDetail = lazy(() =>
+  import("../views/ui/document/DocumentDetail.js")
+);
 
 /*****Routes******/
 const ThemeRoutes = () => [
@@ -105,7 +111,6 @@ const ThemeRoutes = () => [
         exact: true,
         element: <FreeBoard />,
       },
-      
     ],
   },
 ];
