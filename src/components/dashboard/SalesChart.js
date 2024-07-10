@@ -1,61 +1,74 @@
+import React from "react";
 import { Card, CardBody, CardSubtitle, CardTitle } from "reactstrap";
 import Chart from "react-apexcharts";
 
 const SalesChart = () => {
-  const chartoptions = {
+  // Sample data for demonstration
+  const chartOptions = {
     series: [
       {
-        name: "Iphone 13",
-        data: [0, 31, 40, 28, 51, 42, 109, 100],
+        name: "Product A",
+        data: [30, 40, 45, 50, 49, 60, 70, 91],
       },
       {
-        name: "Oneplue 9",
-        data: [0, 11, 32, 45, 32, 34, 52, 41],
+        name: "Product B",
+        data: [20, 35, 25, 40, 60, 50, 30, 40],
+      },
+      {
+        name: "Product C",
+        data: [10, 15, 20, 25, 30, 35, 40, 45],
       },
     ],
     options: {
       chart: {
         type: "area",
+        height: 350,
+        stacked: true,
       },
       dataLabels: {
         enabled: false,
       },
-      grid: {
-        strokeDashArray: 3,
-      },
-
       stroke: {
-        curve: "smooth",
-        width: 1,
+        width: [2, 2, 2],
+      },
+      plotOptions: {
+        bar: {
+          columnWidth: "20%",
+        },
       },
       xaxis: {
-        categories: [
-          "Jan",
-          "Feb",
-          "March",
-          "April",
-          "May",
-          "June",
-          "July",
-          "Aug",
-        ],
+        categories: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug"],
+      },
+      legend: {
+        position: "top",
+      },
+      fill: {
+        opacity: [0.85, 0.75, 0.6],
+        gradient: {
+          inverseColors: false,
+          shade: "light",
+          type: "vertical",
+          opacityFrom: 0.85,
+          opacityTo: 0.55,
+          stops: [0, 100, 100, 100],
+        },
       },
     },
   };
+
   return (
     <Card>
       <CardBody>
-        <CardTitle tag="h5">Sales Summary</CardTitle>
-        <CardSubtitle className="text-muted" tag="h6">
-          Yearly Sales Report
+        <CardTitle tag="h5">Sales Overview</CardTitle>
+        <CardSubtitle tag="h6" className="mb-2 text-muted">
+          Monthly Sales Performance
         </CardSubtitle>
         <Chart
+          options={chartOptions.options}
+          series={chartOptions.series}
           type="area"
-          width="100%"
-          height="390"
-          options={chartoptions.options}
-          series={chartoptions.series}
-        ></Chart>
+          height={350}
+        />
       </CardBody>
     </Card>
   );
