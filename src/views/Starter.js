@@ -1,16 +1,13 @@
 import { Col, Row } from "reactstrap";
-<<<<<<< HEAD
 import Menu from "../components/dashboard/Menu";
 import MyCalendar from "../components/Calendar";
 import DashboardNoticeBoard from "../components/dashboard/DashBoardNoticeBoard"; // DashboardNoticeBoard 컴포넌트 가져오기
 import "./Starter.css"; // CSS 파일 추가
-=======
 import SalesChart from "../components/dashboard/SalesChart";
 import Feeds from "../components/dashboard/Feeds";
 import ProjectTables from "../components/dashboard/ProjectTable";
 import TopCards from "../components/dashboard/TopCards";
 import Blog from "../components/dashboard/Blog";
-import Menu from "../components/dashboard/menu";
 import bg1 from "../assets/images/bg/bg1.jpg";
 import bg2 from "../assets/images/bg/bg2.jpg";
 import bg3 from "../assets/images/bg/bg3.jpg";
@@ -50,7 +47,6 @@ const BlogData = [
     btnbg: "primary",
   },
 ];
->>>>>>> main
 
 const Starter = () => {
   return (
@@ -74,15 +70,12 @@ const Starter = () => {
           <Menu />
         </Col>
       </Row>
-<<<<<<< HEAD
-=======
       {/* Add Menu */}
       <Row>
         <Col lg="12">
           <Menu />
         </Col>
       </Row>
->>>>>>> main
     </div>
   );
 };
