@@ -136,13 +136,18 @@ const PendingTable = ({ LoginEmpId, LoginPositionId }) => {
   };
 
   const getStatus = (tdata) => {
+    console.log("getStatus:", {
+      positionId,
+      managerStatus: tdata.managerStatus,
+      positionName: tdata.empDTO.position.positionName,
+    });
     if (positionId >= 3) {
       return tdata.managerStatus ? "[대표이사] 결재 대기" : "[부장] 결재 대기";
-    } else if (positionId === 2) {
+    } else if (positionId == 2) {
       return tdata.managerStatus
         ? "[대표이사] 결재 대기"
         : "[" + tdata.empDTO.position.positionName + "] 결재 요청";
-    } else if (positionId === 1) {
+    } else if (positionId == 1) {
       return "최종 결재 대기";
     } else {
       return null;
@@ -194,26 +199,23 @@ const PendingTable = ({ LoginEmpId, LoginPositionId }) => {
                 <th>제목</th>
                 <th>기안자</th>
                 <th>상태</th>
-                <th>기안부서</th>
+                <th>기안 팀</th>
               </tr>
             </thead>
             <tbody>
               {tableData.map((tdata, index) => {
                 const status = getStatus(tdata);
+                console.log("Table Row:", { tdata, status, positionId, empId });
 
                 if (!tdata.ceoStatus && !tdata.digitalApprovalType) {
-                  // Exclude rows where ceoStatus is true or type is true
-                  if (empId !== 3) {
-                    if (!tdata.managerStatus && positionId === 2) {
-                      // Only render the row if managerStatus is false, empId is not 3, and position is 2
+                  if (positionId != 1) {
+                    if (positionId == 2 && !tdata.managerStatus) {
                       return renderTableRow(tdata, index, status);
-                    } else if (positionId !== 2) {
+                    } else if (positionId != 2) {
                       return renderTableRow(tdata, index, status);
                     }
-                  } else {
-                    if (tdata.managerStatus) {
-                      return renderTableRow(tdata, index, status);
-                    }
+                  } else if (positionId == 1 && tdata.managerStatus) {
+                    return renderTableRow(tdata, index, status);
                   }
                 }
                 return null;
