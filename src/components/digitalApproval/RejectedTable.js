@@ -89,10 +89,10 @@ const RejectedTable = ({ LoginEmpId, LoginPositionId, RejectTime }) => {
     if (positionId >= 3) {
       //T -> 결재 O, F -> 결재 X
       return tdata.managerStatus ? "[대표이사] 결재 반려" : "[부장] 결재 반려";
-    } else if (positionId === 2) {
+    } else if (positionId == 2) {
       //T -> 결재 O
       return tdata.ceoStatus ? "[대표이사] 결재 반려" : "[부장] 결재 반려";
-    } else if (positionId === 1) {
+    } else if (positionId == 1) {
       return "[대표이사] 결재 반려";
     } else {
       return null;
@@ -142,7 +142,7 @@ const RejectedTable = ({ LoginEmpId, LoginPositionId, RejectTime }) => {
                 <th>제목</th>
                 <th>기안자</th>
                 <th>상태</th>
-                <th>기안부서</th>
+                <th>기안 팀</th>
               </tr>
             </thead>
             <tbody>
@@ -150,13 +150,14 @@ const RejectedTable = ({ LoginEmpId, LoginPositionId, RejectTime }) => {
                 if (!tdata.digitalApprovalType) return null;
 
                 const status = getStatus(tdata);
-                const date = tdata.managerStatus
-                  ? formatDate(tdata.ceoRejectAt)
-                  : formatDate(tdata.managerRejectAt);
+                const date =
+                  positionId == 1
+                    ? formatDate(tdata.ceoRejectAt)
+                    : formatDate(tdata.managerRejectAt);
 
                 return positionId >= 3
                   ? renderTableRow(tdata, index, status, date)
-                  : positionId === 1
+                  : positionId == 1
                   ? tdata.managerStatus
                     ? renderTableRow(tdata, index, status, date)
                     : null
