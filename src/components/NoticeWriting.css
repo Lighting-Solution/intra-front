@@ -1,0 +1,126 @@
+.notice-writing {
+    padding: 20px;
+    width: 80%;
+    margin: auto;
+    background: #f0f8ff; /* 밝은 배경 색 */
+    border-radius: 8px; /* 둥근 모서리 */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 그림자 */
+  }
+  
+  .notice-writing h1 {
+    font-size: 2em;
+    margin-bottom: 20px;
+    color: #333; /* 텍스트 색상 */
+  }
+  
+  .form-group {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+  }
+  
+  .form-group label {
+    width: 150px;
+    margin-right: 10px;
+    font-weight: bold; /* 텍스트 두껍게 */
+    color: #555;
+  }
+  
+  .form-control {
+    flex: 1;
+    padding: 10px;
+    border: 2px solid #ddd;
+    border-radius: 4px;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+    transition: border-color 0.3s;
+  }
+  
+  .form-control:focus {
+    border-color: #007bff;
+  }
+  
+  .ckeditor-container {
+    flex: 1;
+  }
+  
+  .ck-editor__editable_inline {
+    min-height: 300px;
+    height: 300px;
+    border: 2px solid #ddd;
+    border-radius: 4px;
+    padding: 10px;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+  
+  .btn {
+    padding: 10px 20px;
+    margin-right: 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.3s;
+  }
+  
+  .btn-primary {
+    background: linear-gradient(45deg, #007bff, #0056b3);
+    color: white;
+  }
+  
+  .btn-primary:hover {
+    background: linear-gradient(45deg, #0056b3, #003f7f);
+    transform: scale(1.05);
+  }
+  
+  .btn-secondary {
+    background: linear-gradient(45deg, #6c757d, #495057);
+    color: white;
+  }
+  
+  .btn-secondary:hover {
+    background: linear-gradient(45deg, #495057, #343a40);
+    transform: scale(1.05);
+  }
+  
+  .button-group {
+    display: flex;
+    justify-content: flex-end;
+  }
+  
+  .settings-group {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: 15px;
+    width: 100%;
+  }
+  
+  .settings-group .form-group {
+    width: 100%;
+  }
+  
+  .radio-group {
+    display: flex;
+    align-items: center;
+  }
+  
+  .notice-radio-group,
+  .alert-radio-group {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    width: 100%;
+  }
+  
+  .notice-radio-group label,
+  .alert-radio-group label {
+    width: 150px;
+  }
+  
+  .notice-radio-group input,
+  .alert-radio-group input {
+    margin-left: 10px;
+  }
+  .separator {
+    border-bottom: 1px solid #ddd;
+    margin-bottom: 20px;
+  }
