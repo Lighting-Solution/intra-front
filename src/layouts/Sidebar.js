@@ -55,7 +55,12 @@ const navigation = [
     icon: "bi bi-people",
   },
   {
-    title: "메신저", // Chat
+    title: "주소록", // 추가된 Contact 링크
+    href: "/contact",
+    icon: "bi bi-journal",
+  },
+  {
+    title: "메신저", // 추가된 Chat 링크
     href: "/chat",
     icon: "bi bi-chat",
   },
