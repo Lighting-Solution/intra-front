@@ -5,7 +5,14 @@ import { Navigate } from "react-router-dom";
 const FullLayout = lazy(() => import("../layouts/FullLayout.js"));
 const ChatLayout = lazy(() => import("../views/ui/ChatLayout.jsx"));
 const NoticeLayout = lazy(() => import("../views/ui/NoticeLayout.jsx"));
+<<<<<<< HEAD
 const FreeLayout = lazy(() => import("../views/ui/FreeLayout.jsx"));
+=======
+const DocumentLayout = lazy(() =>
+  import("../views/ui/document/DocumentLayout.js")
+);
+
+>>>>>>> main
 /***** Pages ****/
 const Starter = lazy(() => import("../views/Starter.js"));
 const About = lazy(() => import("../views/About.js"));
@@ -19,6 +26,7 @@ const Forms = lazy(() => import("../views/ui/Forms.js"));
 const Breadcrumbs = lazy(() => import("../views/ui/Breadcrumbs.js"));
 const NoticeBoard = lazy(() => import("../components/NoticeBoard.jsx"));
 const NoticeWriting = lazy(() => import("../components/NoticeWriting.jsx"));
+<<<<<<< HEAD
 const NoticeDetail = lazy(() => import("../components/NoticeDetail.jsx"));
 const NoticeEditing = lazy(() => import("../components/NoticeEditing.jsx"));
 const NoticeBoardUser = lazy(() => import("../components/NoticeBoardUser.jsx"));
@@ -30,15 +38,46 @@ const FreePostWriting = lazy(() => import("../components/FreePostWriting.jsx"));
 const FreePostDetail = lazy(() => import("../components/FreePostDetail.jsx"));
 const FreePostEditing = lazy(() => import("../components/FreePostEditing.jsx"));
 const CommentSection = lazy(() => import("../components/CommentSection.jsx"));
+=======
+const PrivateRoute = lazy(() => import("../components/Login/PrivateRoute.js"));
+//Calendar 추가
+const Calendar = lazy(() => import("../views/ui/Calendar.js"));
+
+//DigitalApproval 추가
+const DigitalApproval = lazy(() => import("../views/ui/DigitalApproval.js"));
+
+// 결재 대기
+const PendingTable = lazy(() =>
+  import("../components/digitalApproval/PendingTable.js")
+);
+
+// 결재 반려
+const RejectedTable = lazy(() =>
+  import("../components/digitalApproval/RejectedTable.js")
+);
+
+// Login 페이지 추가
+const Login = lazy(() => import("../views/ui/Login.js"));
+
+// document 추가
+>>>>>>> main
 const DocumentComponent = lazy(() =>
-  import("../views/ui/DocumentComponent.js")
+  import("../views/ui/document/DocumentComponent.js")
+);
+const DocumentDetail = lazy(() =>
+  import("../views/ui/document/DocumentDetail.js")
 );
 
 /*****Routes******/
 const ThemeRoutes = () => [
   {
+    path: "/login",
+    exact: true,
+    element: <Login />,
+  },
+  {
     path: "/",
-    element: <FullLayout />,
+    element: <PrivateRoute element={<FullLayout />} />,
     children: [
       { path: "/", element: <Navigate to="/starter" /> },
       { path: "/starter", exact: true, element: <Starter /> },
@@ -51,10 +90,20 @@ const ThemeRoutes = () => [
       { path: "/table", exact: true, element: <Tables /> },
       { path: "/forms", exact: true, element: <Forms /> },
       { path: "/breadcrumbs", exact: true, element: <Breadcrumbs /> },
+      { path: "/calendar", exact: true, element: <Calendar /> },
+      { path: "/digitalapproval", exact: true, element: <DigitalApproval /> },
       {
         path: "/chat",
         exact: true,
         element: <ChatLayout />,
+      },
+      {
+        path: "/document",
+        element: <DocumentLayout />, // 새로운 DocumentLayout 사용
+        children: [
+          { path: "", exact: true, element: <DocumentComponent /> },
+          { path: "detail/:id", exact: true, element: <DocumentDetail /> },
+        ],
       },
       {
         path: "notice",
@@ -69,6 +118,7 @@ const ThemeRoutes = () => [
         ],
       },
       {
+<<<<<<< HEAD
         path: "freeboard",
         element: <FreeLayout />,
         children: [
@@ -77,11 +127,21 @@ const ThemeRoutes = () => [
           { path: ":id", exact: true, element: <FreePostDetail /> },
           { path: "edit/:id", exact: true, element: <FreePostEditing /> },
         ],
+=======
+        path: "/digitalapproval/pending",
+        exact: true,
+        element: <PendingTable LoginEmpId={1} LoginPositionId={5} />,
       },
       {
-        path: "/document",
+        path: "/digitalapproval/rejected",
         exact: true,
-        element: <DocumentComponent />,
+        element: <RejectedTable LoginEmpId={1} LoginPositionId={5} />,
+      },
+      {
+        path: "/freeboard",
+        exact: true,
+        element: <FreeBoard />,
+>>>>>>> main
       },
     ],
   },
