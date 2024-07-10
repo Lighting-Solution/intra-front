@@ -34,12 +34,20 @@ const DocumentComponent = () => {
 
   const fetchDocuments = async (categoryName, searchTerm, searchType, page, size) => {
     try {
+      let bodyData = { empId: currentEmpId, categoryName, searchType, page, size };
+
+      if (searchType === 'date') {
+        bodyData = { ...bodyData, startDate: searchTerm.startDate, endDate: searchTerm.endDate };
+      } else {
+        bodyData = { ...bodyData, searchTerm };
+      }
+
       const response = await fetch('http://localhost:9000/document/api/docsList', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ empId: currentEmpId, categoryName, searchTerm, searchType, page, size })
+        body: JSON.stringify(bodyData)
       });
       const data = await response.json();
       setDocuments(data.content);
@@ -93,14 +101,22 @@ const DocumentComponent = () => {
     fetchDocuments(selectedCategory, searchTerm, searchType, newPage, size);
   };
 
+  // 검색어
   const handleSearchTermChange = (e) => {
-    setSearchTerm(e.target.value);
+    if (searchType === 'date') {
+      setSearchTerm(prevState => ({
+        ...prevState,
+        [e.target.name]: e.target.value
+      }));
+    } else {
+      setSearchTerm(e.target.value);
+    }
   };
-
+  // 검색 타입 : 제목, 작성자, 기간
   const handleSearchTypeChange = (e) => {
     setSearchType(e.target.value);
   };
-
+  // 제출
   const handleSearchSubmit = (e) => {
     e.preventDefault();
     fetchDocuments(selectedCategory ,searchTerm, searchType, 0, size);
@@ -126,8 +142,8 @@ const DocumentComponent = () => {
       <div className="document-main">
         <div className="document-header">
          {/* 검색하는 부분 */}
-          <form onSubmit={handleSearchSubmit}>
-          <select value={selectedCategory} onChange={handleSearchCategoryType}> {/* 화면에 보이는 부분 */}
+         <form onSubmit={handleSearchSubmit}>
+            <select value={selectedCategory} onChange={handleSearchCategoryType}>
               <option value="public">공통</option>
               <option value="service">서비스</option>
               <option value="manage">관리</option>
@@ -150,18 +166,21 @@ const DocumentComponent = () => {
               <div>
                 <input
                   type="date"
+                  name="startDate"
                   value={searchTerm.startDate || ''}
-                  onChange={e => setSearchTerm({ ...searchTerm, startDate: e.target.value })}
+                  onChange={handleSearchTermChange}
                 />
                 <input
                   type="date"
+                  name="endDate"
                   value={searchTerm.endDate || ''}
-                  onChange={e => setSearchTerm({ ...searchTerm, endDate: e.target.value })}
+                  onChange={handleSearchTermChange}
                 />
               </div>
             )}
             <button type="submit">검색</button>
           </form>
+
         </div>
         <table className="document-list">
           <thead>
