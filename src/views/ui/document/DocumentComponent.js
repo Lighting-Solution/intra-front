@@ -41,7 +41,8 @@ const DocumentComponent = () => {
       } else {
         bodyData = { ...bodyData, searchTerm };
       }
-
+      bodyData = {...bodyData, searchType};
+      console.log(bodyData);
       const response = await fetch('http://localhost:9000/document/api/docsList', {
         method: 'POST',
         headers: {
@@ -115,10 +116,12 @@ const DocumentComponent = () => {
   // 검색 타입 : 제목, 작성자, 기간
   const handleSearchTypeChange = (e) => {
     setSearchType(e.target.value);
+    setSearchTerm(''); // 검색 타입 변경 시 검색어 초기화
   };
   // 제출
   const handleSearchSubmit = (e) => {
     e.preventDefault();
+    console.log(searchTerm);
     fetchDocuments(selectedCategory ,searchTerm, searchType, 0, size);
   };
 
