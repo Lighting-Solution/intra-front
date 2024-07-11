@@ -4,8 +4,7 @@ import axios from "axios";
 import { FaEdit, FaTrashAlt, FaHeart } from "react-icons/fa";
 import "./NoticeDetail.css";
 
-const NoticeDetail = () => {
-  const { id } = useParams();
+const NoticeDetail = (id) => {
   const [notice, setNotice] = useState(null);
   const [nextNotices, setNextNotices] = useState([]);
   const navigate = useNavigate();
