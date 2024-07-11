@@ -5,7 +5,7 @@ import { Navigate } from "react-router-dom";
 const FullLayout = lazy(() => import("../layouts/FullLayout.js"));
 const ChatLayout = lazy(() => import("../views/ui/ChatLayout.jsx"));
 const NoticeLayout = lazy(() => import("../views/ui/NoticeLayout.jsx"));
-const FreeLayout = lazy(() => import("../views/ui/FreeLayout.jsx"));
+const Contact = lazy(() => import("../views/ui/Contact.js"));
 const DocumentLayout = lazy(() =>
   import("../views/ui/document/DocumentLayout.js")
 );
@@ -34,6 +34,7 @@ const FreePostWriting = lazy(() => import("../components/FreePostWriting.jsx"));
 const FreePostDetail = lazy(() => import("../components/FreePostDetail.jsx"));
 const FreePostEditing = lazy(() => import("../components/FreePostEditing.jsx"));
 const CommentSection = lazy(() => import("../components/CommentSection.jsx"));
+
 const PrivateRoute = lazy(() => import("../components/Login/PrivateRoute.js"));
 //Calendar 추가
 const Calendar = lazy(() => import("../views/ui/Calendar.js"));
@@ -74,6 +75,7 @@ const ThemeRoutes = () => [
     element: <PrivateRoute element={<FullLayout />} />,
     children: [
       { path: "/", element: <Navigate to="/starter" /> },
+      { path: "/contact", exact: true, element: <Contact /> },
       { path: "/starter", exact: true, element: <Starter /> },
       { path: "/about", exact: true, element: <About /> },
       { path: "/alerts", exact: true, element: <Alerts /> },
@@ -104,11 +106,7 @@ const ThemeRoutes = () => [
         element: <NoticeLayout />,
         children: [
           { path: "", exact: true, element: <NoticeBoard /> },
-          //  { path: "", exact: true, element: <NoticeBoardUser /> },
           { path: "write", exact: true, element: <NoticeWriting /> },
-          { path: ":id", exact: true, element: <NoticeDetail /> },
-          // { path: ":id", exact: true, element: <NoticeDetailUser /> },
-          { path: "edit/:id", exact: true, element: <NoticeEditing /> },
         ],
       },
       {

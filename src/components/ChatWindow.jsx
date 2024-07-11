@@ -1,7 +1,5 @@
-import React, { useState, useEffect, useCallback, useRef } from "react";
-import axios from "axios";
+import SearchIcon from "@mui/icons-material/Search"; // 추가
 import {
-  Paper,
   Box,
   TextField,
   Typography,
@@ -9,10 +7,12 @@ import {
   InputAdornment,
 } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
-import SearchIcon from "@mui/icons-material/Search";
 import AttachFileIcon from "@mui/icons-material/AttachFile";
 import { Client } from "@stomp/stompjs";
 import SockJS from "sockjs-client";
+import { useEffect, useState, useRef, useCallback } from "react";
+import axios from "axios";
+import Paper from "@mui/material/Paper";
 
 const ChatWindow = ({ currentChat, setCurrentChat, testMessages }) => {
   const [messages, setMessages] = useState([]); // 현재 채팅방의 모든 메시지 저장
