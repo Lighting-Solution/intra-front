@@ -13,7 +13,7 @@ const DocumentDetail = () => {
     file: null
   });
 
-    // 현재 사용자 ID를 예시로 설정합니다. 실제로는 인증 로직에 따라 설정되어야 합니다.
+    // 수정해야함 
     const currentUserId = 1;
 
   useEffect(() => {
@@ -22,7 +22,7 @@ const DocumentDetail = () => {
         const response = await fetch(`http://localhost:9000/document/detail/${id}`);
         const data = await response.json();
         setDocument(data);
-        console.log(document);
+        console.log(data);
         setEditedDocument({
           title: data.title,
           content: data.content,
@@ -37,10 +37,10 @@ const DocumentDetail = () => {
 
   const handleDelete = async () => {
     try {
-      await fetch(`http://localhost:9000/document/${id}`, {
+      await fetch(`http://localhost:9000/document/delete/${id}`, {
         method: 'DELETE'
       });
-      navigate('/documents');
+      navigate('/document');
     } catch (error) {
       console.error('Error deleting document:', error);
     }
@@ -74,12 +74,13 @@ const DocumentDetail = () => {
     formData.append('documentId', document.documentId);
     formData.append('title', editedDocument.title);
     formData.append('content', editedDocument.content);
+    formData.append('writerEmpId', document.writerEmpId);
     if (editedDocument.file) {
       formData.append('file', editedDocument.file);
     }
 
     try {
-      await fetch(`http://localhost:9000/document/${id}`, {
+      await fetch(`http://localhost:9000/document/update`, {
         method: 'PUT',
         body: formData
       });
