@@ -26,7 +26,7 @@ const navigation = [
     icon: "bi bi-card-text",
   },
   {
-    title: "전자 결재 ",
+    title: "전자 결재",
     href: "/digitalapproval",
     icon: "bi bi-file-earmark-check",
     subNav: [
@@ -82,6 +82,20 @@ const Sidebar = () => {
       setCollapsedIndex(index);
     }
     navigate(href);
+  };
+
+  const handleBoardNavClick = (href) => {
+    if (href === "/notice") {
+      if (localStorage.getItem("empAdmin") == "true") {
+        console.log("관리자");
+        navigate("/notice");
+      } else {
+        console.log("사용자");
+        navigate("/notice/user");
+      }
+    } else {
+      navigate(href);
+    }
   };
 
   return (
@@ -185,17 +199,18 @@ const Sidebar = () => {
           <Collapse isOpen={isBoardOpen}>
             {boardNavigation.map((navi, index) => (
               <NavItem key={index} className="sidenav-bg">
-                <Link
-                  to={navi.href}
+                <div
                   className={
                     location.pathname === navi.href
                       ? "text-primary nav-link py-3"
                       : "nav-link text-secondary py-3"
                   }
+                  onClick={() => handleBoardNavClick(navi.href)}
+                  style={{ cursor: "pointer" }}
                 >
                   <i className={navi.icon}></i>
                   <span className="ms-3 d-inline-block">{navi.title}</span>
-                </Link>
+                </div>
               </NavItem>
             ))}
           </Collapse>

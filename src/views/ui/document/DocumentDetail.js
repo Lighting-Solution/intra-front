@@ -14,7 +14,7 @@ const DocumentDetail = () => {
   });
 
     // 수정해야함 
-    const currentUserId = 1;
+    const currentUserId = parseInt(localStorage.getItem("empId"), 10);
 
   useEffect(() => {
     const fetchDocument = async () => {

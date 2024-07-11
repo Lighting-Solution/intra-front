@@ -85,6 +85,8 @@ const NoticeBoard = () => {
     }
   };
 
+  const shwoDetail = () => {};
+
   const handleDeleteClick = async () => {
     if (window.confirm("선택한 공지를 삭제하시겠습니까?")) {
       try {
@@ -235,7 +237,7 @@ const NoticeBoard = () => {
               </div>
               <div
                 className="board-col"
-                onClick={() => navigate(`/notice/${notice.noticePostId}`)}
+                onClick={shwoDetail}
                 style={{ cursor: "pointer", color: "blue" }}
               >
                 {notice.noticeTitle || "N/A"}

@@ -27,7 +27,7 @@ const ChatList = ({ setCurrentChat, currentChat, setTestMessages }) => {
   const isDragging = useRef(false);
   const wasDragging = useRef(false);
   const offset = useRef({ x: 0, y: 0 });
-  const currentUserId = 2;
+  const currentUserId = parseInt(localStorage.getItem("empId"), 10);
 
   const fetchChats = async () => {
     try {
