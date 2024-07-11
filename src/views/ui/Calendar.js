@@ -38,8 +38,8 @@ const MyCalendar = (props) => {
             id: event.calendarId,
             title: event.calendarTitle,
             content: event.calendarContent,
-            start: new Date(event.calendarStartAt),
-            end: new Date(event.calendarEndAt),
+            start: moment(event.calendarStartAt).tz("Asia/Seoul").toDate(), // Convert to Asia/Seoul timezone
+            end: moment(event.calendarEndAt).tz("Asia/Seoul").toDate(),
             attendees: event.attendees || [],
             createAt: new Date(event.calendarCreateAt),
           }))
@@ -62,8 +62,8 @@ const MyCalendar = (props) => {
           id: eventData.calendarId,
           title: eventData.calendarTitle,
           content: eventData.calendarContent,
-          start: new Date(eventData.calendarStartAt),
-          end: new Date(eventData.calendarEndAt),
+          start: moment(eventData.calendarStartAt).tz("Asia/Seoul").toDate(),
+          end: moment(eventData.calendarEndAt).tz("Asia/Seoul").toDate(),
           attendees: eventData.attendees || [],
           createAt: new Date(eventData.calendarCreateAt),
         });
@@ -165,8 +165,12 @@ const MyCalendar = (props) => {
                 id: updatedEventData.calendarId,
                 title: updatedEventData.calendarTitle,
                 content: updatedEventData.calendarContent,
-                start: new Date(updatedEventData.calendarStartAt),
-                end: new Date(updatedEventData.calendarEndAt),
+                start: moment(updatedEventData.calendarStartAt)
+                  .tz("Asia/Seoul")
+                  .toDate(),
+                end: moment(updatedEventData.calendarEndAt)
+                  .tz("Asia/Seoul")
+                  .toDate(),
                 attendees: updatedEventData.attendees || [],
                 createAt: new Date(updatedEventData.calendarCreateAt),
               }
@@ -201,25 +205,22 @@ const MyCalendar = (props) => {
   };
 
   // 참가자 추가 요청
-  const addAttendeesToEvent = (eventId, attendees) => {
-    const attendeeRequests = attendees.map((attendee) =>
-      axios.post(
-        "http://localhost:9000/api/v1/lighting_solutions/calendar/attendees",
-        {
-          eventId: eventId,
-          team: attendee.team,
-          employee: attendee.employee,
-        }
-      )
-    );
-
-    Promise.all(attendeeRequests)
-      .then(() => {
-        fetchEvents(); // 참가자 추가 후 이벤트 목록 업데이트
-      })
-      .catch((error) => {
-        console.error("There was an error adding the attendees!", error);
-      });
+  const addAttendeesToEvent = async (eventId, attendees) => {
+    try {
+      for (let attendee of attendees) {
+        await axios.post(
+          "http://localhost:9000/api/v1/lighting_solutions/calendar/attendees",
+          {
+            eventId: eventId,
+            team: attendee.team,
+            employee: attendee.employee,
+          }
+        );
+      }
+      fetchEvents(); // 참가자 추가 후 이벤트 목록 업데이트
+    } catch (error) {
+      console.error("There was an error adding the attendees!", error);
+    }
   };
 
   // 참가자 추가
@@ -271,11 +272,11 @@ const MyCalendar = (props) => {
       <Modal
         isOpen={mainModalIsOpen}
         onRequestClose={() => setMainModalIsOpen(false)}
-        contentLabel={newEvent.id ? "Edit Event" : "Add Event"}
+        contentLabel={newEvent.id ? "일정 수정" : "일정 등록"}
         className="custom-modal"
         overlayClassName="custom-overlay"
       >
-        <h2>{newEvent.id ? "Edit Event" : "Add Event"}</h2>
+        <h2>{newEvent.id ? "일정 수정" : "일정 등록"}</h2>
         <form
           onSubmit={(e) => {
             e.preventDefault();
@@ -311,7 +312,9 @@ const MyCalendar = (props) => {
             <input
               type="datetime-local"
               className="form-control"
-              value={moment(newEvent.start).format("YYYY-MM-DDTHH:mm")}
+              value={moment(newEvent.start)
+                .tz("Asia/Seoul")
+                .format("YYYY-MM-DDTHH:mm")}
               onChange={(e) =>
                 setNewEvent({ ...newEvent, start: new Date(e.target.value) })
               }
@@ -323,7 +326,9 @@ const MyCalendar = (props) => {
             <input
               type="datetime-local"
               className="form-control"
-              value={moment(newEvent.end).format("YYYY-MM-DDTHH:mm")}
+              value={moment(newEvent.end)
+                .tz("Asia/Seoul")
+                .format("YYYY-MM-DDTHH:mm")}
               onChange={(e) =>
                 setNewEvent({ ...newEvent, end: new Date(e.target.value) })
               }
@@ -331,7 +336,7 @@ const MyCalendar = (props) => {
             />
           </div>
           <div className="form-group">
-            <label>Attendees</label>
+            <label></label>
             {newEvent.attendees.map((attendee, index) => (
               <div key={index} className="attendee-item">
                 <span>{`${attendee.team} - ${attendee.employee}`}</span>
@@ -349,12 +354,12 @@ const MyCalendar = (props) => {
               className="btn btn-sm btn-primary mt-2"
               onClick={() => setAttendeeModalIsOpen(true)}
             >
-              Add Attendee
+              참석자 추가
             </button>
           </div>
           <div className="button-group">
             <button type="submit" className="btn btn-primary">
-              {newEvent.id ? "Update Event" : "Add Event"}
+              {newEvent.id ? "일정 수정" : "일정 등록"}
             </button>
             {newEvent.id && (
               <button
@@ -362,7 +367,7 @@ const MyCalendar = (props) => {
                 className="btn btn-danger"
                 onClick={handleDeleteEvent}
               >
-                Delete Event
+                일정 삭제
               </button>
             )}
             <button
@@ -370,7 +375,7 @@ const MyCalendar = (props) => {
               className="btn btn-secondary"
               onClick={() => setMainModalIsOpen(false)}
             >
-              Cancel
+              취소
             </button>
           </div>
         </form>
@@ -382,7 +387,7 @@ const MyCalendar = (props) => {
         className="attendee-modal"
         overlayClassName="custom-overlay"
       >
-        <h2>Add Attendee</h2>
+        <h2>참석자 추가</h2>
         <AddAttendeeModal
           isOpen={attendeeModalIsOpen}
           closeModal={() => setAttendeeModalIsOpen(false)}
