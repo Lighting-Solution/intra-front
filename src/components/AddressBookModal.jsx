@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import {
   Dialog,
   DialogTitle,
@@ -13,15 +14,25 @@ import {
   Checkbox,
 } from "@mui/material";
 
-const addressBookData = [
-  { id: 1, name: "김철수", avatar: "https://i.pravatar.cc/150?img=4" },
-  { id: 2, name: "이영희", avatar: "https://i.pravatar.cc/150?img=5" },
-  { id: 3, name: "박민수", avatar: "https://i.pravatar.cc/150?img=6" },
-  // 더미 데이터 추가
-];
-
-const AddressBookModal = ({ open, onClose, onCreateChat }) => {
+const AddressBookModal = ({ open, onClose, onCreateChat, currentUserId }) => {
   const [selectedContacts, setSelectedContacts] = useState([]);
+  const [addressBookData, setAddressBookData] = useState([]);
+
+  useEffect(() => {
+    if (open) {
+      const fetchContacts = async () => {
+        try {
+          const response = await axios.get("http://localhost:9000/api/v1/intranet/emp/toMessenger");
+          const filteredData = response.data.filter(contact => contact.empId !== currentUserId); // 현재 사용자 제외
+          setAddressBookData(filteredData);
+        } catch (error) {
+          console.error("Error fetching contacts:", error);
+        }
+      };
+
+      fetchContacts();
+    }
+  }, [open, currentUserId]);
 
   const handleToggle = (contact) => {
     const currentIndex = selectedContacts.indexOf(contact);
@@ -37,7 +48,8 @@ const AddressBookModal = ({ open, onClose, onCreateChat }) => {
   };
 
   const handleCreateChat = () => {
-    onCreateChat(selectedContacts);
+    const selectedIds = selectedContacts.map(contact => contact.empId);
+    onCreateChat(selectedIds);
     setSelectedContacts([]);
     onClose();
   };
@@ -49,14 +61,17 @@ const AddressBookModal = ({ open, onClose, onCreateChat }) => {
         <List>
           {addressBookData.map((contact) => (
             <ListItem
-              key={contact.id}
+              key={contact.empId}
               button
               onClick={() => handleToggle(contact)}
             >
               <ListItemAvatar>
                 <Avatar src={contact.avatar} />
               </ListItemAvatar>
-              <ListItemText primary={contact.name} />
+              <ListItemText 
+                primary={contact.empName} 
+                secondary={contact.position.positionName}
+              />
               <Checkbox checked={selectedContacts.indexOf(contact) !== -1} />
             </ListItem>
           ))}
