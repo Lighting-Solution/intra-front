@@ -181,3 +181,60 @@
   padding: 10px 0;
   border-bottom: 1px solid #ddd;
 }
+
+/* Starter.css */
+
+/* Existing styles */
+/* ... */
+
+.approval-container {
+  background-color: #f8f9fa;
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.approval-container h3 {
+  margin-bottom: 15px;
+  font-size: 1.25rem;
+  color: #333;
+}
+
+.approval-container ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.approval-container ul li {
+  margin-bottom: 10px;
+}
+
+.approval-item {
+  background-color: #ffffff;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s;
+}
+
+.approval-item:hover {
+  transform: translateY(-5px);
+}
+
+.approval-item p {
+  margin: 5px 0;
+  color: #333;
+}
+
+.approval-item strong {
+  font-weight: 600;
+  color: #007bff;
+}
+
+.no-approvals {
+  text-align: center;
+  color: #6c757d;
+  font-size: 1rem;
+  margin-top: 20px;
+}

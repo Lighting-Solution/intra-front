@@ -51,6 +51,7 @@ const BlogData = [
 
 const Starter = () => {
   const [memos, setMemos] = useState(["", "", "", ""]);
+  const [approvals, setApprovals] = useState([]);
 
   useEffect(() => {
     const storedMemos = [
@@ -60,7 +61,24 @@ const Starter = () => {
       localStorage.getItem("memo4"),
     ];
     setMemos(storedMemos.map(memo => memo || ""));
+
+    const fetchWaitingApprovals = async () => {
+      try {
+        const response = await fetch(`/api/v1/lighting_solutions/digital/approval/waiting`);
+        if (!response.ok){
+          throw new Error('Network response was not ok!!!!!');
+        }
+        const data = await response.json();
+        setApprovals(data);
+      } catch(error){
+        console.error('Error fetching approvals: ', error);
+      }
+    };
+  
+    fetchWaitingApprovals();
   }, []);
+
+  
 
   const handleMemoChange = (index, value) => {
     const newMemos = [...memos];
@@ -122,12 +140,22 @@ const Starter = () => {
         </div>
         <div className="approval-container">
           <h3>전자결재 대기창</h3>
+          {approvals.length > 0 ? (
           <ul>
-            <li>결재 1</li>
-            <li>결재 2</li>
-            <li>결재 3</li>
-            <li>결재 4</li>
+            {approvals.map((approval, index) => (
+            <li key={index}>
+              <div className="approval-item">
+                <p><strong>제목:</strong>{approval.title}</p>
+                <p><strong>작성자:</strong>{approval.writerName}</p>
+                <p><strong>상태:</strong>{approval.status}</p>
+                <p><strong>등록일:</strong>{approval.createAt}</p>
+              </div>
+            </li>
+          ))}
           </ul>
+          ) : (
+            <p>대기중인 전자결재가 없네요...!🐙</p>
+          )}
         </div>
       </div>
       <div className="menu-container">
