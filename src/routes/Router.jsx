@@ -107,7 +107,11 @@ const ThemeRoutes = () => [
         element: <NoticeLayout />,
         children: [
           { path: "", exact: true, element: <NoticeBoard /> },
+          //  { path: "", exact: true, element: <NoticeBoardUser /> },
           { path: "write", exact: true, element: <NoticeWriting /> },
+          { path: ":id", exact: true, element: <NoticeDetail /> },
+          // { path: ":id", exact: true, element: <NoticeDetailUser /> },
+          { path: "edit/:id", exact: true, element: <NoticeEditing /> },
         ],
       },
       {
