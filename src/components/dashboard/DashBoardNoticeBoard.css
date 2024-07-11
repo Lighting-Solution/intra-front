@@ -1,0 +1,34 @@
+.dashboard-board-content {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .dashboard-board-list {
+    margin-top: 20px;
+  }
+  
+  .dashboard-board-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  .dashboard-board-col {
+    font-size: 14px;
+    color: #333;
+    flex: 1;
+  }
+  
+  .dashboard-board-title {
+    cursor: pointer;
+    color: blue;
+  }
+  
+  .dashboard-board-title:hover {
+    text-decoration: underline;
+  }
+  
