@@ -10,7 +10,7 @@ const DocumentComponent = () => {
   const [file, setFile] = useState(null);
   const [category, setCategory] = useState('');
   const [writerEmpId, setWriterEmpId] = useState('');
-  const [currentEmpId, setCurrentEmpId] = useState(1); // 예시를 위한 empId설정 수정해야함ㅋ
+  const [currentEmpId, setCurrentEmpId] = useState(localStorage.getItem("empId"));
   const [page, setPage] = useState(0);
   const [size, setSize] = useState(10);
   const [totalPages, setTotalPages] = useState(0);

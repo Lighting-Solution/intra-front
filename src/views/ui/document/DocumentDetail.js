@@ -12,10 +12,9 @@ const DocumentDetail = () => {
     content: '',
     file: null
   });
+  const currentUserId = parseInt(localStorage.getItem("empId"), 10) || NaN;
 
-    // 수정해야함 
-    const currentUserId = 1;
-
+  
   useEffect(() => {
     const fetchDocument = async () => {
       try {
@@ -112,6 +111,7 @@ const DocumentDetail = () => {
           <strong>File:</strong> <a className="download-link" href={`http://localhost:9000/document/${document.documentId}/download`} download>{document.filePath}</a>
         </p>
       )}
+      
        {document.writerEmpId === currentUserId && (
         <>
           <button onClick={handleOpenModal}>Edit</button>

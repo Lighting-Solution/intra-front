@@ -27,11 +27,13 @@ const ChatList = ({ setCurrentChat, currentChat, setTestMessages }) => {
   const isDragging = useRef(false);
   const wasDragging = useRef(false);
   const offset = useRef({ x: 0, y: 0 });
-  const currentUserId = 2;
+  const currentUserId = parseInt(localStorage.getItem("empId"), 10) || NaN;
 
   const fetchChats = async () => {
     try {
-      const response = await axios.get(`http://localhost:9000/api/rooms/${currentUserId}`);
+      const response = await axios.get(
+        `http://localhost:9000/api/rooms/${currentUserId}`
+      );
       console.log("Fetched chats:", response.data);
       const adjustedData = response.data.map((chat) => ({
         ...chat,
@@ -67,7 +69,8 @@ const ChatList = ({ setCurrentChat, currentChat, setTestMessages }) => {
     console.log("클릭 핸들러 내:", currentChat);
     try {
       const response = await axios.post(
-        `http://localhost:9000/api/rooms/messages`, chat
+        `http://localhost:9000/api/rooms/messages`,
+        chat
       );
       setTestMessages(response.data);
       const updatedChat = { ...chat, notificationStatus: false };
@@ -92,7 +95,7 @@ const ChatList = ({ setCurrentChat, currentChat, setTestMessages }) => {
     try {
       const response = await axios.post("http://localhost:9000/api/room", {
         empIds: updatedContactIds,
-        roomName: "New Chat Room"
+        roomName: "New Chat Room",
       });
       fetchChats();
     } catch (error) {
@@ -154,7 +157,7 @@ const ChatList = ({ setCurrentChat, currentChat, setTestMessages }) => {
   const handleContextMenu = (event, chat) => {
     event.preventDefault();
     setSelectedChat(chat);
-    console.log('selected', chat);
+    console.log("selected", chat);
     setContextMenu(
       contextMenu === null
         ? {
@@ -170,9 +173,12 @@ const ChatList = ({ setCurrentChat, currentChat, setTestMessages }) => {
   };
 
   const handleDelete = async () => {
-    console.log('삭제핸들러', chats);
+    console.log("삭제핸들러", chats);
     try {
-      const response = await axios.post("http://localhost:9000/api/delRoom", selectedChat);
+      const response = await axios.post(
+        "http://localhost:9000/api/delRoom",
+        selectedChat
+      );
       console.log("server response:", response.data);
       setChats(chats.filter((chat) => chat.roomId !== selectedChat.roomId));
       handleClose();
