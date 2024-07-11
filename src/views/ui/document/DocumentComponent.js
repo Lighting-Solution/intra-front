@@ -274,7 +274,6 @@ const DocumentComponent = () => {
                 </select>
               </div>
               <div className="form-group">
-                <label>Writer Emp ID:</label>
                 <input type="hidden" value={currentEmpId} />
               </div>
               <button type="submit" className="submit-button">Submit</button>
