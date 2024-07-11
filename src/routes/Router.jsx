@@ -2,6 +2,7 @@ import { lazy } from "react";
 import { Navigate } from "react-router-dom";
 
 /****Layouts*****/
+const FreeLayout = lazy(() => import("../views/ui/FreeLayout.jsx"));
 const FullLayout = lazy(() => import("../layouts/FullLayout.js"));
 const ChatLayout = lazy(() => import("../views/ui/ChatLayout.jsx"));
 const NoticeLayout = lazy(() => import("../views/ui/NoticeLayout.jsx"));
@@ -22,8 +23,19 @@ const Tables = lazy(() => import("../views/ui/Tables.js"));
 const Forms = lazy(() => import("../views/ui/Forms.js"));
 const Breadcrumbs = lazy(() => import("../views/ui/Breadcrumbs.js"));
 const NoticeBoard = lazy(() => import("../components/NoticeBoard.jsx"));
-const FreeBoard = lazy(() => import("../components/FreeBoard.jsx"));
 const NoticeWriting = lazy(() => import("../components/NoticeWriting.jsx"));
+const NoticeDetail = lazy(() => import("../components/NoticeDetail.jsx"));
+const NoticeEditing = lazy(() => import("../components/NoticeEditing.jsx"));
+const NoticeBoardUser = lazy(() => import("../components/NoticeBoardUser.jsx"));
+const NoticeDetailUser = lazy(() =>
+  import("../components/NoticeDetailUser.jsx")
+);
+const FreeBoard = lazy(() => import("../components/FreeBoard.jsx"));
+const FreePostWriting = lazy(() => import("../components/FreePostWriting.jsx"));
+const FreePostDetail = lazy(() => import("../components/FreePostDetail.jsx"));
+const FreePostEditing = lazy(() => import("../components/FreePostEditing.jsx"));
+const CommentSection = lazy(() => import("../components/CommentSection.jsx"));
+
 const PrivateRoute = lazy(() => import("../components/Login/PrivateRoute.js"));
 //Calendar 추가
 const Calendar = lazy(() => import("../views/ui/Calendar.js"));
@@ -99,6 +111,14 @@ const ThemeRoutes = () => [
         ],
       },
       {
+        path: "freeboard",
+        element: <FreeLayout />,
+        children: [
+          { path: "", exact: true, element: <FreeBoard /> },
+          { path: "write", exact: true, element: <FreePostWriting /> },
+          { path: ":id", exact: true, element: <FreePostDetail /> },
+          { path: "edit/:id", exact: true, element: <FreePostEditing /> },
+        ],
         path: "/digitalapproval/pending",
         exact: true,
         element: <PendingTable LoginEmpId={1} LoginPositionId={5} />,
