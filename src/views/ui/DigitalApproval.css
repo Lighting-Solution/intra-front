@@ -194,8 +194,9 @@ textarea {
   font-size: 1.2em;
   padding: 10px 20px;
   width: 180px;
+  margin-right: 20px;
   margin-top: 12px;
-  margin-bottom: 20px;
+  margin-bottom: 180px;
 }
 
 .vertical-line {
@@ -210,4 +211,8 @@ textarea {
 .btn-primary {
   margin-right: 100px;
   float: right;
+}
+
+#approvalRequest {
+  margin-right: 260px;
 }

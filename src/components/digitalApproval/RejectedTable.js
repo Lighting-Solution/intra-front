@@ -36,7 +36,6 @@ const RejectedTable = ({ LoginEmpId, LoginPositionId, RejectTime }) => {
       )
       .then((response) => {
         setTableData(response.data);
-        console.log("response data " + response.data);
       })
       .catch((error) => {
         console.error("Error fetching project data:", error);

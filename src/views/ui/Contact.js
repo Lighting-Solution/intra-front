@@ -20,7 +20,7 @@ function Contact() {
   const updateGroupList = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:9000/api/v1/intranet/contact/personal-group/${id}`
+        `http://localhost:9000/api/v1/lighting_solutions/contact/personal-group/${id}`
       );
       setGroupList(response.data);
     } catch (error) {
@@ -36,11 +36,11 @@ function Contact() {
           setType("사내");
           if (groupId === 0) {
             response = await axios.get(
-              "http://localhost:9000/api/v1/intranet/contact/list/all-emp"
+              "http://localhost:9000/api/v1/lighting_solutions/contact/list/all-emp"
             );
           } else {
             response = await axios.get(
-              `http://localhost:9000/api/v1/intranet/contact/list/group-emp/${groupId}`
+              `http://localhost:9000/api/v1/lighting_solutions/contact/list/group-emp/${groupId}`
             );
           }
           break;
@@ -48,11 +48,11 @@ function Contact() {
           setType("개인");
           if (groupId === 0) {
             response = await axios.get(
-              `http://localhost:9000/api/v1/intranet/contact/list/all-contact/${id}`
+              `http://localhost:9000/api/v1/lighting_solutions/contact/list/all-contact/${id}`
             );
           } else {
             response = await axios.get(
-              `http://localhost:9000/api/v1/intranet/contact/list/group-contact/${groupId}`
+              `http://localhost:9000/api/v1/lighting_solutions/contact/list/group-contact/${groupId}`
             );
           }
           break;
@@ -75,7 +75,7 @@ function Contact() {
   const handleGroupDelete = async (groupId, contactId) => {
     try {
       const response = await axios.delete(
-        `http://localhost:9000/api/v1/intranet/contact/contact-group`,
+        `http://localhost:9000/api/v1/lighting_solutions/contact/contact-group`,
         {
           headers: {
             "Content-Type": "application/json",
@@ -100,7 +100,7 @@ function Contact() {
     async function fetchData() {
       try {
         const response = await axios.get(
-          `http://localhost:9000/api/v1/intranet/contact/list/all/${id}`
+          `http://localhost:9000/api/v1/lighting_solutions/contact/list/all/${id}`
         );
         setGroupList(response.data.groupDTOList);
         setDepartmentList(response.data.departmentDTOList);

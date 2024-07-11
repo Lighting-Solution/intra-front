@@ -54,7 +54,7 @@ const DigitalApproval = () => {
     setStatus(status);
     try {
       const response = await axios.get(
-        `http://localhost:9002/api/v1/lighting_solutions/security/digital/approval/form?status=${status}`,
+        `http://localhost:9000/api/v1/lighting_solutions/digital/approval/form?status=${status}`,
         {
           headers: {
             Authorization: localStorage.getItem("authToken"),
@@ -217,7 +217,7 @@ const DigitalApproval = () => {
       const encodedHtmlContent = encodeURIComponent(htmlContent);
 
       const response = await axios.post(
-        "http://localhost:9002/api/v1/lighting_solutions/security/digital/approval/request",
+        "http://localhost:9000/api/v1/lighting_solutions/digital/approval/request",
         {
           html: encodedHtmlContent,
           status: status,
