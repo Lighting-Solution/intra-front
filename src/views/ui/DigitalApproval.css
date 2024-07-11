@@ -193,7 +193,7 @@ textarea {
 .new-approval-button {
   font-size: 1.2em;
   padding: 10px 20px;
-  width: 150px;
+  width: 180px;
   margin-top: 12px;
   margin-bottom: 20px;
 }
@@ -205,4 +205,9 @@ textarea {
 
 .tables-section {
   margin-top: 20px;
+}
+
+.btn-primary {
+  margin-right: 100px;
+  float: right;
 }

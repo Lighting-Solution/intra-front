@@ -1,9 +1,14 @@
+import React from "react";
 import { Col, Row } from "reactstrap";
+import MyCalendar from "../components/Calendar";
+import DashboardNoticeBoard from "../components/dashboard/DashBoardNoticeBoard"; // DashboardNoticeBoard 컴포넌트 가져오기
+import "./Starter.css"; // CSS 파일 추가
 import SalesChart from "../components/dashboard/SalesChart";
 import Feeds from "../components/dashboard/Feeds";
 import ProjectTables from "../components/dashboard/ProjectTable";
 import TopCards from "../components/dashboard/TopCards";
 import Blog from "../components/dashboard/Blog";
+import Menu from "../components/dashboard/menu";
 import bg1 from "../assets/images/bg/bg1.jpg";
 import bg2 from "../assets/images/bg/bg2.jpg";
 import bg3 from "../assets/images/bg/bg3.jpg";
@@ -46,75 +51,38 @@ const BlogData = [
 
 const Starter = () => {
   return (
-    <div>
-      {/***Top Cards***/}
-      <Row>
-        <Col sm="6" lg="3">
-          <TopCards
-            bg="bg-light-success text-success"
-            title="Profit"
-            subtitle="Yearly Earning"
-            earning="$21k"
-            icon="bi bi-wallet"
-          />
-        </Col>
-        <Col sm="6" lg="3">
-          <TopCards
-            bg="bg-light-danger text-danger"
-            title="Refunds"
-            subtitle="Refund given"
-            earning="$1k"
-            icon="bi bi-coin"
-          />
-        </Col>
-        <Col sm="6" lg="3">
-          <TopCards
-            bg="bg-light-warning text-warning"
-            title="New Project"
-            subtitle="Yearly Project"
-            earning="456"
-            icon="bi bi-basket3"
-          />
-        </Col>
-        <Col sm="6" lg="3">
-          <TopCards
-            bg="bg-light-info text-into"
-            title="Sales"
-            subtitle="Weekly Sales"
-            earning="210"
-            icon="bi bi-bag"
-          />
-        </Col>
-      </Row>
-      {/***Sales & Feed***/}
-      <Row>
-        <Col sm="6" lg="6" xl="7" xxl="8">
-          <SalesChart />
-        </Col>
-        <Col sm="6" lg="6" xl="5" xxl="4">
-          <Feeds />
-        </Col>
-      </Row>
-      {/***Table ***/}
-      <Row>
-        <Col lg="12">
-          <ProjectTables />
-        </Col>
-      </Row>
-      {/***Blog Cards***/}
-      <Row>
-        {BlogData.map((blg, index) => (
-          <Col sm="6" lg="6" xl="3" key={index}>
-            <Blog
-              image={blg.image}
-              title={blg.title}
-              subtitle={blg.subtitle}
-              text={blg.description}
-              color={blg.btnbg}
-            />
-          </Col>
-        ))}
-      </Row>
+    <div className="dashboard-grid">
+      <div className="profile-container">
+        <h3>로그인 정보</h3>
+        <p>사용자 이름: 홍길동</p>
+        <p>직책: 관리자</p>
+      </div>
+      <div className="notice-container">
+        <h3>사내 공지</h3>
+        <DashboardNoticeBoard />
+      </div>
+      <div className="memo-approval-container">
+        <div className="memo-container">
+          <h3>메모장</h3>
+          <textarea
+            className="memo-area"
+            placeholder="메모를 입력하세요"
+          ></textarea>
+        </div>
+        <div className="approval-container">
+          <h3>전자결재 대기창</h3>
+          <ul>
+            <li>결재 1</li>
+            <li>결재 2</li>
+            <li>결재 3</li>
+            <li>결재 4</li>
+          </ul>
+        </div>
+      </div>
+      <div className="menu-container">
+        <h3>주간 식단표</h3>
+        <Menu />
+      </div>
     </div>
   );
 };

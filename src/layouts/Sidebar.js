@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button, Nav, NavItem, NavLink } from "reactstrap";
+import { Button, Nav, NavItem, NavLink, Collapse } from "reactstrap";
 import Logo from "./Logo";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 
@@ -55,9 +55,19 @@ const navigation = [
     icon: "bi bi-people",
   },
   {
-    title: "캘린더",
-    href: "/calendar",
-    icon: "bi bi-calendar",
+    title: "주소록", // 추가된 Contact 링크
+    href: "/contact",
+    icon: "bi bi-journal",
+  },
+  {
+    title: "메신저", // 추가된 Chat 링크
+    href: "/chat",
+    icon: "bi bi-chat",
+  },
+  {
+    title: "문서함",
+    href: "/document",
+    icon: "bi bi-card-text",
   },
   {
     title: "전자 결재 ",
@@ -76,6 +86,24 @@ const navigation = [
       },
     ],
   },
+  {
+    title: "Calendar",
+    href: "/calendar",
+    icon: "bi bi-calendar",
+  },
+];
+
+const boardNavigation = [
+  {
+    title: "사내 공지",
+    href: "/notice",
+    icon: "bi bi-megaphone",
+  },
+  {
+    title: "자유 게시판",
+    href: "/freeboard",
+    icon: "bi bi-chat-dots",
+  },
 ];
 
 const Sidebar = () => {
@@ -84,7 +112,12 @@ const Sidebar = () => {
     document.getElementById("sidebarArea").classList.toggle("showSidebar");
   };
   let location = useLocation();
+  const [isBoardOpen, setIsBoardOpen] = useState(false);
   const navigate = useNavigate();
+
+  const toggleBoardMenu = () => {
+    setIsBoardOpen(!isBoardOpen);
+  };
 
   const handleNavClick = (href, index) => {
     if (collapsedIndex === index) {
@@ -174,6 +207,42 @@ const Sidebar = () => {
               )}
             </NavItem>
           ))}
+          <NavItem className="sidenav-bg" onClick={toggleBoardMenu}>
+            <div
+              className={
+                isBoardOpen
+                  ? "nav-link py-3 text-primary"
+                  : "nav-link py-3 text-secondary"
+              }
+              style={{ cursor: "pointer" }}
+            >
+              <i className="bi bi-layout-text-window-reverse"></i>
+              <span className="ms-3 d-inline-block">게시판</span>
+              <i
+                className={`bi ms-auto ${
+                  isBoardOpen ? "bi-chevron-up" : "bi-chevron-down"
+                }`}
+                style={{ float: "right" }}
+              ></i>
+            </div>
+          </NavItem>
+          <Collapse isOpen={isBoardOpen}>
+            {boardNavigation.map((navi, index) => (
+              <NavItem key={index} className="sidenav-bg">
+                <Link
+                  to={navi.href}
+                  className={
+                    location.pathname === navi.href
+                      ? "text-primary nav-link py-3"
+                      : "nav-link text-secondary py-3"
+                  }
+                >
+                  <i className={navi.icon}></i>
+                  <span className="ms-3 d-inline-block">{navi.title}</span>
+                </Link>
+              </NavItem>
+            ))}
+          </Collapse>
         </Nav>
       </div>
     </div>

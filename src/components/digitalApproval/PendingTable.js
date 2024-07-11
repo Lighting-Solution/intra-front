@@ -13,17 +13,28 @@ import {
   CardFooter,
 } from "reactstrap"; // reactstrap에서 Modal과 관련된 컴포넌트 가져오기
 
-const ProjectTables = () => {
+const PendingTable = ({ LoginEmpId, LoginPositionId }) => {
   const [pdfUrl, setPdfUrl] = useState(null); // PDF 파일의 URL을 저장할 상태
   const [modalOpen, setModalOpen] = useState(false); // 모달 열기/닫기 상태
   const [tableData, setTableData] = useState([]);
-  const [empId, setEmpId] = useState(2);
-  const [positionId, setPositionId] = useState(2);
+  const [empId, setEmpId] = useState(LoginEmpId);
+  const [positionId, setPositionId] = useState(LoginPositionId);
   const [digitalApprovalId, setDigitalApprovalId] = useState(0);
+
   useEffect(() => {
+    console.log(empId);
+    console.log(positionId);
     axios
       .get(
-        `http://localhost:9000/api/v1/lighting_solutions/digital/approval/waiting?digitalApprovalId=${digitalApprovalId}`
+        "http://localhost:9000/api/v1/lighting_solutions/digital/approval/waiting",
+        {
+          params: {
+            empId: empId,
+          },
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
       )
       .then((response) => {
         setTableData(response.data);
@@ -32,7 +43,7 @@ const ProjectTables = () => {
       .catch((error) => {
         console.error("Error fetching project data:", error);
       });
-  }, [digitalApprovalId]);
+  }, [LoginEmpId, LoginPositionId]);
 
   const handleProjectClick = (projectName, digitalApprovalId) => {
     setDigitalApprovalId(digitalApprovalId);
@@ -84,6 +95,7 @@ const ProjectTables = () => {
     }
 
     toggleModal(); // 모달 닫기
+    window.location.reload();
   };
 
   const handleReject = async () => {
@@ -101,12 +113,13 @@ const ProjectTables = () => {
         }
       );
 
-      console.log("Success:", response.data);
-      console.log("empId : ====" + empId);
+      console.log("currentTime : " + currentTime);
     } catch (error) {
       console.error("Error sending the HTML content", error);
     }
+    const currentTime = new Date();
     toggleModal(); // 모달 닫기
+    window.location.reload();
   };
 
   const formatDate = (dateString) => {
@@ -121,6 +134,51 @@ const ProjectTables = () => {
     };
     return new Date(dateString).toLocaleDateString(undefined, options);
   };
+
+  const getStatus = (tdata) => {
+    console.log("getStatus:", {
+      positionId,
+      managerStatus: tdata.managerStatus,
+      positionName: tdata.empDTO.position.positionName,
+    });
+    if (positionId >= 3) {
+      return tdata.managerStatus ? "[대표이사] 결재 대기" : "[부장] 결재 대기";
+    } else if (positionId == 2) {
+      return tdata.managerStatus
+        ? "[대표이사] 결재 대기"
+        : "[" + tdata.empDTO.position.positionName + "] 결재 요청";
+    } else if (positionId == 1) {
+      return "최종 결재 대기";
+    } else {
+      return null;
+    }
+  };
+
+  const renderTableRow = (tdata, index, status) => (
+    <tr key={index} className="border-top">
+      <td>{formatDate(tdata.digitalApprovalCreateAt)}</td>
+      <td
+        onClick={() =>
+          handleProjectClick(tdata.project, tdata.digitalApprovalId)
+        }
+        style={{ cursor: "pointer" }} // Apply clickable style
+      >
+        {tdata.digitalApprovalName}
+      </td>
+      <td>
+        <div className="d-flex align-items-center p-2">
+          <div className="ms-3">
+            <h6 className="mb-0">{tdata.empDTO.empName}</h6>
+          </div>
+        </div>
+      </td>
+      <td>
+        <span className="p-2 bg-warning rounded-circle d-inline-block ms-3 align-self-center"></span>{" "}
+        {status}
+      </td>
+      <td>{tdata.empDTO.department.departmentName}</td>
+    </tr>
+  );
 
   return (
     <div>
@@ -141,97 +199,27 @@ const ProjectTables = () => {
                 <th>제목</th>
                 <th>기안자</th>
                 <th>상태</th>
-                <th>기안부서</th>
+                <th>기안 팀</th>
               </tr>
             </thead>
             <tbody>
-              {tableData.map((tdata, index) =>
-                !tdata.ceoStatus && !tdata.type ? ( // Exclude rows where ceoStatus is true or type is true
-                  empId !== 3 ? (
-                    !tdata.managerStatus && positionId === 2 ? ( // Only render the row if managerStatus is false, empId is not 3, and position is not 2
-                      <tr key={index} className="border-top">
-                        <td>{formatDate(tdata.digitalApprovalCreateAt)}</td>
-                        <td
-                          onClick={() =>
-                            handleProjectClick(
-                              tdata.project,
-                              tdata.digitalApprovalId
-                            )
-                          }
-                          style={{ cursor: "pointer" }} // Apply clickable style
-                        >
-                          {tdata.digitalApprovalName}
-                        </td>
-                        <td>
-                          <div className="d-flex align-items-center p-2">
-                            <div className="ms-3">
-                              <h6 className="mb-0">{tdata.empDTO.empName}</h6>
-                            </div>
-                          </div>
-                        </td>
-                        <td>
-                          <span className="p-2 bg-warning rounded-circle d-inline-block ms-3"></span>
-                        </td>
-                        <td>{tdata.empDTO.department.departmentName}</td>
-                      </tr>
-                    ) : positionId != 2 ? (
-                      <tr key={index} className="border-top">
-                        <td>{formatDate(tdata.digitalApprovalCreateAt)}</td>
-                        <td
-                          onClick={() =>
-                            handleProjectClick(
-                              tdata.project,
-                              tdata.digitalApprovalId
-                            )
-                          }
-                          style={{ cursor: "pointer" }} // Apply clickable style
-                        >
-                          {tdata.digitalApprovalName}
-                        </td>
-                        <td>
-                          <div className="d-flex align-items-center p-2">
-                            <div className="ms-3">
-                              <h6 className="mb-0">{tdata.empDTO.empName}</h6>
-                            </div>
-                          </div>
-                        </td>
-                        <td>
-                          <span className="p-2 bg-warning rounded-circle d-inline-block ms-3"></span>
-                        </td>
-                        <td>{tdata.empDTO.department.departmentName}</td>
-                      </tr>
-                    ) : null
-                  ) : (
-                    tdata.managerStatus && (
-                      <tr key={index} className="border-top">
-                        <td>{formatDate(tdata.digitalApprovalCreateAt)}</td>
-                        <td
-                          onClick={() =>
-                            handleProjectClick(
-                              tdata.project,
-                              tdata.digitalApprovalId
-                            )
-                          }
-                          style={{ cursor: "pointer" }} // Apply clickable style
-                        >
-                          {tdata.digitalApprovalName}
-                        </td>
-                        <td>
-                          <div className="d-flex align-items-center p-2">
-                            <div className="ms-3">
-                              <h6 className="mb-0">{tdata.empDTO.empName}</h6>
-                            </div>
-                          </div>
-                        </td>
-                        <td>
-                          <span className="p-2 bg-warning rounded-circle d-inline-block ms-3"></span>
-                        </td>
-                        <td>{tdata.empDTO.department.departmentName}</td>
-                      </tr>
-                    )
-                  )
-                ) : null
-              )}
+              {tableData.map((tdata, index) => {
+                const status = getStatus(tdata);
+                console.log("Table Row:", { tdata, status, positionId, empId });
+
+                if (!tdata.ceoStatus && !tdata.digitalApprovalType) {
+                  if (positionId != 1) {
+                    if (positionId == 2 && !tdata.managerStatus) {
+                      return renderTableRow(tdata, index, status);
+                    } else if (positionId != 2) {
+                      return renderTableRow(tdata, index, status);
+                    }
+                  } else if (positionId == 1 && tdata.managerStatus) {
+                    return renderTableRow(tdata, index, status);
+                  }
+                }
+                return null;
+              })}
             </tbody>
           </Table>
         </CardBody>
@@ -253,19 +241,21 @@ const ProjectTables = () => {
             />
           )}
         </ModalBody>
-        <div className="modal-footer">
-          <Button color="success" onClick={handleApprove}>
-            결재
-          </Button>{" "}
-          {/* 결재 버튼 */}
-          <Button color="danger" onClick={handleReject}>
-            반려
-          </Button>{" "}
-          {/* 반려 버튼 */}
-        </div>
+        {positionId < 3 && (
+          <div className="modal-footer">
+            <Button color="success" onClick={handleApprove}>
+              결재
+            </Button>{" "}
+            {/* 결재 버튼 */}
+            <Button color="danger" onClick={handleReject}>
+              반려
+            </Button>{" "}
+            {/* 반려 버튼 */}
+          </div>
+        )}
       </Modal>
     </div>
   );
 };
 
-export default ProjectTables;
+export default PendingTable;

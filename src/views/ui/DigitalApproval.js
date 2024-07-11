@@ -2,20 +2,64 @@ import React, { useState, useEffect } from "react";
 import { Button, Row, Col } from "reactstrap";
 import axios from "axios";
 import Modal from "./Modal"; // Ensure this path is correct
-import ProjectTables from "../../components/digitalApproval/PendingTable"; // Ensure this path is correct
+import PendingTable from "../../components/digitalApproval/PendingTable"; // Ensure this path is correct
 import RejectedTable from "../../components/digitalApproval/RejectedTable"; // Ensure this path is correct
 import "./DigitalApproval.css";
 
-const Tables = () => {
+const DigitalApproval = () => {
   const [htmlContent, setHtmlContent] = useState("");
   const [status, setStatus] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false); // State for modal
-  const [empId, setEmpId] = useState(0);
+  const [empId, setEmpId] = useState(localStorage.getItem("empId"));
+  const [positionId, setPositionId] = useState(
+    localStorage.getItem("positionId")
+  );
+
+  useEffect(() => {
+    if (htmlContent) {
+      const container = document.getElementById("html-content-container");
+
+      const handleInputChange = (event) => {
+        const input = event.target;
+        input.setAttribute("value", input.value);
+      };
+
+      const handleTextareaChange = (event) => {
+        const textarea = event.target;
+        textarea.innerHTML = textarea.value;
+      };
+
+      const inputs = container.querySelectorAll("input");
+      inputs.forEach((input) => {
+        input.addEventListener("input", handleInputChange);
+      });
+
+      const textareas = container.querySelectorAll("textarea");
+      textareas.forEach((textarea) => {
+        textarea.addEventListener("input", handleTextareaChange);
+      });
+
+      return () => {
+        inputs.forEach((input) => {
+          input.removeEventListener("input", handleInputChange);
+        });
+        textareas.forEach((textarea) => {
+          textarea.removeEventListener("input", handleTextareaChange);
+        });
+      };
+    }
+  }, [htmlContent]);
+
   const handleButtonClick = async (status) => {
     setStatus(status);
     try {
       const response = await axios.get(
-        `http://localhost:9000/api/v1/lighting_solutions/digital/approval/form?status=${status}`
+        `http://localhost:9002/api/v1/lighting_solutions/security/digital/approval/form?status=${status}`,
+        {
+          headers: {
+            Authorization: localStorage.getItem("authToken"),
+          },
+        }
       );
       setHtmlContent(response.data);
     } catch (error) {
@@ -23,10 +67,7 @@ const Tables = () => {
     }
   };
 
-  const approvalRequest = async (status, empId) => {
-    // 로그인 한 empId 전달
-    setEmpId(empId);
-
+  const approvalRequest = async (status) => {
     try {
       const container = document.getElementById("html-content-container");
 
@@ -176,7 +217,7 @@ const Tables = () => {
       const encodedHtmlContent = encodeURIComponent(htmlContent);
 
       const response = await axios.post(
-        "http://localhost:9000/api/v1/lighting_solutions/digital/approval/request",
+        "http://localhost:9002/api/v1/lighting_solutions/security/digital/approval/request",
         {
           html: encodedHtmlContent,
           status: status,
@@ -185,50 +226,20 @@ const Tables = () => {
         {
           headers: {
             "Content-Type": "application/json",
+            Authorization: localStorage.getItem("authToken"),
           },
         }
       );
 
       console.log("Success:", response.data);
+      // 여기다가 화면 리로드 기능
+      window.location.replace("/");
     } catch (error) {
       console.error("Error sending the HTML content", error);
     }
+
+    window.location.reload();
   };
-
-  useEffect(() => {
-    if (htmlContent) {
-      const container = document.getElementById("html-content-container");
-
-      const handleInputChange = (event) => {
-        const input = event.target;
-        input.setAttribute("value", input.value);
-      };
-
-      const handleTextareaChange = (event) => {
-        const textarea = event.target;
-        textarea.innerHTML = textarea.value;
-      };
-
-      const inputs = container.querySelectorAll("input");
-      inputs.forEach((input) => {
-        input.addEventListener("input", handleInputChange);
-      });
-
-      const textareas = container.querySelectorAll("textarea");
-      textareas.forEach((textarea) => {
-        textarea.addEventListener("input", handleTextareaChange);
-      });
-
-      return () => {
-        inputs.forEach((input) => {
-          input.removeEventListener("input", handleInputChange);
-        });
-        textareas.forEach((textarea) => {
-          textarea.removeEventListener("input", handleTextareaChange);
-        });
-      };
-    }
-  }, [htmlContent]);
 
   const handleNewApproval = () => {
     setIsModalOpen(true);
@@ -277,7 +288,8 @@ const Tables = () => {
             <Button
               className="btn"
               color="primary"
-              onClick={() => approvalRequest(status, 2)}
+              id="approvalRequest"
+              onClick={() => approvalRequest(status)}
             >
               결재 요청
             </Button>
@@ -286,12 +298,18 @@ const Tables = () => {
           <div className="tables-section">
             <Row>
               <Col lg="12">
-                <ProjectTables />
+                <PendingTable
+                  LoginEmpId={localStorage.getItem("empId")}
+                  LoginPositionId={localStorage.getItem("positionId")}
+                />
               </Col>
             </Row>
             <Row>
               <Col lg="12">
-                <RejectedTable />
+                <RejectedTable
+                  LoginEmpId={empId}
+                  LoginPositionId={positionId}
+                />
               </Col>
             </Row>
           </div>
@@ -301,4 +319,4 @@ const Tables = () => {
   );
 };
 
-export default Tables;
+export default DigitalApproval;
