@@ -4,7 +4,8 @@ import axios from "axios";
 import { FaEdit, FaTrashAlt, FaHeart } from "react-icons/fa";
 import "./NoticeDetail.css";
 
-const NoticeDetail = (id) => {
+const NoticeDetail = () => {
+  const { id } = useParams(); // URL 파라미터에서 id 가져오기
   const [notice, setNotice] = useState(null);
   const [nextNotices, setNextNotices] = useState([]);
   const navigate = useNavigate();
@@ -50,9 +51,7 @@ const NoticeDetail = (id) => {
 
   const handleDelete = async () => {
     try {
-      await axios.delete(`http://localhost:9000/api/notices/delete/${id}`, {
-        params: { accountId: "admin", accountPw: "1234" },
-      });
+      await axios.delete(`http://localhost:9000/api/notices/delete/${id}`);
       navigate("/notice");
     } catch (error) {
       console.error("There was an error deleting the notice!", error);
