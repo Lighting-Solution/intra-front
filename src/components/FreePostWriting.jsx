@@ -11,18 +11,16 @@ const FreePostWriting = () => {
   const [writer, setWriter] = useState(""); // 작성자 이름 상태 추가
   const navigate = useNavigate();
 
-  // 로그인된 사용자의 정보로 설정
-  const accountId = "kang"; // 실제 로그인된 사용자의 accountId로 설정
-  const accountPw = "1234"; // 실제 로그인된 사용자의 accountPw로 설정
+  const empId = localStorage.getItem("empId"); // localStorage에서 empId를 가져옴
 
   useEffect(() => {
     // 로그인된 사용자의 정보를 가져옴
     const fetchWriterInfo = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:9000/api/freeposts/emps`,
+          `http://localhost:9000/api/freeposts/emp`,
           {
-            params: { accountId, accountPw },
+            params: { empId },
           }
         );
         setWriter(response.data.empName); // 작성자 이름 상태 설정
@@ -32,7 +30,7 @@ const FreePostWriting = () => {
     };
 
     fetchWriterInfo();
-  }, []);
+  }, [empId]);
 
   const handleTitleChange = (e) => {
     setTitle(e.target.value);
@@ -49,16 +47,13 @@ const FreePostWriting = () => {
     const freePostDTO = {
       freePostTitle: title,
       freePostContent: content,
-      freePostWriter: writer, // 작성자 이름 사용
+      empId: parseInt(empId, 10), // 작성자 ID 사용
     };
 
     try {
       const response = await axios.post(
         "http://localhost:9000/api/freeposts/create",
-        freePostDTO,
-        {
-          params: { accountId, accountPw },
-        }
+        freePostDTO
       );
       console.log(response.data);
       navigate("/freeboard");

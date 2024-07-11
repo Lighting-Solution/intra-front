@@ -72,9 +72,7 @@ const NoticeBoard = () => {
   };
 
   const handleWriteClick = () => {
-    navigate("write", {
-      state: { accountId: "admin", accountPw: "1234" },
-    });
+    navigate("/notice/write"); // 새 글쓰기 페이지로 이동
   };
 
   const handleCheckboxChange = (noticeId) => {
@@ -85,16 +83,12 @@ const NoticeBoard = () => {
     }
   };
 
-  const shwoDetail = () => {};
-
   const handleDeleteClick = async () => {
     if (window.confirm("선택한 공지를 삭제하시겠습니까?")) {
       try {
         await Promise.all(
           selectedNotices.map((id) =>
-            axios.delete(`http://localhost:9000/api/notices/delete/${id}`, {
-              params: { accountId: "admin", accountPw: "1234" },
-            })
+            axios.delete(`http://localhost:9000/api/notices/delete/${id}`)
           )
         );
         setNotices(
@@ -144,8 +138,6 @@ const NoticeBoard = () => {
                 { type: "application/json" }
               )
             );
-            formData.append("accountId", "admin");
-            formData.append("accountPw", "1234");
 
             return axios.put(
               `http://localhost:9000/api/notices/update/${id}`,
@@ -237,7 +229,7 @@ const NoticeBoard = () => {
               </div>
               <div
                 className="board-col"
-                onClick={shwoDetail}
+                onClick={() => navigate(`/notice/${notice.noticePostId}`)} // 제목 클릭 시 상세보기 페이지로 이동
                 style={{ cursor: "pointer", color: "blue" }}
               >
                 {notice.noticeTitle || "N/A"}

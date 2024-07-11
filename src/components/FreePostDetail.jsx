@@ -10,10 +10,7 @@ const FreePostDetail = () => {
   const [post, setPost] = useState(null);
   const navigate = useNavigate();
 
-  // 로그인된 사용자의 정보로 설정
-  const accountId = "kang"; // 실제 로그인된 사용자의 accountId로 설정
-  const accountPw = "1234"; // 실제 로그인된 사용자의 accountPw로 설정
-  const loggedInUserId = 8; // 실제 로그인된 사용자의 ID
+  const loggedInUserId = localStorage.getItem("empId"); // 로그인된 사용자의 ID
 
   useEffect(() => {
     const fetchPost = async () => {
@@ -39,9 +36,7 @@ const FreePostDetail = () => {
 
   const handleDelete = async () => {
     try {
-      await axios.delete(`http://localhost:9000/api/freeposts/delete/${id}`, {
-        params: { accountId, accountPw },
-      });
+      await axios.delete(`http://localhost:9000/api/freeposts/delete/${id}`);
       navigate("/freeboard");
     } catch (error) {
       console.error("There was an error deleting the post!", error);
@@ -89,7 +84,7 @@ const FreePostDetail = () => {
     <div className="freepost-detail">
       <div className="freepost-header">
         <div className="freepost-actions">
-          {post.empId === loggedInUserId && (
+          {post.empId === parseInt(loggedInUserId) && (
             <>
               <div className="action-item" onClick={handleEdit}>
                 <FaEdit className="icon" />
@@ -126,8 +121,8 @@ const FreePostDetail = () => {
           뒤로가기
         </button>
       </div>
-      <hr className="divider" /> {/* 뒤로가기 버튼 아래 구분선 추가 */}
-      <CommentSection postId={id} accountId={accountId} accountPw={accountPw} />
+      <hr className="divider" />
+      <CommentSection postId={id} />
     </div>
   );
 };

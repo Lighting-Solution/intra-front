@@ -101,7 +101,19 @@ const ThemeRoutes = () => {
             { path: "detail/:id", exact: true, element: <DocumentDetail /> },
           ],
         },
-        { path: "/notice", exact: true, element: <NoticeBoard /> },
+        {
+          path: "/notice",
+          exact: true,
+          element: <NoticeBoard />,
+        },
+        { path: "/notice/write", exact: true, element: <NoticeWriting /> },
+        {
+          path: "/notice/:id", // 이 경로를 추가하여 상세 페이지로 이동
+          exact: true,
+          element: <NoticeDetail />,
+        },
+        { path: "/notice/edit/:id", exact: true, element: <NoticeEditing /> },
+
         { path: "/notice/user", exact: true, element: <NoticeBoardUser /> },
         {
           path: "freeboard",

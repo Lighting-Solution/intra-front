@@ -2,12 +2,13 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "./CommentSection.css";
 
-const CommentSection = ({ postId, accountId, accountPw }) => {
+const CommentSection = ({ postId }) => {
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState("");
   const [editCommentId, setEditCommentId] = useState(null);
   const [editCommentContent, setEditCommentContent] = useState("");
-  const loggedInUserId = 8; // 실제 로그인된 사용자의 empId로 설정
+
+  const empId = localStorage.getItem("empId");
 
   useEffect(() => {
     const fetchComments = async () => {
@@ -35,7 +36,7 @@ const CommentSection = ({ postId, accountId, accountPw }) => {
         `http://localhost:9000/api/freeposts/${postId}/comments`,
         { freeCommentContent: newComment },
         {
-          params: { accountId, accountPw },
+          params: { empId },
         }
       );
       setComments([...comments, response.data]);
@@ -56,7 +57,7 @@ const CommentSection = ({ postId, accountId, accountPw }) => {
         `http://localhost:9000/api/freeposts/${postId}/comments/${editCommentId}`,
         { freeCommentContent: editCommentContent },
         {
-          params: { accountId, accountPw },
+          params: { empId },
         }
       );
       setComments(
@@ -76,7 +77,7 @@ const CommentSection = ({ postId, accountId, accountPw }) => {
       await axios.delete(
         `http://localhost:9000/api/freeposts/${postId}/comments/${commentId}`,
         {
-          params: { accountId, accountPw },
+          params: { empId },
         }
       );
       setComments(
@@ -120,7 +121,7 @@ const CommentSection = ({ postId, accountId, accountPw }) => {
               </span>
               <p>{comment.freeCommentContent}</p>
             </div>
-            {comment.empId === loggedInUserId && (
+            {comment.empId === parseInt(empId) && (
               <div className="comment-actions">
                 <button
                   className="edit-button"
