@@ -344,13 +344,6 @@ const MyCalendar = (props) => {
                 </button>
               </div>
             ))}
-            <button
-              type="button"
-              className="btn btn-sm btn-primary mt-2"
-              onClick={() => setAttendeeModalIsOpen(true)}
-            >
-              Add Attendee
-            </button>
           </div>
           <div className="button-group">
             <button type="submit" className="btn btn-primary">

@@ -14,7 +14,16 @@ const DocumentDetail = () => {
   });
 
     // 수정해야함 
-    const currentUserId = 1;
+    const currentUserId = parseInt(localStorage.getItem("empId"), 10);
+    
+    const formattedText = (text) => {
+      return text.split("\n").map((line, index) => (
+        <span key={index}>
+          {line}
+          <br />
+        </span>
+      ));
+    };
 
   useEffect(() => {
     const fetchDocument = async () => {
@@ -106,7 +115,7 @@ const DocumentDetail = () => {
       <p><strong>Writer:</strong> {document.writerName}</p>
       <p><strong>Created At:</strong> {document.createdAt}</p>
       <p><strong>Updated At:</strong> {document.updatedAt}</p>
-      <p><strong>Content:</strong> {document.content}</p>
+      <p><strong>Content:</strong> {formattedText(document.content)}</p>
       {document.filePath && (
         <p>
           <strong>File:</strong> <a className="download-link" href={`http://localhost:9000/document/${document.documentId}/download`} download>{document.filePath}</a>
