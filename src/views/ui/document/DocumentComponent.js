@@ -1,8 +1,4 @@
-<<<<<<< HEAD
 import React, { useState, useEffect } from 'react';
-=======
-import React, { useState } from 'react';
->>>>>>> main
 import './DocumentComponent.css';
 import { useNavigate } from 'react-router-dom';
 
@@ -14,7 +10,6 @@ const DocumentComponent = () => {
   const [file, setFile] = useState(null);
   const [category, setCategory] = useState('');
   const [writerEmpId, setWriterEmpId] = useState('');
-<<<<<<< HEAD
   const [currentEmpId, setCurrentEmpId] = useState(1); // 예시를 위한 empId설정 수정해야함ㅋ
   const [page, setPage] = useState(0);
   const [size, setSize] = useState(10);
@@ -30,20 +25,10 @@ const DocumentComponent = () => {
   }, []);
 
   // 사이드바 클릭 시 동작하는 코드
-=======
-  const [currentEmpId, setCurrentEmpId] = useState(1); // 예시를 위한 empId 값 설정
-  const [page, setPage] = useState(0);
-  const [size, setSize] = useState(10);
-  const [totalPages, setTotalPages] = useState(0);
-  const [selectedCategory, setSelectedCategory] = useState('');
-  const navigate = useNavigate();
-
->>>>>>> main
   const handleCategoryClick = async (categoryName) => {
     console.log(`${categoryName} clicked`);
     setSelectedCategory(categoryName);
     setPage(0); // 카테고리 변경 시 첫 페이지로 초기화
-<<<<<<< HEAD
     fetchDocuments(categoryName, null, null, 0, size);
   };
 
@@ -58,23 +43,12 @@ const DocumentComponent = () => {
       }
       bodyData = {...bodyData, searchType};
       console.log(bodyData);
-=======
-    fetchDocuments(categoryName, 0, size);
-  };
-
-  const fetchDocuments = async (categoryName, page, size) => {
-    try {
->>>>>>> main
       const response = await fetch('http://localhost:9000/document/api/docsList', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
-<<<<<<< HEAD
         body: JSON.stringify(bodyData)
-=======
-        body: JSON.stringify({ empId: currentEmpId, categoryName, page, size })
->>>>>>> main
       });
       const data = await response.json();
       setDocuments(data.content);
@@ -96,10 +70,6 @@ const DocumentComponent = () => {
     formData.append('file', file);
     formData.append('category', category);
     formData.append('writerEmpId', currentEmpId); // 로그인한 유저의 아이디를 넣기
-<<<<<<< HEAD
-=======
-    
->>>>>>> main
 
     try {
       const response = await fetch('http://localhost:9000/document/api/creation', {
@@ -117,11 +87,7 @@ const DocumentComponent = () => {
         setWriterEmpId('');
         // 새로 등록된 문서를 포함하여 목록을 다시 로드
         if (selectedCategory) {
-<<<<<<< HEAD
           fetchDocuments(selectedCategory, searchTerm, searchType, page, size);
-=======
-          fetchDocuments(selectedCategory, page, size);
->>>>>>> main
         }
       } else {
         console.error('Error submitting document');
@@ -133,7 +99,6 @@ const DocumentComponent = () => {
 
   const handlePageChange = (newPage) => {
     setPage(newPage);
-<<<<<<< HEAD
     fetchDocuments(selectedCategory, searchTerm, searchType, newPage, size);
   };
 
@@ -165,11 +130,6 @@ const DocumentComponent = () => {
     setSelectedCategory(e.target.value);
   }
 
-=======
-    fetchDocuments(selectedCategory, newPage, size);
-  };
-
->>>>>>> main
   return (
     <div className="document-component">
       <div className="document-sidebar">
@@ -184,7 +144,6 @@ const DocumentComponent = () => {
       </div>
       <div className="document-main">
         <div className="document-header">
-<<<<<<< HEAD
          {/* 검색하는 부분 */}
          <form onSubmit={handleSearchSubmit}>
             <select value={selectedCategory} onChange={handleSearchCategoryType}>
@@ -225,17 +184,6 @@ const DocumentComponent = () => {
             <button type="submit">검색</button>
           </form>
 
-=======
-          <h2>내부 프로젝트 - 문서함</h2>
-          <ul>
-            <li>카테고리별로 구분하는 기능</li>
-            <li>검색기능</li>
-            <li>페이징기능</li>
-            <li>날짜 조회 기능</li>
-            <li>페이징 갯수 선택 기능(선택)</li>
-            <li>보존기간 후 삭제(선택)</li>
-          </ul>
->>>>>>> main
         </div>
         <table className="document-list">
           <thead>
@@ -281,11 +229,7 @@ const DocumentComponent = () => {
                 <input type="file" onChange={handleFileChange} />
               </div>
               <div className="form-group">
-<<<<<<< HEAD
                 <label>Category:</label>
-=======
-              <label>Category:</label>
->>>>>>> main
                 <select value={category} onChange={(e) => setCategory(e.target.value)}>
                   <option value="">Select Category</option>
                   <option value="service">서비스사업부</option>
