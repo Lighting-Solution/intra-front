@@ -29,8 +29,13 @@ const Login = () => {
         localStorage.setItem("positionId", response.data.positionId);
         localStorage.setItem("empName", response.data.empName);
         localStorage.setItem("departmentId", response.data.departmentId);
-        console.log(localStorage.getItem("positionId"));
-        console.log(localStorage.getItem("departmentId"));
+        localStorage.setItem("empAdmin", response.data.empAdmin);
+        localStorage.setItem("departmentName", response.data.departmentName);
+        localStorage.setItem("empEmail", response.data.empEmail);
+
+        console.log(localStorage.getItem("empAdmin"));
+        console.log(localStorage.getItem("departmentName"));
+        console.log(localStorage.getItem("empEmail"));
         navigate("/starter");
       })
       .catch((error) => {
