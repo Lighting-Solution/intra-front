@@ -19,6 +19,9 @@ const DocumentComponent = () => {
   const [searchType, setSearchType] = useState('title'); // 검색 조건 상태 추가
   const navigate = useNavigate();
   const currentEmpId = parseInt(localStorage.getItem("empId"), 10);
+  const departmentId = parseInt(localStorage.getItem("departmentId"), 10); // 부서 ID 가져오기
+  const positionId = parseInt(localStorage.getItem("positionId", 10));
+
 
   // 컴포넌트가 불러와질 때 호출되는 함수 -> 공통 문서를 가져오겠다
   useEffect(() => {
@@ -131,6 +134,40 @@ const DocumentComponent = () => {
     setSelectedCategory(e.target.value);
   }
 
+  const getCategoryOptions = () => {
+    if (departmentId >= 100 && departmentId < 200 && positionId !== 1) {
+      return (
+        <>
+          <option value="public">공통</option>
+          <option value="service">서비스사업부</option>
+        </>
+      );
+    } else if (departmentId >= 200 && departmentId < 300) {
+      return (
+        <>
+          <option value="public">공통</option>
+          <option value="manage">관리지원부</option>
+        </>
+      );
+    } else if (departmentId >= 300) {
+      return (
+        <>
+          <option value="public">공통</option>
+          <option value="solution">솔루션사업부</option>
+        </>
+      );
+    } else {
+      return (
+        <>
+      <option value="public">공통</option>
+      <option value="service">서비스사업부</option>
+      <option value="manage">관리지원부</option>
+      <option value="solution">솔루션사업부</option>
+      </>
+    );
+    }
+  };
+
   return (
     <div className="document-component">
       <div className="document-sidebar">
@@ -233,14 +270,10 @@ const DocumentComponent = () => {
                 <label>Category:</label>
                 <select value={category} onChange={(e) => setCategory(e.target.value)}>
                   <option value="">Select Category</option>
-                  <option value="service">서비스사업부</option>
-                  <option value="solution">솔루션사업부</option>
-                  <option value="manage">관리사업부</option>
-                  <option value="public">공통</option>
+                  {getCategoryOptions()}
                 </select>
               </div>
               <div className="form-group">
-                <label>Writer Emp ID:</label>
                 <input type="hidden" value={currentEmpId} />
               </div>
               <button type="submit" className="submit-button">Submit</button>

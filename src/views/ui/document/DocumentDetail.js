@@ -104,6 +104,10 @@ const DocumentDetail = () => {
     }
   };
 
+  const handleGoList = () => {
+    navigate(`/document`);
+  }
+
   if (!document) {
     return <div>Loading...</div>;
   }
@@ -127,6 +131,7 @@ const DocumentDetail = () => {
           <button onClick={handleDelete}>Delete</button>
         </>
       )}
+      <button onClick={handleGoList}>목록으로</button>
 
       {isModalOpen && (
         <div className="modal">
@@ -162,6 +167,7 @@ const DocumentDetail = () => {
             <div className="modal-actions">
               <button className="save-button" onClick={handleSave}>Save</button>
               <button className="cancel-button" onClick={handleCloseModal}>Cancel</button>
+              
             </div>
           </div>
         </div>
