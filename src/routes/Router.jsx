@@ -2,6 +2,7 @@ import { lazy } from "react";
 import { Navigate } from "react-router-dom";
 
 /****Layouts*****/
+const FreeLayout = lazy(() => import("../views/ui/FreeLayout.jsx"));
 const FullLayout = lazy(() => import("../layouts/FullLayout.js"));
 const ChatLayout = lazy(() => import("../views/ui/ChatLayout.jsx"));
 const NoticeLayout = lazy(() => import("../views/ui/NoticeLayout.jsx"));
