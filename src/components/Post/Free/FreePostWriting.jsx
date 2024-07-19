@@ -3,7 +3,7 @@ import { CKEditor } from "@ckeditor/ckeditor5-react";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import "./NoticeWriting.css";
+import "./FreePostEditing.css";
 
 const FreePostWriting = () => {
   const [title, setTitle] = useState("");
