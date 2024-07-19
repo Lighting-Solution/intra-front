@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Container, Grid } from "@mui/material";
-import ChatList from "../../components/ChatList";
-import ChatWindow from "../../components/ChatWindow";
+import ChatList from "../../components/Chat/ChatList";
+import ChatWindow from "../../components/Chat/ChatWindow";
 
 const ChatLayout = () => {
   const [currentChat, setCurrentChat] = useState(null);

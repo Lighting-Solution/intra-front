@@ -88,7 +88,7 @@ const NoticeDetail = () => {
   };
 
   const handleBack = () => {
-    navigate("/notice");
+    navigate("/notice/user");
   };
 
   if (!notice) {

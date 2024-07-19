@@ -22,8 +22,12 @@ const AddressBookModal = ({ open, onClose, onCreateChat, currentUserId }) => {
     if (open) {
       const fetchContacts = async () => {
         try {
-          const response = await axios.get("http://localhost:9000/api/v1/intranet/emp/toMessenger");
-          const filteredData = response.data.filter(contact => contact.empId !== currentUserId); // 현재 사용자 제외
+          const response = await axios.get(
+            "http://localhost:9000/api/v1/intranet/emp/toMessenger"
+          );
+          const filteredData = response.data.filter(
+            (contact) => contact.empId !== currentUserId
+          ); // 현재 사용자 제외
           setAddressBookData(filteredData);
         } catch (error) {
           console.error("Error fetching contacts:", error);
@@ -48,7 +52,7 @@ const AddressBookModal = ({ open, onClose, onCreateChat, currentUserId }) => {
   };
 
   const handleCreateChat = () => {
-    const selectedIds = selectedContacts.map(contact => contact.empId);
+    const selectedIds = selectedContacts.map((contact) => contact.empId);
     onCreateChat(selectedIds);
     setSelectedContacts([]);
     onClose();
@@ -68,8 +72,8 @@ const AddressBookModal = ({ open, onClose, onCreateChat, currentUserId }) => {
               <ListItemAvatar>
                 <Avatar src={contact.avatar} />
               </ListItemAvatar>
-              <ListItemText 
-                primary={contact.empName} 
+              <ListItemText
+                primary={contact.empName}
                 secondary={contact.position.positionName}
               />
               <Checkbox checked={selectedContacts.indexOf(contact) !== -1} />
